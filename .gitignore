@@ -1,0 +1,25 @@
+# Variables reales
+.env
+.env.dev
+.env.test
+.env.prod
+
+# Backups / dumps de base de datos
+database/dumps/*.dump
+database/dumps/*.sql
+
+# Logs
+*.log
+
+# Editores
+.vscode/
+.idea/
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Dependencias y temporales
+node_modules/
+__pycache__/
+*.pyc

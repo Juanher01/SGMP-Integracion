@@ -1,0 +1,82 @@
+services:
+
+  postgres-dev:
+    image: postgres:17
+    container_name: sgpmp-postgres-dev
+    profiles:
+      - dev
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "${POSTGRES_HOST_PORT}:5432"
+
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    restart: unless-stopped
+
+    networks:
+      - sgpmp-dev-network
+
+
+  postgres-test:
+    image: postgres:16
+    container_name: sgpmp-postgres-test
+    profiles:
+      - test
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "${POSTGRES_HOST_PORT}:5432"
+
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    restart: unless-stopped
+
+    networks:
+      - sgpmp-test-network
+
+
+volumes:
+  postgres_dev_data:
+    name: sgpmp-postgres-dev-data
+
+  postgres_test_data:
+    name: sgpmp-postgres-test-data
+
+
+networks:
+  sgpmp-dev-network:
+    name: sgpmp-dev-network
+
+  sgpmp-test-network:
+    name: sgpmp-test-network
