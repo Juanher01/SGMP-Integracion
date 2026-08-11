@@ -4,6 +4,9 @@
 .env.test
 .env.prod
 
+# Copia de trabajo local del script de restauración (contiene .env de prueba)
+.sgpmp-local/
+
 # Backups / dumps de base de datos
 database/dumps/*.dump
 database/dumps/*.sql
