@@ -50,24 +50,26 @@ No contendrá secretos reales dentro del repositorio.
 
 ## 5. Base de datos
 
-|       Variable      |      DEV        |     TEST        |          PROD          | Secreto |        Descripción        |
-|---------------------|-----------------|-----------------|------------------------|---------|---------------------------|
-| `POSTGRES_HOST`     | `postgres-dev`  | `postgres-test` | Definido en despliegue | No      | Host PostgreSQL           |
-| `POSTGRES_PORT`     | `5432`          | `5432`          | `5432`                 | No      | Puerto interno PostgreSQL |
-| `POSTGRES_DB`       | `sgpmp_dev`     | `sgpmp_test`    | Definido en despliegue | No      | Nombre de base            |
-| `POSTGRES_USER`     | `sgpmp_dev`     | `sgpmp_test`    | Definido en despliegue | Sí*     | Usuario de base           |
-| `POSTGRES_PASSWORD` | Local           | Local TEST      | Externo                | Sí      | Contraseña de base        |
+|         Variable        |      DEV        |     TEST        |          PROD          | Secreto |          Descripción          |
+|-------------------------|-----------------|-----------------|------------------------|---------|-------------------------------|
+| `POSTGRES_HOST`         | `postgres-dev`  | `postgres-test` | Definido en despliegue | No      | Host PostgreSQL               |
+| `POSTGRES_PORT`         | `5432`          | `5432`          | `5432`                 | No      | Puerto interno PostgreSQL     |
+| `POSTGRES_HOST_PORT`    | `5432`          | `5433`          | Definido en despliegue | No      | Puerto mapeado en el Host     |
+| `POSTGRES_DB`           | `sgpmp_dev`     | `sgpmp_test`    | Definido en despliegue | No      | Nombre de base                |
+| `POSTGRES_USER`         | `sgpmp_dev`     | `sgpmp_test`    | Definido en despliegue | Sí*     | Usuario de base               |
+| `POSTGRES_PASSWORD`     | Local           | Local TEST      | Externo                | Sí      | Contraseña de base            |
 
 \* El nombre del usuario no necesariamente es secreto, pero se maneja junto con las credenciales de base de datos.
 
 ## 6. Backend
 
-|      Variable    |    DEV    |     TEST   |   PROD    | Secreto |        Descripción             |
-|------------------|-----------|------------|-----------|---------|--------------------------------|
-| `BACKEND_HOST`   | `0.0.0.0` | `0.0.0.0`  | `0.0.0.0` | No      | Interfaz donde escucha FastAPI |
-| `BACKEND_PORT`   | `8000`    | `8000`     | `8000`    | No      | Puerto interno del backend     |
-| `JWT_SECRET_KEY` | Local     | Local TEST | Externo   | Sí      | Clave para firma JWT           |
-| `JWT_ALGORITHM`  | `HS256`   | `HS256`    | `HS256`   | No      | Algoritmo JWT                  |
+|        Variable       |    DEV    |     TEST   |          PROD          | Secreto |          Descripción           |
+|-----------------------|-----------|------------|------------------------|---------|--------------------------------|
+| `BACKEND_HOST`        | `0.0.0.0` | `0.0.0.0`  | `0.0.0.0`              | No      | Interfaz donde escucha FastAPI |
+| `BACKEND_PORT`        | `8000`    | `8000`     | `8000`                 | No      | Puerto interno del backend     |
+| `BACKEND_HOST_PORT`   | `8000`    | `8001`     | Definido en despliegue | No      | Puerto mapeado en el Host      |
+| `JWT_SECRET_KEY`      | Local     | Local TEST | Externo                | Sí      | Clave para firma JWT           |
+| `JWT_ALGORITHM`       | `HS256`   | `HS256`    | `HS256`                | No      | Algoritmo JWT                  |
 
 ## 7. Frontend
 

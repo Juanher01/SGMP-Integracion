@@ -10,19 +10,7 @@ Ningún componente debe incorporarse a la rama de integración sin aprobación p
 
 ## 3. Información requerida
 
-La entrega debe indicar:
-
-- Repositorio.
-- Rama origen.
-- Commit SHA o tag aprobado.
-- Fecha de aprobación.
-- Módulos incluidos.
-- Resultado de Pruebas.
-- Incidencias conocidas.
-- Nuevas dependencias.
-- Nuevas variables de entorno.
-- Migraciones incluidas.
-- Cambios de contratos API.
+Toda entrega formal realizada por el equipo de Pruebas debe documentarse mediante el diligenciamiento completo del formulario oficial de recepción disponible en [FORMATO-RECEPCION.md].
 
 ## 4. Flujo
 

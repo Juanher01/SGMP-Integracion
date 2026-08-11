@@ -1,43 +1,24 @@
-# Ambientes del ecosistema SGPMP
+# Ambientes del Ecosistema SGPMP
 
-## DEV
+## 1. Visión General de Ambientes
 
-Propósito:
-Desarrollo e integración local de los componentes aprobados.
+El ecosistema SGPMP define tres ambientes con propósitos y configuraciones técnicas aisladas:
 
-Características previstas:
+| Característica | DEV | TEST | PROD |
+| :--- | :--- | :--- | :--- |
+| **Propósito** | Desarrollo e integración local | Pruebas automatizadas y validación técnica | Despliegue final de producción |
+| **Servicio BD** | `postgres-dev` (`5432`) | `postgres-test` (`5433`) | Instancia productiva |
+| **Persistencia** | Datos persistentes | Datos reiniciables / reproducibles | Persistencia gestionada |
+| **Backend** | Port `8000` (Hot-reload, Swagger) | Port `8001` (Pytest) | Port `8000` (Sin debug, optimizado) |
+| **Frontend** | Port `5173` (Vite dev server) | Port `5174` (Vitest / Cypress) | Bundle compilado en servidor |
+| **Perfil Docker** | `dev` | `test` | `prod` |
 
-- PostgreSQL independiente.
-- Datos persistentes.
-- Hot reload para backend y frontend.
-- Logs detallados.
-- Puertos expuestos localmente.
-- Swagger habilitado.
+---
 
-## TEST
+## 2. Documentos de Referencia Técnica
 
-Propósito:
-Ejecutar pruebas automatizadas y validaciones reproducibles.
+Para profundizar en la configuración y operación de los ambientes, consulte los siguientes documentos:
 
-Características previstas:
-
-- PostgreSQL independiente de DEV.
-- Datos reiniciables.
-- pytest y pytest-cov para backend.
-- Vitest para frontend.
-- Cypress para pruebas E2E.
-- Uso compartido entre Pruebas e Implementación.
-
-## PROD
-
-Propósito:
-Ejecutar una versión equivalente a producción y preparar la entrega a Despliegue.
-
-Características previstas:
-
-- Sin hot reload.
-- Sin debug.
-- Build optimizado.
-- Secretos no versionados.
-- Frontend compilado.
-- Configuración mínima necesaria para ejecución.
+* **Operación de Contenedores:** Consultar [DOCKER.md] para comandos CLI de inicio, logs y detención.
+* **Matriz de Variables:** Consultar [VARIABLES-ENTORNO.md] para mapeo de puertos y variables de entorno.
+* **Gestión de Base de Datos:** Consultar [BASE-DATOS.md] para reglas de dumps, restauración y volúmenes.

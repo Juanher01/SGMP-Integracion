@@ -1,7 +1,7 @@
 services:
 
   postgres-dev:
-    image: postgres:17
+    image: postgres:16
     container_name: sgpmp-postgres-dev
     profiles:
       - dev
