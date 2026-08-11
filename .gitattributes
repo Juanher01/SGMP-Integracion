@@ -1,0 +1,17 @@
+# Normaliza finales de línea en el repositorio (evita el bug de CRLF en Windows)
+* text=auto
+
+# Scripts de shell: SIEMPRE LF (un .sh con CRLF no ejecuta en Linux/contenedor)
+*.sh text eol=lf
+
+# Documentación y config en LF
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.env text eol=lf
+
+# Binarios: nunca tocar finales de línea
+*.dump binary
+*.png binary
+*.jpg binary
+*.pdf binary
