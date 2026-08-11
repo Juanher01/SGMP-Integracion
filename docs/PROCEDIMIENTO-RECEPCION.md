@@ -1,99 +1,58 @@
-# Procedimiento de Recepción — Implementación SGPMP
+# Procedimiento de Recepción — Etapa E1 (Implementación SGPMP)
+
+> [!NOTE]
+> Este documento detalla la **etapa E1 (Recepción y Aceptación de Superficies)** del flujo de trabajo de Implementación. Para el flujo completo E1→E7 y su encaje con las matrices, ver [FLUJO-TRABAJO.md].
 
 ## 1. Objetivo
 
-Establecer el proceso mediante el cual el grupo de Implementación recibe componentes previamente aprobados por el grupo de Pruebas.
+Recibir y aceptar las **superficies de integración** de un componente ya aprobado por Pruebas, registrándolas en el DOC-01 Checklist del módulo.
 
 ## 2. Precondición
 
-Ningún componente debe incorporarse a la rama de integración sin aprobación previa del grupo de Pruebas.
+Ningún componente se incorpora a la integración sin la aprobación previa de Pruebas (compuerta de entrada del flujo `Desarrollo → Pruebas → Integración → Pruebas → Despliegue`).
 
-## 3. Información requerida
+La verificación se hace contra el código en la rama `dev` como **fuente principal**; el documento de Desarrollo es **fuente secundaria**. Ante divergencia, manda el código: la diferencia es un **hallazgo** que se registra como incidencia.
 
-Toda entrega formal realizada por el equipo de Pruebas debe documentarse mediante el diligenciamiento completo del formulario oficial de recepción disponible en [FORMATO-RECEPCION.md].
+## 3. Registro
 
-## 4. Flujo
+La entrega se documenta en el formulario oficial [FORMATO-RECEPCION.md], y las superficies en el **DOC-01 Checklist** del módulo.
+
+## 4. Flujo de la etapa E1
 
 ### Paso 1 — Liberación
 
-Pruebas comunica que una versión de `dev` ha sido aprobada.
+Pruebas comunica el commit SHA o tag de `dev` aprobado.
 
 ### Paso 2 — Identificación
 
-Implementación registra el commit SHA o tag exacto aprobado.
+Se registra el commit SHA o tag exacto aprobado. Para evidencia reproducible, la referencia se congela por SHA.
 
-### Paso 3 — Rama de integración
+### Paso 3 — Rama de recepción
 
-Se crea o actualiza `integration` exclusivamente desde esa versión aprobada.
+Se crea `recep/m0X-vY.Z.W` desde esa versión aprobada (ver [FLUJO-GIT.md]).
 
-### Paso 4 — Revisión técnica
+### Paso 4 — Inventario de superficies
 
-Se identifican cambios en:
+Se listan en el DOC-01 **solo** las superficies que el módulo **expone** o **consume** (endpoints REST, esquemas de BD, interfaces entre módulos); **no** entidades ni objetos internos. Cada superficie se apunta a su doble fuente (código en `dev` + documento).
 
-Backend:
-- `requirements.txt`
-- configuración
-- migraciones
-- contratos OpenAPI
+### Paso 5 — Verificación de contratos
 
-Frontend:
-- `package.json`
-- variables Vite
-- dependencias
-- rutas API
+Se verifican los contratos REST publicados por FastAPI vía Swagger/OpenAPI y la colección Bruno/Postman (ver [API-VALIDACION.md]).
 
-### Paso 5 — Variables de entorno
+### Paso 6 — Cotejo
 
-Se comparan las necesidades del componente con la matriz oficial de variables de entorno.
+Se compara lo recibido contra las superficies registradas en el DOC-01.
 
-Toda nueva variable debe documentarse antes de incorporarse.
+### Paso 7 — Evidencias
 
-### Paso 6 — Docker
+Se almacenan logs, requests, responses y capturas relevantes, con referencias congeladas por SHA.
 
-Se crean o actualizan los Dockerfiles necesarios.
+### Paso 8 — Estado y cierre
 
-### Paso 7 — Docker Compose
+Cada superficie avanza `PENDIENTE → RECIBIDO → VERIFICADO`. Si existe un problema, se abre una incidencia en el DOC-02 y la superficie **no** se marca como verificada.
 
-Se incorporan los servicios aprobados al ecosistema.
+## 5. Salida de la etapa
 
-### Paso 8 — Base de datos
+La **compuerta de E1** (conformidad de superficies) determina si el módulo es **apto**, **apto con observaciones** o **no apto** para continuar a E2.
 
-Se conecta el componente con la instancia correspondiente de base de datos.
-
-### Paso 9 — Ejecución
-
-Se levanta el ambiente correspondiente.
-
-### Paso 10 — Swagger/OpenAPI
-
-Se verifican los contratos REST publicados por FastAPI.
-
-### Paso 11 — Postman
-
-Se ejecutan las solicitudes correspondientes.
-
-### Paso 12 — Integraciones
-
-Se verifican las interacciones entre:
-
-- Frontend ↔ Backend
-- Backend ↔ PostgreSQL
-- Módulo ↔ Módulo
-- Autenticación ↔ módulos protegidos
-- Servicios externos cuando corresponda
-
-### Paso 13 — DOC-01
-
-Se compara la implementación recibida con las superficies registradas.
-
-### Paso 14 — Evidencias
-
-Se almacenan logs, requests, responses y capturas relevantes.
-
-### Paso 15 — Resultado
-
-La superficie se actualiza a:
-
-`PENDIENTE → RECIBIDO → VERIFICADO`
-
-Si existe un problema, se registra una incidencia y no se marca como verificada.
+Los pasos de configuración de entorno, levantamiento de ambiente, Docker, base de datos y verificación de integración entre módulos pertenecen a etapas posteriores (E2–E5) y se describen en [FLUJO-TRABAJO.md]. Este procedimiento cubre únicamente E1.
