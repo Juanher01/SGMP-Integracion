@@ -1,82 +1,30 @@
+# docker-compose.yml — BASE (servicios comunes a los 3 entornos)
+#
+# Requisitos para que este compose funcione:
+# 1. Los repos backend y frontend deben estar clonados como HERMANOS de este repo
+#    (misma carpeta padre): ../sgpmp-backend y ../SGPMP-FRONT-END-PWA
+# 2. Cada uno debe tener ya su Dockerfile colocado en la raíz (ver docs/dockerFiles/
+#    para las copias de referencia, mientras se fusionan sus respectivos PR).
+# 3. La BD del DBA debe estar corriendo ANTES de levantar este compose
+#    (scripts/restaurar-bd.sh, o "docker start SGPMP" si ya fue restaurada).
+#    No se define aquí ningún servicio de base de datos: se adopta el contenedor
+#    del DBA tal cual, conectándose a su red, sin duplicar su definición.
+
 services:
+  backend:
+    build:
+      context: ../sgpmp-backend
+      dockerfile: Dockerfile
 
-  postgres-dev:
-    image: postgres:17
-    container_name: sgpmp-postgres-dev
-    profiles:
-      - dev
-
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
-    ports:
-      - "${POSTGRES_HOST_PORT}:5432"
-
-    volumes:
-      - postgres_dev_data:/var/lib/postgresql/data
-
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-    restart: unless-stopped
-
-    networks:
-      - sgpmp-dev-network
-
-
-  postgres-test:
-    image: postgres:16
-    container_name: sgpmp-postgres-test
-    profiles:
-      - test
-
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
-    ports:
-      - "${POSTGRES_HOST_PORT}:5432"
-
-    volumes:
-      - postgres_test_data:/var/lib/postgresql/data
-
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-    restart: unless-stopped
-
-    networks:
-      - sgpmp-test-network
-
-
-volumes:
-  postgres_dev_data:
-    name: sgpmp-postgres-dev-data
-
-  postgres_test_data:
-    name: sgpmp-postgres-test-data
-
+  frontend:
+    build:
+      context: ../SGPMP-FRONT-END-PWA
+      dockerfile: Dockerfile
+    depends_on:
+      backend:
+        condition: service_healthy
 
 networks:
-  sgpmp-dev-network:
-    name: sgpmp-dev-network
-
-  sgpmp-test-network:
-    name: sgpmp-test-network
+  default:
+    name: docker_default
+    external: true
