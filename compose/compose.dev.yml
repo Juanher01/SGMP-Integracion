@@ -7,6 +7,12 @@ name: sgpmp-dev
 services:
 
   database:
+    # HU-04 entrega DBIntegrador como capa externa en DEV.
+    # Este servicio queda disponible solo si se habilita explícitamente
+    # el perfil internal-db.
+    profiles:
+      - internal-db
+
     build:
       context: ../../DBIntegrador-master
       dockerfile: dockerfile
@@ -21,6 +27,12 @@ services:
       - ../../BROKER-MQTT-SGPMP-develop/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   gateway:
+    # En DEV la BD proviene de HU-04 externamente.
+    # Se conserva únicamente la dependencia de Mosquitto.
+    depends_on: !override
+      mosquitto:
+        condition: service_healthy
+
     build:
       context: ../../BROKER-MQTT-SGPMP-develop
       dockerfile: Dockerfile
@@ -33,6 +45,10 @@ services:
       - "8002:8000"
 
   backend:
+    # El backend DEV consume DBIntegrador externa (HU-04),
+    # por lo que no debe esperar al servicio database interno.
+    depends_on: !reset []
+
     build:
       context: ../../sgpmp-backend
       dockerfile: Dockerfile

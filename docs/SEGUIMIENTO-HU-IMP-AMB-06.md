@@ -10,305 +10,422 @@
 
 # 1. Objetivo
 
-Montar y validar el ambiente DEV de extremo a extremo utilizando las definiciones de HU-01 y HU-02 e integrando posteriormente las capas entregadas por HU-04 (base de datos) y HU-05 (AIoT).
-
-Si una dependencia externa impide continuar, se documentará el punto exacto, la evidencia y la razón del bloqueo.
+Montar y validar el ambiente DEV utilizando las definiciones heredadas de HU-01 y HU-02, integrando la capa de base de datos entregada por HU-04 y, posteriormente, la capa AIoT entregada por HU-05.
 
 ---
 
-# 2. Dependencias
-
-```text
-HU-01 — Compose base
-HU-02 — Catálogo unificado de variables
-HU-04 — Restauración / capa de base de datos
-HU-05 — Capa AIoT / gateway / broker
-```
-
-Estado conocido:
-
-```text
-HU-01 → feat/compose-base, publicada y pendiente de revisión/merge
-HU-02 → feat/env-unificado, publicada y pendiente de revisión/merge
-HU-04 → feat/db-restauracion-dbintegrador, completada técnicamente y publicada
-HU-05 → pendiente de confirmar para integración final
-```
-
-HU-06 se creó desde `feat/env-unificado` para conservar temporalmente la dependencia:
-
-```text
-main
-  └── feat/compose-base
-       └── feat/env-unificado
-            └── feat/ambiente-dev
-```
-
----
-
-# 3. Estado de subtareas
+# 2. Estado de subtareas
 
 | Subtarea | Descripción | Estado |
 |---|---|---|
-| ST-01 | Build local de backend/frontend con configuración DEV | ✅ Completada |
-| ST-02 | Integrar capa BD de HU-04 y capa AIoT de HU-05 | ⏳ En preparación |
+| ST-01 | Build local de backend/frontend con `.env.dev` | ✅ Completada |
+| ST-02 | Integrar capa BD de HU-04 y capa AIoT de HU-05 | ⏳ En progreso |
 | ST-03 | Verificación integral, healthchecks y evidencias | ⏳ Pendiente |
 
 ---
 
-# 4. ST-01 — Build local DEV
+# 3. ST-01 — Build DEV
 
-**Estado:** ✅ Completada
-
-## 4.1 Prechequeo
-
-Se confirmó:
+Se validó correctamente:
 
 ```text
-Rama activa: feat/ambiente-dev
-Working tree: clean
+docker compose config --quiet   ✅
+build backend                   ✅
+build frontend                  ✅
 ```
 
-Estructura Compose:
+Imágenes locales:
 
 ```text
-compose/
-├── docker-compose.yml
-├── compose.dev.yml
-├── compose.test.yml
-└── compose.prod.yml
+sgpmp-dev-backend:latest
+sgpmp-dev-frontend:latest
 ```
 
-Dockerfiles disponibles:
+El archivo local de ejecución es:
 
 ```text
-dockerfiles/backend/Dockerfile
-dockerfiles/frontend/Dockerfile
-dockerfiles/frontend/nginx.conf
+./.env.dev
 ```
 
-La resolución DEV fue validada mediante:
+y el contrato versionado se mantiene en:
 
-```bash
-docker compose   -f compose/docker-compose.yml   -f compose/compose.dev.yml   --env-file .env.dev   config --quiet
+```text
+env/.env.dev.example
+```
+
+Los archivos reales `.env.*` permanecen ignorados por Git.
+
+---
+
+# 4. ST-02 — Integración de HU-04
+
+HU-04 fue probada en un worktree aislado para no mezclar su rama completa con HU-06.
+
+```text
+implementacion       → feat/ambiente-dev
+implementacion-hu04  → detached HEAD de origin/feat/db-restauracion-dbintegrador
+```
+
+Commit probado:
+
+```text
+ce7fd5d feat: adaptar restauración a DBIntegrador
+```
+
+## 4.1 Fuente recibida
+
+Se verificaron los artefactos de DBIntegrador:
+
+```text
+backup7_1_0.dump
+backup_roles.sql
+docker-compose.yml
+dockerfile
+scripts/restaurar-bd.sh
+```
+
+## 4.2 Instancia aislada para HU-06
+
+Se creó exclusivamente para la prueba:
+
+```text
+Contenedor: SGP-HU06-DB
+Volumen: sgmp_hu06_hu04_pgdata
+Puerto host: 5433
+Puerto interno: 5432
+Base: dba
+Usuario inicial: dba
+PostgreSQL: 18
+```
+
+## 4.3 Restauración validada
+
+Resultado:
+
+```text
+✅ PostgreSQL 18 iniciado
+✅ backup_roles.sql aplicado
+✅ pg_cron habilitado
+✅ backup7_1_0.dump restaurado
+✅ schemas modulo1 a modulo9 encontrados
+✅ roles esperados encontrados
+✅ script finalizó correctamente
+```
+
+Tablas restauradas:
+
+```text
+auditoria      3
+modulo1       15
+modulo2       19
+modulo3       17
+modulo4       24
+modulo5       25
+modulo6       18
+modulo7       15
+modulo8       13
+modulo9       38
+```
+
+Total:
+
+```text
+187 tablas
+```
+
+Roles validados:
+
+```text
+dba
+member_deploy
+member_dev
+member_impl
+member_iot
+member_qa
+```
+
+Extensión:
+
+```text
+pg_cron
+```
+
+---
+
+# 5. Hallazgo de autenticación durante la integración
+
+La restauración aplicó `backup_roles.sql`, el cual contiene un `ALTER ROLE dba ... PASSWORD ...`.
+
+El `pg_hba.conf` de la instancia restaurada quedó con:
+
+```text
+local / localhost → trust
+conexiones remotas → scram-sha-256
+```
+
+Por esta razón, una conexión local podía funcionar sin validar realmente la contraseña mientras una conexión desde otro contenedor fallaba.
+
+Para la instancia aislada HU-06 se realizó una reconciliación local de la contraseña del rol `dba` después de la restauración.
+
+Este ajuste:
+
+- se realizó únicamente sobre `SGP-HU06-DB`;
+- no modificó `backup_roles.sql`;
+- no modificó el dump;
+- no modificó la rama HU-04;
+- no versionó ningún secreto.
+
+Después del ajuste se validó autenticación remota correctamente.
+
+---
+
+# 6. Pruebas de conectividad backend → HU-04
+
+## 6.1 TCP
+
+Desde `sgpmp-dev-backend:latest`:
+
+```text
+TCP OK -> host.docker.internal:5433
 ```
 
 Resultado:
 
 ```text
-Sin errores
+✅ red / puerto accesibles
 ```
 
-Servicios reconocidos:
+## 6.2 PostgreSQL
+
+Desde la imagen backend:
 
 ```text
-database
+DB OK: database=dba user=dba
+```
+
+Resultado:
+
+```text
+✅ autenticación PostgreSQL
+✅ base dba accesible
+✅ usuario dba válido
+```
+
+## 6.3 Contrato real de Compose
+
+Se ejecutó el backend mediante `docker compose run --no-deps` utilizando la `DATABASE_URL` generada por `compose.dev.yml`.
+
+Resultado:
+
+```text
+COMPOSE DB OK: database=dba user=dba
+```
+
+Esto confirmó:
+
+```text
+.env.dev
+   ↓
+compose.dev.yml
+   ↓
+DATABASE_URL
+   ↓
+backend
+   ↓
+host.docker.internal:5433
+   ↓
+HU-04
+```
+
+---
+
+# 7. Adaptación realizada en DEV
+
+La entrega HU-04 establece que la BD se consume externamente en DEV.
+
+Se actualizaron:
+
+```text
+compose/compose.dev.yml
+env/.env.dev.example
+```
+
+Contrato DEV:
+
+```text
+DB_HOST=host.docker.internal
+DB_PORT=5433
+DB_NAME=dba
+DB_APP_USER=dba
+DB_APP_PASSWORD=<secreto local>
+```
+
+## 7.1 Servicio database interno
+
+El servicio `database` heredado se conserva para no modificar la arquitectura base de HU-01, pero en DEV queda bajo el perfil:
+
+```text
+internal-db
+```
+
+En la ejecución DEV normal no se activa.
+
+Validación:
+
+```text
+docker compose ... config --profiles
+→ internal-db
+```
+
+Servicios DEV activos sin perfil:
+
+```text
 backend
 frontend
 mosquitto
 gateway
 ```
 
----
-
-# 5. Build backend
-
-Se ejecutó:
-
-```bash
-docker compose   -f compose/docker-compose.yml   -f compose/compose.dev.yml   --env-file .env.dev   build backend
-```
-
-Resultado:
+Por tanto:
 
 ```text
-Image sgpmp-dev-backend Built
+database interno → no participa en DEV normal
 ```
 
-Imagen confirmada:
+## 7.2 Dependencias
+
+Backend:
 
 ```text
-sgpmp-dev-backend:latest
-sha256:08fa8acab0a932d2c3810b1c421bd23d4de873aaa6b3dfce8a30811142df7dc6
+depends_on database → eliminado en override DEV
 ```
 
-El build utilizó:
+Gateway:
 
 ```text
-python:3.12-slim
+depends_on database → eliminado en override DEV
+depends_on mosquitto → conservado
 ```
 
-y finalizó correctamente.
+Validación de Compose:
+
+```text
+docker compose ... config --quiet
+→ OK
+```
 
 ---
 
-# 6. Build frontend
+# 8. Separación de contenedores legacy
 
-Se ejecutó:
-
-```bash
-docker compose   -f compose/docker-compose.yml   -f compose/compose.dev.yml   --env-file .env.dev   build frontend
-```
-
-Resultado:
+Se detectaron contenedores antiguos pertenecientes al proyecto Compose:
 
 ```text
-Image sgpmp-dev-frontend Built
+project=implementacion
 ```
 
-Imagen confirmada:
+No se eliminaron.
+
+Se detuvieron y renombraron:
 
 ```text
-sgpmp-dev-frontend:latest
-sha256:2755c3e39f126fbd40aa64476ddb956882f1e61c69504157bd29ed681697eaff
+sgpmp-backend-dev-legacy
+sgpmp-frontend-dev-legacy
 ```
 
-El build utilizó:
+Esto liberó:
 
 ```text
-node:22-slim
+8000
+5173
 ```
 
-y finalizó correctamente.
+para la ejecución HU-06.
 
 ---
 
-# 7. Hallazgo — archivos `.env.dev` duplicados
+# 9. Backend DEV real contra HU-04
 
-Se detectaron dos archivos locales ignorados por Git:
-
-```text
-./.env.dev
-env/.env.dev
-```
-
-Ninguno está versionado.
-
-`git check-ignore` confirmó que ambos están cubiertos por:
+Se levantó únicamente el backend nuevo:
 
 ```text
-.gitignore → .env.dev
+docker compose ... up -d --build --no-deps backend
 ```
 
-El archivo:
+Validación:
 
 ```text
-./.env.dev
+project=sgpmp-dev
+service=backend
+status=running
 ```
 
-es el archivo actualizado utilizado actualmente por los comandos:
-
-```bash
---env-file .env.dev
-```
-
-Este contiene el contrato nuevo construido en HU-02:
+Estado Docker:
 
 ```text
-ENVIRONMENT
-DB_*
-SECRET_KEY
-JWT_EXPIRE_HOURS
-RF71_INTERNAL_KEY
-VITE_*
-GATEWAY_API_TOKEN
-MQTT_*
-SMTP_*
-FIREBASE_CREDENTIALS_PATH
-MODELOS_STORAGE_PATH
-...
+Up (...) (healthy)
+0.0.0.0:8000->8000/tcp
 ```
 
-El archivo:
+Logs:
 
 ```text
-env/.env.dev
+Application startup complete.
+GET /health → 200 OK
 ```
 
-corresponde a una versión anterior y conserva nomenclatura obsoleta:
+Prueba HTTP:
 
 ```text
-APP_ENV
-POSTGRES_*
-JWT_SECRET_KEY
-JWT_ALGORITHM
-VITE_APP_ENV
-BACKEND_HOST_PORT
-FRONTEND_HOST_PORT
-DEBUG
-LOG_LEVEL
+GET /docs → HTTP 200
 ```
 
-### Convención adoptada para HU-06
+Resultado consolidado:
 
 ```text
-./.env.dev             → configuración real local de DEV
-env/.env.dev.example   → plantilla versionada
+✅ backend DEV construido
+✅ backend DEV iniciado
+✅ healthcheck correcto
+✅ HTTP correcto
+✅ backend consume HU-04 externa
+✅ no se levanta una segunda BD interna
 ```
-
-`env/.env.dev` se considera una copia local obsoleta y no debe utilizarse para ejecutar el ambiente.
 
 ---
 
-# 8. Resultado ST-01
+# 10. Estado actual de ST-02
+
+Parte HU-04:
 
 ```text
-Backend build local  → ✅
-Frontend build local → ✅
-Compose DEV válido   → ✅
-Contrato .env usado  → ✅ ./ .env.dev
+Restauración                    ✅
+Schemas / tablas / roles        ✅
+pg_cron                         ✅
+TCP backend → BD                ✅
+Autenticación backend → BD      ✅
+DATABASE_URL Compose → BD       ✅
+Adaptación Compose DEV          ✅
+Backend real → HU-04            ✅
+Health backend                  ✅
+HTTP backend                    ✅
 ```
 
-ST-01 queda completada sin necesidad todavía de integrar HU-04 o HU-05.
+**Integración de la capa de base de datos HU-04: COMPLETADA para DEV.**
+
+Parte HU-05:
+
+```text
+Integración AIoT / MQTT / Gateway → PENDIENTE
+```
+
+ST-02 permanece abierta hasta disponer y validar la entrega HU-05.
 
 ---
 
-# 9. Preparación de ST-02
+# 11. Próximos pasos
 
-HU-04 está disponible en:
-
-```text
-feat/db-restauracion-dbintegrador
-```
-
-La entrega reporta:
-
-```text
-PostgreSQL 18
-base dba
-usuario dba
-puerto host 5433
-backup7_1_0.dump
-roles restaurados
-pg_cron habilitado
-```
-
-Existe una diferencia arquitectónica pendiente de reconciliación:
-
-### HU-01/HU-02
-
-```text
-Compose contiene servicio database
-backend/gateway → database:5432
-```
-
-### HU-04
-
-```text
-DBIntegrador se restaura como capa separada
-backend → host.docker.internal:5433
-```
-
-No se hará merge completo de HU-04 sobre HU-06 porque ambas ramas fueron desarrolladas en paralelo y HU-04 modifica archivos `.env.*.example` que HU-02 ya normalizó.
-
-El siguiente paso será probar la entrega HU-04 de forma aislada y determinar cómo debe consumirse desde DEV sin reintroducir configuraciones obsoletas.
-
----
-
-# 10. Estado actual
-
-```text
-HU-IMP-AMB-06
-├── ST-01 ✅ Build local DEV
-├── ST-02 ⏳ Integración BD / AIoT
-└── ST-03 ⏳ Verificación integral
-```
+1. Versionar el checkpoint de integración HU-04.
+2. Levantar y validar frontend DEV contra el backend actual.
+3. Verificar disponibilidad de HU-05.
+4. Integrar Mosquitto/Gateway cuando HU-05 esté disponible.
+5. Ejecutar ST-03 únicamente después de contar con todas las capas.
