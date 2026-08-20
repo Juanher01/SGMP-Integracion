@@ -8,6 +8,7 @@
 .sgpmp-local/
 
 # Backups / dumps de base de datos
+database/*.dump
 database/dumps/*.dump
 database/dumps/*.sql
 

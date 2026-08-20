@@ -1,0 +1,8 @@
+HU-05 Mosquitto DEV logs, summarized
+Date: 2026-08-20
+- Mosquitto 2.1.2 started.
+- Configuration loaded from /mosquitto/config/mosquitto.conf.
+- IPv4 and IPv6 listeners opened on 1883.
+- IPv4 and IPv6 listeners opened on 9001.
+- Broker reported running.
+No credentials or payloads are included in this evidence.

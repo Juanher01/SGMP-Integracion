@@ -20,7 +20,7 @@ services:
       - "1884:1883"
       - "9002:9001"
     volumes:
-      - ../../BROKER-MQTT-SGPMP-develop/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ../../BROKER-MQTT-SGPMP/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   gateway:
     image: ${GATEWAY_IMAGE}

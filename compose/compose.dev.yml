@@ -18,11 +18,11 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - ../../BROKER-MQTT-SGPMP-develop/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ../../BROKER-MQTT-SGPMP/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   gateway:
     build:
-      context: ../../BROKER-MQTT-SGPMP-develop
+      context: ../../BROKER-MQTT-SGPMP
       dockerfile: Dockerfile
     container_name: sgpmp-gateway-dev
     environment:

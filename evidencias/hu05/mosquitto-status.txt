@@ -1,0 +1,10 @@
+HU-05 Mosquitto DEV evidence
+Date: 2026-08-20
+Container: sgpmp-mosquitto-dev
+Image: eclipse-mosquitto:2
+Health: healthy
+Listeners: MQTT 1883; WebSocket 9001
+Security: allow_anonymous true, DEV local only
+TCP 1883: reachable
+TCP 9001: reachable
+MQTT system-topic connectivity test: executed through the Docker network without business topics.
