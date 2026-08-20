@@ -1,33 +1,49 @@
-# docker-compose.test.yml — override de TEST
+# compose.test.yml — override de TEST
+#
+# TEST consume imágenes versionadas y no realiza builds locales.
+# Las imágenes y credenciales se suministran mediante .env.test.
+#
 # Uso desde la raíz del repositorio:
-# docker compose -f compose/docker-compose.yml -f compose/compose.test.yml --env-file .env.test up
+# docker compose -f compose/docker-compose.yml -f compose/compose.test.yml --env-file .env.test up -d
 
 services:
+
+  database:
+    image: ${DATABASE_IMAGE}
+    container_name: sgpmp-database-test
+
+  mosquitto:
+    container_name: sgpmp-mosquitto-test
+    ports:
+      - "1884:1883"
+      - "9002:9001"
+    volumes:
+      - ../../BROKER-MQTT-SGPMP-develop/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  gateway:
+    image: ${GATEWAY_IMAGE}
+    container_name: sgpmp-gateway-test
+    environment:
+      ENVIRONMENT: test
+      DATABASE_URL: ${GATEWAY_DATABASE_URL}
+      API_TOKEN: ${GATEWAY_API_TOKEN}
+      MQTT_TLS: "false"
+    ports:
+      - "8003:8000"
+
   backend:
+    image: ${BACKEND_IMAGE}
     container_name: sgpmp-backend-test
     environment:
+      ENVIRONMENT: test
       SECRET_KEY: ${SECRET_KEY}
       FRONTEND_URL: ${FRONTEND_URL}
       DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
-    # Puerto distinto al de dev (8000), para poder correr ambos a la vez si hace falta comparar.
     ports:
       - "8001:8000"
-    # Sin "command:" — usa el CMD por defecto del Dockerfile (uvicorn sin --reload).
 
   frontend:
+    image: ${FRONTEND_IMAGE}
     container_name: sgpmp-frontend-test
-    build:
-      target: prod
-      # target "prod" (nginx + estáticos): estas variables se HORNEAN en el build,
-      # no se pueden cambiar después con "environment:" en tiempo de ejecución.
-      args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-        VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY}
-        VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN}
-        VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID}
-        VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET}
-        VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID}
-        VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
-        VITE_VAPID_KEY: ${VITE_VAPID_KEY}
     ports:
       - "8081:80"

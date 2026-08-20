@@ -12,11 +12,9 @@
 
 ### Objetivo
 
-Reorganizar la estructura del repositorio de infraestructura para cumplir con la convención definida en el backlog, separando los archivos de orquestación Docker Compose y las copias de referencia de los Dockerfiles.
+Reorganizar la estructura del repositorio de infraestructura para cumplir con la convención definida en el backlog.
 
 ### Cambios realizados
-
-Se creó la estructura:
 
 ```text
 compose/
@@ -35,50 +33,24 @@ dockerfiles/
     └── nginx.conf
 ```
 
-Se realizaron los siguientes movimientos:
-
-- `docker-compose.yml` → `compose/docker-compose.yml`
-- `docker-compose.dev.yml` → `compose/compose.dev.yml`
-- `docker-compose.test.yml` → `compose/compose.test.yml`
-- `docker-compose.prod.yml` → `compose/compose.prod.yml`
-- `docs/dockerFiles/back/.dockerignore` → `dockerfiles/backend/.dockerignore`
-- `docs/dockerFiles/back/Dockerfile` → `dockerfiles/backend/Dockerfile`
-- `docs/dockerFiles/front/.dockerignore` → `dockerfiles/frontend/.dockerignore`
-- `docs/dockerFiles/front/Dockerfile` → `dockerfiles/frontend/Dockerfile`
-- `docs/dockerFiles/front/nginx.conf` → `dockerfiles/frontend/nginx.conf`
-
-También se ajustaron las rutas y comentarios necesarios en los archivos Compose para que continuaran funcionando desde su nueva ubicación.
-
-### Validación realizada
-
-Se validó la resolución del ambiente DEV con:
+### Validación
 
 ```bash
-docker compose \
-  -f compose/docker-compose.yml \
-  -f compose/compose.dev.yml \
-  --env-file .env.dev \
-  config --services
+docker compose   -f compose/docker-compose.yml   -f compose/compose.dev.yml   --env-file .env.dev   config --services
 ```
 
-Resultado:
+Resultado inicial:
 
 ```text
 backend
 frontend
 ```
 
-### Control de versiones
-
-Commit asociado:
+### Commit
 
 ```text
 47a8e75 refactor(compose): reorganiza estructura de orquestacion
 ```
-
-### Resultado
-
-ST-01 queda completada.
 
 ---
 
@@ -88,14 +60,7 @@ ST-01 queda completada.
 
 ### Objetivo
 
-Ampliar el Compose base para representar las cuatro capas requeridas:
-
-1. Base de datos.
-2. Aplicación (backend + frontend).
-3. Gateway AIoT.
-4. Broker Mosquitto.
-
-Técnicamente, el stack queda compuesto por cinco servicios:
+Representar las cuatro capas requeridas mediante cinco servicios técnicos:
 
 ```text
 database
@@ -105,101 +70,21 @@ gateway
 mosquitto
 ```
 
-### Cambios realizados
+### Cambios principales
 
-#### Red propia
-
-Se eliminó la dependencia de la red externa `docker_default` y se creó:
-
-```yaml
-networks:
-  sgpmp-network:
-    driver: bridge
-```
-
-Todos los servicios del stack usan esta red.
-
-#### Servicio `database`
-
-Se incorporó la capa de base de datos con:
-
-- red `sgpmp-network`;
-- volumen persistente `postgres-data`;
-- configuración para `pg_cron`;
-- healthcheck mediante `pg_isready`;
-- dependencia del backend respecto a `database`.
-
-En DEV, la definición toma como contexto local `DBIntegrador-master`.
-
-La restauración de roles, dump, esquemas y configuración definitiva de usuarios queda asociada a HU-IMP-AMB-04.
-
-#### Volumen PostgreSQL
-
-```yaml
-volumes:
-  postgres-data:
-```
-
-#### Servicio `mosquitto`
-
-Se incorporó Mosquitto usando:
-
-```text
-eclipse-mosquitto:2
-```
-
-En DEV:
-
-- MQTT: `1883`;
-- WebSockets: `9001`;
-- configuración tomada desde el repositorio AIoT;
-- healthcheck sobre el puerto interno `1883`.
-
-Se confirmó que la imagen contiene:
-
-```text
-/usr/bin/nc
-/usr/bin/mosquitto_pub
-```
-
-#### Servicio `gateway`
-
-Se incorporó el gateway AIoT con:
-
-- dependencia de `database`;
-- dependencia de `mosquitto`;
-- `MQTT_HOST=mosquitto`;
-- `MQTT_PORT=1883`;
-- `DB_SCHEMA_INGEST=modulo3`;
-- `DB_SCHEMA_REGISTRY=modulo9`;
-- API interna en `8000`;
-- healthcheck en `/v1/healthz`.
-
-En DEV se construye desde `BROKER-MQTT-SGPMP-develop` y se publica:
-
-```text
-host 8002 → contenedor 8000
-```
-
-Esto evita la colisión con el backend, que usa `8000` en el host.
-
-#### Backend
-
-El backend:
-
-- mantiene build desde el repositorio local;
-- usa `sgpmp-network`;
-- depende de `database` con `service_healthy`;
-- conserva el `HEALTHCHECK` de su Dockerfile.
-
-#### Frontend
-
-El frontend:
-
-- mantiene build desde el repositorio local;
-- usa `sgpmp-network`;
-- depende de backend con `service_healthy`;
-- conserva el `HEALTHCHECK` de su Dockerfile.
+- Se eliminó la dependencia de `docker_default`.
+- Se creó la red propia `sgpmp-network`.
+- Se agregó `database`.
+- Se agregó volumen `postgres-data`.
+- Se agregó healthcheck de PostgreSQL con `pg_isready`.
+- Se agregó `mosquitto` con `eclipse-mosquitto:2`.
+- Se agregó healthcheck de Mosquitto sobre `1883`.
+- Se agregó `gateway`.
+- Se configuró `gateway → database`.
+- Se configuró `gateway → mosquitto`.
+- Se configuró `backend → database`.
+- Se mantuvo `frontend → backend`.
+- Se verificaron healthchecks existentes de backend y frontend.
 
 ### Grafo de dependencias
 
@@ -209,19 +94,9 @@ database ──────► backend ──────► frontend
     └──────────► gateway ◄────── mosquitto
 ```
 
-### Validaciones realizadas
+### Validaciones
 
-#### Servicios
-
-```bash
-docker compose \
-  -f compose/docker-compose.yml \
-  -f compose/compose.dev.yml \
-  --env-file .env.dev \
-  config --services
-```
-
-Resultado:
+Servicios:
 
 ```text
 database
@@ -231,87 +106,225 @@ mosquitto
 gateway
 ```
 
-#### Red
-
-```bash
-docker compose \
-  -f compose/docker-compose.yml \
-  -f compose/compose.dev.yml \
-  --env-file .env.dev \
-  config --networks
-```
-
-Resultado:
+Red:
 
 ```text
 sgpmp-network
 ```
 
-#### Volumen
-
-```bash
-docker compose \
-  -f compose/docker-compose.yml \
-  -f compose/compose.dev.yml \
-  --env-file .env.dev \
-  config --volumes
-```
-
-Resultado:
+Volumen:
 
 ```text
 postgres-data
 ```
 
-#### Validación sintáctica
+Validación sintáctica:
 
 ```bash
-docker compose \
-  -f compose/docker-compose.yml \
-  -f compose/compose.dev.yml \
-  --env-file .env.dev \
-  config --quiet
+docker compose   -f compose/docker-compose.yml   -f compose/compose.dev.yml   --env-file .env.dev   config --quiet
 ```
 
 Resultado: sin errores.
 
-#### Healthchecks backend/frontend
-
-Se confirmó que ambos Dockerfiles contienen instrucciones `HEALTHCHECK`.
-
-#### Healthcheck Mosquitto
-
-La imagen `eclipse-mosquitto:2` dispone de:
+También se confirmó:
 
 ```text
 nc: /usr/bin/nc
 mosquitto_pub: /usr/bin/mosquitto_pub
 ```
 
-#### Referencias obsoletas
+dentro de `eclipse-mosquitto:2`.
 
-Se verificó que `compose/` ya no contiene referencias a:
+### Commit
 
 ```text
-docker_default
-BD del DBA debe estar corriendo
-No se define aquí ningún servicio de base de datos
+3f38177 feat(compose): incorpora las cuatro capas al compose base
 ```
 
-### Consideraciones pendientes
+---
 
-Se resolverán en las HU/subtareas correspondientes:
+## ST-03 — Tres overrides por ambiente
 
-- unificación definitiva de variables;
-- roles definitivos de PostgreSQL;
-- credenciales reales de backend/gateway;
-- restauración de roles y dump;
-- ejecución integral de los cinco servicios;
-- validación extremo a extremo.
+**Estado:** ✅ Completada
 
-### Resultado
+### Objetivo
 
-ST-02 queda completada a nivel de definición de orquestación. El Compose base ya contiene las cuatro capas requeridas y los cinco servicios técnicos, con red, volumen, dependencias y healthchecks definidos.
+Separar correctamente las variaciones de DEV, TEST y PROD manteniendo una definición base común.
+
+---
+
+### DEV
+
+**Origen de backend/frontend:** build local.
+
+Cambios principales:
+
+- El `build` de backend y frontend se retiró del Compose base.
+- Backend DEV construye desde `../../sgpmp-backend`.
+- Frontend DEV construye desde `../../SGPMP-FRONT-END-PWA`.
+- Frontend utiliza `target: dev`.
+- Gateway se construye localmente desde `BROKER-MQTT-SGPMP-develop`.
+- Base de datos se construye localmente desde `DBIntegrador-master`.
+- Mosquitto usa `eclipse-mosquitto:2`.
+- Se agregó `ENVIRONMENT=dev` en backend y gateway.
+
+Validación:
+
+```bash
+docker compose   -f compose/docker-compose.yml   -f compose/compose.dev.yml   --env-file .env.dev   config --quiet
+```
+
+Resultado: sin errores.
+
+Se verificó que DEV conserva `build:` para backend y frontend.
+
+---
+
+### TEST
+
+**Origen de backend/frontend:** imágenes versionadas.
+
+Cambios principales:
+
+- Se eliminaron builds locales.
+- `database` usa `${DATABASE_IMAGE}`.
+- `backend` usa `${BACKEND_IMAGE}`.
+- `frontend` usa `${FRONTEND_IMAGE}`.
+- `gateway` usa `${GATEWAY_IMAGE}`.
+- Mosquitto mantiene `eclipse-mosquitto:2`.
+- Se agregó `ENVIRONMENT=test` en backend y gateway.
+- Mosquitto publica:
+  - `1884:1883`
+  - `9002:9001`
+- Gateway publica:
+  - `8003:8000`
+- Backend publica:
+  - `8001:8000`
+- Frontend publica:
+  - `8081:80`
+- Se reutiliza el `mosquitto.conf` entregado por AIoT para TEST.
+
+Validaciones:
+
+```bash
+docker compose   -f compose/docker-compose.yml   -f compose/compose.test.yml   --env-file .env.test   config --quiet
+```
+
+Resultado: sin errores.
+
+Servicios:
+
+```text
+database
+backend
+frontend
+mosquitto
+gateway
+```
+
+Búsqueda de builds:
+
+```text
+Sin resultados.
+```
+
+Imágenes resueltas durante validación:
+
+```text
+ghcr.io/placeholder/sgpmp-backend:test
+ghcr.io/placeholder/sgpmp-frontend:test
+postgres:18
+eclipse-mosquitto:2
+ghcr.io/placeholder/sgpmp-gateway:test
+```
+
+Variables verificadas:
+
+```text
+ENVIRONMENT: test
+ENVIRONMENT: test
+```
+
+Los nombres `ghcr.io/placeholder/...` son únicamente valores temporales para validar sintaxis; deberán sustituirse por las imágenes reales.
+
+---
+
+### PROD
+
+**Origen de backend/frontend:** imágenes versionadas.
+
+Cambios principales:
+
+- PROD no realiza builds locales.
+- `database` usa `${DATABASE_IMAGE}`.
+- `backend` usa `${BACKEND_IMAGE}`.
+- `frontend` usa `${FRONTEND_IMAGE}`.
+- `gateway` usa `${GATEWAY_IMAGE}`.
+- Mosquitto mantiene `eclipse-mosquitto:2`.
+- Se agregó `ENVIRONMENT=prod` en backend y gateway.
+- Se establece `MQTT_TLS=true` para el gateway.
+- No se publican puertos del host desde este override.
+- La exposición externa queda a cargo de Despliegue.
+- No se reutiliza el `mosquitto.conf` de DEV/TEST porque contiene acceso anónimo; la configuración TLS/autenticada de PROD queda como dependencia de HU-IMP-AMB-05.
+
+Validaciones:
+
+```bash
+docker compose   -f compose/docker-compose.yml   -f compose/compose.prod.yml   --env-file .env.prod   config --quiet
+```
+
+Resultado: sin errores.
+
+Servicios:
+
+```text
+database
+mosquitto
+gateway
+backend
+frontend
+```
+
+Búsqueda de builds:
+
+```text
+Sin resultados.
+```
+
+Imágenes resueltas durante validación:
+
+```text
+eclipse-mosquitto:2
+ghcr.io/placeholder/sgpmp-gateway:prod
+ghcr.io/placeholder/sgpmp-backend:prod
+ghcr.io/placeholder/sgpmp-frontend:prod
+postgres:18
+```
+
+Variables verificadas:
+
+```text
+ENVIRONMENT: prod
+ENVIRONMENT: prod
+```
+
+Puertos publicados:
+
+```text
+Sin resultados.
+```
+
+### Resultado de ST-03
+
+La separación por ambiente queda así:
+
+| Ambiente | Backend | Frontend | Gateway | Base de datos | Mosquitto |
+|---|---|---|---|---|---|
+| DEV | Build local | Build local | Build local | Build local desde DBIntegrador | Imagen pública |
+| TEST | Imagen por variable | Imagen por variable | Imagen por variable | Imagen por variable | Imagen pública |
+| PROD | Imagen por variable | Imagen por variable | Imagen por variable | Imagen por variable | Imagen pública |
+
+DEV, TEST y PROD ya se derivan del mismo Compose base y difieren mediante sus respectivos overrides.
 
 ---
 
@@ -321,5 +334,5 @@ ST-02 queda completada a nivel de definición de orquestación. El Compose base 
 |---|---|
 | ST-01 — Reorganizar `compose/` y `dockerfiles/` | ✅ Completada |
 | ST-02 — Compose base con las cuatro capas | ✅ Completada |
-| ST-03 — Tres overrides por ambiente | ⏳ Pendiente |
+| ST-03 — Tres overrides por ambiente | ✅ Completada |
 | ST-04 — Reasignación de puertos | ⏳ Pendiente |

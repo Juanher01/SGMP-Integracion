@@ -72,9 +72,6 @@ services:
       start_period: 10s
 
   backend:
-    build:
-      context: ../../sgpmp-backend
-      dockerfile: Dockerfile
     depends_on:
       database:
         condition: service_healthy
@@ -82,9 +79,6 @@ services:
       - sgpmp-network
 
   frontend:
-    build:
-      context: ../../SGPMP-FRONT-END-PWA
-      dockerfile: Dockerfile
     depends_on:
       backend:
         condition: service_healthy

@@ -1,35 +1,43 @@
-# docker-compose.prod.yml — override de PROD
-# ANDAMIAJE: el sistema aún no ha superado el pipeline de integración completo
-# (ver docs/FLUJO-TRABAJO.md, etapas E1-E7). Esta estructura queda lista para
-# cuando corresponda encenderla — no se recomienda levantarla todavía.
-# Uso desde la raíz del repositorio:
-# docker compose -f compose/docker-compose.yml -f compose/compose.prod.yml --env-file .env.prod up
+# compose.prod.yml — override de PROD
+#
+# PROD consume imágenes versionadas y no realiza builds locales.
+# Las imágenes, credenciales y secretos se suministran mediante
+# variables del ambiente administradas por Despliegue.
+#
+# Este archivo define la configuración de producción;
+# la operación efectiva del ambiente corresponde a Despliegue.
+#
+# Validación:
+# docker compose -f compose/docker-compose.yml -f compose/compose.prod.yml --env-file .env.prod config
 
 services:
+
+  database:
+    image: ${DATABASE_IMAGE}
+    container_name: sgpmp-database-prod
+
+  mosquitto:
+    container_name: sgpmp-mosquitto-prod
+
+  gateway:
+    image: ${GATEWAY_IMAGE}
+    container_name: sgpmp-gateway-prod
+    environment:
+      ENVIRONMENT: prod
+      DATABASE_URL: ${GATEWAY_DATABASE_URL}
+      API_TOKEN: ${GATEWAY_API_TOKEN}
+      MQTT_TLS: "true"
+
   backend:
+    image: ${BACKEND_IMAGE}
     container_name: sgpmp-backend-prod
     environment:
+      ENVIRONMENT: prod
       SECRET_KEY: ${SECRET_KEY}
       FRONTEND_URL: ${FRONTEND_URL}
       DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
-    ports:
-      - "8002:8000"
-    # TODO: definir si prod necesita --workers N (Dockerfile hoy corre uvicorn simple).
 
   frontend:
+    image: ${FRONTEND_IMAGE}
     container_name: sgpmp-frontend-prod
-    build:
-      target: prod
-      args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-        VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY}
-        VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN}
-        VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID}
-        VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET}
-        VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID}
-        VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
-        VITE_VAPID_KEY: ${VITE_VAPID_KEY}
-    ports:
-      - "8082:80"
-    # TODO: en un despliegue real, esto probablemente vive detrás de un reverse
-    # proxy / TLS, no publicado directo como aquí — pendiente de infraestructura real.
+    
