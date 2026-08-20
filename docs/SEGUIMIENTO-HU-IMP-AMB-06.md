@@ -19,7 +19,7 @@ Montar y validar el ambiente DEV utilizando las definiciones heredadas de HU-01 
 | Subtarea | Descripción | Estado |
 |---|---|---|
 | ST-01 | Build local de backend/frontend con `.env.dev` | ✅ Completada |
-| ST-02 | Integrar capa BD de HU-04 y capa AIoT de HU-05 | ⏳ En progreso |
+| ST-02 | Integrar capa BD de HU-04 y capa AIoT de HU-05 | ⏸️ Parcialmente completada / bloqueada por HU-05 |
 | ST-03 | Verificación integral, healthchecks y evidencias | ⏳ Pendiente |
 
 ---
@@ -393,9 +393,117 @@ Resultado consolidado:
 
 ---
 
-# 10. Estado actual de ST-02
+# 10. Frontend DEV real
 
-Parte HU-04:
+Se levantó únicamente el frontend DEV:
+
+```text
+docker compose ... up -d --build --no-deps frontend
+```
+
+Validación:
+
+```text
+project=sgpmp-dev
+service=frontend
+status=running
+```
+
+Vite inició correctamente:
+
+```text
+VITE v5.4.21 ready
+Local: http://localhost:5173/
+```
+
+Prueba HTTP:
+
+```text
+GET http://localhost:5173/ → HTTP 200
+```
+
+Variable de API validada dentro del contenedor:
+
+```text
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+Resultado:
+
+```text
+✅ frontend DEV construido
+✅ frontend DEV iniciado
+✅ HTTP 200
+✅ frontend apunta al backend DEV correcto
+```
+
+---
+
+# 11. Validación Frontend → Backend / CORS
+
+Se realizó una solicitud al backend con:
+
+```text
+Origin: http://localhost:5173
+```
+
+Resultado:
+
+```text
+HTTP/1.1 200 OK
+access-control-allow-credentials: true
+access-control-allow-origin: http://localhost:5173
+```
+
+Esto confirma:
+
+```text
+Frontend DEV :5173
+      ↓
+Backend DEV :8000
+      ↓
+CORS permitido
+      ↓
+HU-04 PostgreSQL :5433
+```
+
+Resultado:
+
+```text
+✅ conectividad frontend/backend
+✅ origen DEV autorizado
+✅ credenciales CORS habilitadas
+```
+
+---
+
+# 12. Estado operativo actual
+
+Servicios activos y validados:
+
+```text
+sgpmp-backend-dev    healthy
+sgpmp-frontend-dev   running
+```
+
+Puertos:
+
+```text
+backend   → 8000
+frontend  → 5173
+```
+
+La capa de BD HU-04 funciona externamente por:
+
+```text
+host.docker.internal:5433
+```
+
+---
+
+# 13. Estado actual de ST-02
+
+Parte HU-04 / frontend-backend:
 
 ```text
 Restauración                    ✅
@@ -408,9 +516,12 @@ Adaptación Compose DEV          ✅
 Backend real → HU-04            ✅
 Health backend                  ✅
 HTTP backend                    ✅
+Frontend DEV                    ✅
+VITE_API_BASE_URL               ✅
+CORS frontend → backend         ✅
 ```
 
-**Integración de la capa de base de datos HU-04: COMPLETADA para DEV.**
+**La integración de base de datos, backend y frontend DEV queda validada.**
 
 Parte HU-05:
 
@@ -418,14 +529,54 @@ Parte HU-05:
 Integración AIoT / MQTT / Gateway → PENDIENTE
 ```
 
-ST-02 permanece abierta hasta disponer y validar la entrega HU-05.
+---
+
+# 14. Bloqueo externo de ST-02
+
+En el momento de esta validación no se encontró una rama publicada claramente identificable como entrega de HU-05, AIoT, MQTT o Gateway para esta historia.
+
+Las ramas visibles asociadas al trabajo de ambiente fueron:
+
+```text
+feat/compose-base
+feat/db-restauracion-dbintegrador
+feat/env-unificado
+feature/docker-setup
+```
+
+No se asume que `feature/docker-setup` corresponda a HU-05 porque no existe evidencia suficiente para afirmarlo.
+
+Por tanto, HU-06 se detiene en el siguiente punto:
+
+```text
+ST-02
+├── BD HU-04                         ✅
+├── Backend DEV                      ✅
+├── Frontend DEV                     ✅
+├── Frontend ↔ Backend               ✅
+├── AIoT / MQTT / Gateway HU-05      ⏸️ BLOQUEADO
+└── ST-03 extremo a extremo          ⏳ NO EJECUTABLE TODAVÍA
+```
+
+Motivo:
+
+```text
+Dependencia HU-05 todavía no disponible o no identificada de forma verificable.
+```
+
+No se implementará ni se inventará la funcionalidad correspondiente a HU-05 desde HU-06.
 
 ---
 
-# 11. Próximos pasos
+# 15. Próximos pasos
 
-1. Versionar el checkpoint de integración HU-04.
-2. Levantar y validar frontend DEV contra el backend actual.
-3. Verificar disponibilidad de HU-05.
-4. Integrar Mosquitto/Gateway cuando HU-05 esté disponible.
-5. Ejecutar ST-03 únicamente después de contar con todas las capas.
+Cuando HU-05 esté disponible:
+
+1. verificar la rama/commit oficial de HU-05;
+2. integrar Mosquitto y Gateway con el ambiente DEV;
+3. validar conexión Gateway → MQTT;
+4. validar conexión Gateway → PostgreSQL/HU-04;
+5. comprobar `/v1/healthz`;
+6. ejecutar la verificación integral de ST-03;
+7. recopilar evidencias finales del ambiente DEV;
+8. cerrar HU-IMP-AMB-06.
