@@ -51,6 +51,15 @@ services:
       # DATABASE_URL se ensambla a partir de las piezas del .env.
       DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 
+      FIREBASE_CREDENTIALS_PATH: ${FIREBASE_CREDENTIALS_PATH}
+
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+
+      MODELOS_STORAGE_PATH: ${MODELOS_STORAGE_PATH}
+
     ports:
       - "8000:8000"
 
