@@ -1,0 +1,9 @@
+]633;E;{   for container in     sgpmp-backend-dev     sgpmp-gateway-dev     sgpmp-mosquitto-dev\x3b   do     echo "===== $container ====="\x3b      RESULT="$(\x0adocker logs --since 15m "$container" 2>&1 |\x0agrep -Ei \\\x0a'traceback|exception|critical|(^|[^a-z])error([^a-z]|$)' \\\x0a|| true\x0a)"\x3b      if [ -z "$RESULT" ]\x3b then       echo "OK: sin errores críticos detectados"\x3b     else       printf '%s\\n' "$RESULT"\x3b     fi\x3b      echo\x3b   done\x3b } > evidencias/hu06/logs-critical-scan.txt;9fa7117b-0243-4cd5-9a92-f56669cd0b70]633;C===== sgpmp-backend-dev =====
+OK: sin errores críticos detectados
+
+===== sgpmp-gateway-dev =====
+OK: sin errores críticos detectados
+
+===== sgpmp-mosquitto-dev =====
+OK: sin errores críticos detectados
+
