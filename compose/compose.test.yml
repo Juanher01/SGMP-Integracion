@@ -6,6 +6,7 @@
 # Uso desde la raíz del repositorio:
 # docker compose -f compose/docker-compose.yml -f compose/compose.test.yml --env-file .env.test up -d
 
+name: sgpmp-test
 services:
 
   database:

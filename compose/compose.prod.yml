@@ -10,6 +10,7 @@
 # Validación:
 # docker compose -f compose/docker-compose.yml -f compose/compose.prod.yml --env-file .env.prod config
 
+name: sgpmp-prod
 services:
 
   database:
@@ -40,4 +41,3 @@ services:
   frontend:
     image: ${FRONTEND_IMAGE}
     container_name: sgpmp-frontend-prod
-    

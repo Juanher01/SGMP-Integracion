@@ -2,6 +2,7 @@
 # Uso desde la raíz del repositorio:
 # docker compose -f compose/docker-compose.yml -f compose/compose.dev.yml --env-file .env.dev up --build
 
+name: sgpmp-dev
 services:
 
   database:
