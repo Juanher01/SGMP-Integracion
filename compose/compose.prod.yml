@@ -25,15 +25,16 @@ services:
     image: ${GATEWAY_IMAGE}
     container_name: sgpmp-gateway-prod
     environment:
-      ENVIRONMENT: prod
-      DATABASE_URL: ${GATEWAY_DATABASE_URL}
+      ENVIRONMENT: ${ENVIRONMENT}
+      DATABASE_URL: postgresql+asyncpg://${DB_IOT_USER}:${DB_IOT_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
       API_TOKEN: ${GATEWAY_API_TOKEN}
 
   backend:
     image: ${BACKEND_IMAGE}
     container_name: sgpmp-backend-prod
     environment:
-      ENVIRONMENT: prod
+      ENVIRONMENT: ${ENVIRONMENT}
+      ENV: production
 
       # JWT / Seguridad
       SECRET_KEY: ${SECRET_KEY}

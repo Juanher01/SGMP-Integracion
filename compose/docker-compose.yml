@@ -86,8 +86,8 @@ services:
       MQTT_TOPIC_STATUS: ${MQTT_TOPIC_STATUS}
 
       # Esquemas PostgreSQL utilizados por AIoT
-      DB_SCHEMA_INGEST: modulo3
-      DB_SCHEMA_REGISTRY: modulo9
+      DB_SCHEMA_INGEST: ${DB_SCHEMA_INGEST}
+      DB_SCHEMA_REGISTRY: ${DB_SCHEMA_REGISTRY}
 
       # API interna del gateway
       API_HOST: 0.0.0.0
