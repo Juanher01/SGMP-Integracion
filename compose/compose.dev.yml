@@ -1,10 +1,43 @@
 # docker-compose.dev.yml — override de DESARROLLO
-# Uso: docker compose -f docker-compose.yml -f docker-compose.dev.yml --env-file .env.dev up --build
+# Uso desde la raíz del repositorio:
+# docker compose -f compose/docker-compose.yml -f compose/compose.dev.yml --env-file .env.dev up --build
 
+name: sgpmp-dev
 services:
+
+  database:
+    build:
+      context: ../../DBIntegrador-master
+      dockerfile: dockerfile
+    container_name: sgpmp-database-dev
+
+  mosquitto:
+    container_name: sgpmp-mosquitto-dev
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ../../BROKER-MQTT-SGPMP-develop/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  gateway:
+    build:
+      context: ../../BROKER-MQTT-SGPMP-develop
+      dockerfile: Dockerfile
+    container_name: sgpmp-gateway-dev
+    environment:
+      ENVIRONMENT: dev
+      DATABASE_URL: ${GATEWAY_DATABASE_URL}
+      API_TOKEN: ${GATEWAY_API_TOKEN}
+    ports:
+      - "8002:8000"
+
   backend:
+    build:
+      context: ../../sgpmp-backend
+      dockerfile: Dockerfile
     container_name: sgpmp-backend-dev
     environment:
+      ENVIRONMENT: dev
       SECRET_KEY: ${SECRET_KEY}
       FRONTEND_URL: ${FRONTEND_URL}
       # DATABASE_URL se ensambla aquí a partir de las piezas sueltas del .env —
@@ -16,9 +49,11 @@ services:
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
   frontend:
-    container_name: sgpmp-frontend-dev
     build:
+      context: ../../SGPMP-FRONT-END-PWA
+      dockerfile: Dockerfile
       target: dev
+    container_name: sgpmp-frontend-dev
     # En el target "dev", Vite SÍ puede leer esta variable en tiempo de ejecución
     # (a diferencia del build de prod, donde se hornea). Por eso aquí basta con
     # "environment", sin necesidad de "build.args".

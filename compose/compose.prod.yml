@@ -1,0 +1,43 @@
+# compose.prod.yml — override de PROD
+#
+# PROD consume imágenes versionadas y no realiza builds locales.
+# Las imágenes, credenciales y secretos se suministran mediante
+# variables del ambiente administradas por Despliegue.
+#
+# Este archivo define la configuración de producción;
+# la operación efectiva del ambiente corresponde a Despliegue.
+#
+# Validación:
+# docker compose -f compose/docker-compose.yml -f compose/compose.prod.yml --env-file .env.prod config
+
+name: sgpmp-prod
+services:
+
+  database:
+    image: ${DATABASE_IMAGE}
+    container_name: sgpmp-database-prod
+
+  mosquitto:
+    container_name: sgpmp-mosquitto-prod
+
+  gateway:
+    image: ${GATEWAY_IMAGE}
+    container_name: sgpmp-gateway-prod
+    environment:
+      ENVIRONMENT: prod
+      DATABASE_URL: ${GATEWAY_DATABASE_URL}
+      API_TOKEN: ${GATEWAY_API_TOKEN}
+      MQTT_TLS: "true"
+
+  backend:
+    image: ${BACKEND_IMAGE}
+    container_name: sgpmp-backend-prod
+    environment:
+      ENVIRONMENT: prod
+      SECRET_KEY: ${SECRET_KEY}
+      FRONTEND_URL: ${FRONTEND_URL}
+      DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    container_name: sgpmp-frontend-prod
