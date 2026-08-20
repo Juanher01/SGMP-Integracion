@@ -10,7 +10,7 @@
 
 # 1. Objetivo
 
-Montar y validar el ambiente DEV utilizando las definiciones heredadas de HU-01 y HU-02, integrando la capa de base de datos entregada por HU-04 y, posteriormente, la capa AIoT entregada por HU-05.
+Montar y validar el ambiente DEV integrando las definiciones heredadas de HU-01 y HU-02, la base de datos entregada por HU-04 y la capa AIoT entregada por HU-05.
 
 ---
 
@@ -18,9 +18,9 @@ Montar y validar el ambiente DEV utilizando las definiciones heredadas de HU-01 
 
 | Subtarea | Descripción | Estado |
 |---|---|---|
-| ST-01 | Build local de backend/frontend con `.env.dev` | ✅ Completada |
-| ST-02 | Integrar capa BD de HU-04 y capa AIoT de HU-05 | ⏸️ Parcialmente completada / bloqueada por HU-05 |
-| ST-03 | Verificación integral, healthchecks y evidencias | ⏳ Pendiente |
+| ST-01 | Build local backend/frontend con `.env.dev` | ✅ Completada |
+| ST-02 | Integrar capa BD de HU-04 y capa AIoT de HU-05 | ✅ Completada |
+| ST-03 | Verificación integral, healthchecks y evidencias finales | ⏳ Pendiente |
 
 ---
 
@@ -41,542 +41,414 @@ sgpmp-dev-backend:latest
 sgpmp-dev-frontend:latest
 ```
 
-El archivo local de ejecución es:
-
-```text
-./.env.dev
-```
-
-y el contrato versionado se mantiene en:
-
-```text
-env/.env.dev.example
-```
-
-Los archivos reales `.env.*` permanecen ignorados por Git.
+El archivo real `./.env.dev` permanece ignorado por Git.
 
 ---
 
-# 4. ST-02 — Integración de HU-04
+# 4. ST-02 — Integración HU-04
 
-HU-04 fue probada en un worktree aislado para no mezclar su rama completa con HU-06.
-
-```text
-implementacion       → feat/ambiente-dev
-implementacion-hu04  → detached HEAD de origin/feat/db-restauracion-dbintegrador
-```
-
-Commit probado:
+HU-04 fue consumida mediante worktree aislado:
 
 ```text
-ce7fd5d feat: adaptar restauración a DBIntegrador
+implementacion-hu04 → detached HEAD ce7fd5d
 ```
 
-## 4.1 Fuente recibida
-
-Se verificaron los artefactos de DBIntegrador:
-
-```text
-backup7_1_0.dump
-backup_roles.sql
-docker-compose.yml
-dockerfile
-scripts/restaurar-bd.sh
-```
-
-## 4.2 Instancia aislada para HU-06
-
-Se creó exclusivamente para la prueba:
+Instancia de integración HU-06:
 
 ```text
 Contenedor: SGP-HU06-DB
-Volumen: sgmp_hu06_hu04_pgdata
+PostgreSQL: 18
+Base: dba
 Puerto host: 5433
 Puerto interno: 5432
-Base: dba
-Usuario inicial: dba
-PostgreSQL: 18
 ```
 
-## 4.3 Restauración validada
-
-Resultado:
+Resultados:
 
 ```text
-✅ PostgreSQL 18 iniciado
-✅ backup_roles.sql aplicado
-✅ pg_cron habilitado
-✅ backup7_1_0.dump restaurado
-✅ schemas modulo1 a modulo9 encontrados
-✅ roles esperados encontrados
-✅ script finalizó correctamente
+✅ restauración de backup7_1_0.dump
+✅ schemas modulo1 a modulo9
+✅ 187 tablas
+✅ roles restaurados
+✅ pg_cron
+✅ backend → PostgreSQL
+✅ DATABASE_URL de Compose → PostgreSQL
+✅ backend healthy
+✅ backend /docs HTTP 200
+✅ frontend HTTP 200
+✅ frontend → backend
+✅ CORS localhost:5173
 ```
 
-Tablas restauradas:
-
-```text
-auditoria      3
-modulo1       15
-modulo2       19
-modulo3       17
-modulo4       24
-modulo5       25
-modulo6       18
-modulo7       15
-modulo8       13
-modulo9       38
-```
-
-Total:
-
-```text
-187 tablas
-```
-
-Roles validados:
-
-```text
-dba
-member_deploy
-member_dev
-member_impl
-member_iot
-member_qa
-```
-
-Extensión:
-
-```text
-pg_cron
-```
-
----
-
-# 5. Hallazgo de autenticación durante la integración
-
-La restauración aplicó `backup_roles.sql`, el cual contiene un `ALTER ROLE dba ... PASSWORD ...`.
-
-El `pg_hba.conf` de la instancia restaurada quedó con:
-
-```text
-local / localhost → trust
-conexiones remotas → scram-sha-256
-```
-
-Por esta razón, una conexión local podía funcionar sin validar realmente la contraseña mientras una conexión desde otro contenedor fallaba.
-
-Para la instancia aislada HU-06 se realizó una reconciliación local de la contraseña del rol `dba` después de la restauración.
-
-Este ajuste:
-
-- se realizó únicamente sobre `SGP-HU06-DB`;
-- no modificó `backup_roles.sql`;
-- no modificó el dump;
-- no modificó la rama HU-04;
-- no versionó ningún secreto.
-
-Después del ajuste se validó autenticación remota correctamente.
-
----
-
-# 6. Pruebas de conectividad backend → HU-04
-
-## 6.1 TCP
-
-Desde `sgpmp-dev-backend:latest`:
-
-```text
-TCP OK -> host.docker.internal:5433
-```
-
-Resultado:
-
-```text
-✅ red / puerto accesibles
-```
-
-## 6.2 PostgreSQL
-
-Desde la imagen backend:
-
-```text
-DB OK: database=dba user=dba
-```
-
-Resultado:
-
-```text
-✅ autenticación PostgreSQL
-✅ base dba accesible
-✅ usuario dba válido
-```
-
-## 6.3 Contrato real de Compose
-
-Se ejecutó el backend mediante `docker compose run --no-deps` utilizando la `DATABASE_URL` generada por `compose.dev.yml`.
-
-Resultado:
-
-```text
-COMPOSE DB OK: database=dba user=dba
-```
-
-Esto confirmó:
-
-```text
-.env.dev
-   ↓
-compose.dev.yml
-   ↓
-DATABASE_URL
-   ↓
-backend
-   ↓
-host.docker.internal:5433
-   ↓
-HU-04
-```
-
----
-
-# 7. Adaptación realizada en DEV
-
-La entrega HU-04 establece que la BD se consume externamente en DEV.
-
-Se actualizaron:
-
-```text
-compose/compose.dev.yml
-env/.env.dev.example
-```
-
-Contrato DEV:
+DEV consume PostgreSQL externamente mediante:
 
 ```text
 DB_HOST=host.docker.internal
 DB_PORT=5433
 DB_NAME=dba
 DB_APP_USER=dba
-DB_APP_PASSWORD=<secreto local>
 ```
 
-## 7.1 Servicio database interno
+El servicio `database` interno permanece disponible únicamente mediante el perfil opcional `internal-db`.
 
-El servicio `database` heredado se conserva para no modificar la arquitectura base de HU-01, pero en DEV queda bajo el perfil:
-
-```text
-internal-db
-```
-
-En la ejecución DEV normal no se activa.
-
-Validación:
+Checkpoint previo:
 
 ```text
-docker compose ... config --profiles
-→ internal-db
-```
-
-Servicios DEV activos sin perfil:
-
-```text
-backend
-frontend
-mosquitto
-gateway
-```
-
-Por tanto:
-
-```text
-database interno → no participa en DEV normal
-```
-
-## 7.2 Dependencias
-
-Backend:
-
-```text
-depends_on database → eliminado en override DEV
-```
-
-Gateway:
-
-```text
-depends_on database → eliminado en override DEV
-depends_on mosquitto → conservado
-```
-
-Validación de Compose:
-
-```text
-docker compose ... config --quiet
-→ OK
+230f434 feat(dev): integra base de datos externa de HU-04
 ```
 
 ---
 
-# 8. Separación de contenedores legacy
+# 5. Recepción e inspección de HU-05
 
-Se detectaron contenedores antiguos pertenecientes al proyecto Compose:
-
-```text
-project=implementacion
-```
-
-No se eliminaron.
-
-Se detuvieron y renombraron:
+Rama remota:
 
 ```text
-sgpmp-backend-dev-legacy
-sgpmp-frontend-dev-legacy
+origin/feat/aiot-gateway-mosquitto
 ```
 
-Esto liberó:
+Commit propio identificado:
 
 ```text
-8000
-5173
+779690b feat: advance HU-05 AIoT gateway and Mosquitto integration
 ```
 
-para la ejecución HU-06.
+Se creó un worktree aislado:
+
+```text
+implementacion-hu05 → detached HEAD 779690b
+```
+
+No se hizo merge ni cherry-pick de HU-05.
+
+La integración de HU-06 tomó únicamente los elementos necesarios para DEV.
 
 ---
 
-# 9. Backend DEV real contra HU-04
+# 6. Dependencia AIoT oficial
 
-Se levantó únicamente el backend nuevo:
+Se clonó el repositorio esperado por HU-05:
 
 ```text
-docker compose ... up -d --build --no-deps backend
+SerBy48/BROKER-MQTT-SGPMP
+rama: develop
 ```
 
-Validación:
+Ubicación local:
+
+```text
+../BROKER-MQTT-SGPMP
+```
+
+Artefactos verificados:
+
+```text
+Dockerfile                  ✅
+docker/mosquitto.conf       ✅
+```
+
+La copia previa `../BROKER-MQTT-SGPMP-develop/` se conservó intacta.
+
+`compose/compose.dev.yml` fue actualizado para usar:
+
+```text
+../../BROKER-MQTT-SGPMP
+```
+
+tanto para el build del Gateway como para la configuración de Mosquitto.
+
+---
+
+# 7. Contrato AIoT local y autenticación PostgreSQL
+
+Inicialmente se detectó:
+
+```text
+DB_IOT_USER=placeholder
+```
+
+La base restaurada contiene:
+
+```text
+member_iot   LOGIN=true
+member_iot → grp_iot
+member_iot   INHERIT=true
+grp_iot      LOGIN=false
+```
+
+Para la instancia local HU-06 se configuró:
+
+```text
+DB_IOT_USER=member_iot
+DB_IOT_PASSWORD=<secreto local no versionado>
+```
+
+La contraseña fue reconciliada únicamente en `SGP-HU06-DB`.
+
+No se modificaron:
+
+```text
+backup_roles.sql
+backup7_1_0.dump
+rama HU-04
+rama HU-05
+```
+
+Validación desde el contenedor Gateway:
+
+```text
+GATEWAY DB OK: database=dba user=member_iot
+```
+
+---
+
+# 8. Hallazgo de permisos AIoT
+
+Aunque `member_iot` era un login válido y pertenecía a `grp_iot`, inicialmente no existían privilegios efectivos de esquema:
+
+```text
+modulo3 → member_iot USAGE=false
+modulo3 → grp_iot USAGE=false
+modulo9 → member_iot USAGE=false
+modulo9 → grp_iot USAGE=false
+```
+
+Los esquemas pertenecían a `dba` y no presentaban ACL para `grp_iot`.
+
+Los objetos requeridos sí existían:
+
+```text
+modulo3.heartbeats
+modulo3.transmisiones_mqtt
+modulo3.fn_ingesta_telemetria
+```
+
+---
+
+# 9. Adaptación local de permisos
+
+Se aplicaron permisos mínimos exclusivamente sobre la instancia `SGP-HU06-DB`.
+
+A `grp_iot`:
+
+```text
+USAGE modulo3                             ✅
+USAGE modulo9                             ✅
+SELECT modulo9.dispositivos_iot           ✅
+SELECT modulo9.variables_ambientales      ✅
+SELECT modulo9.sensores                   ✅
+SELECT modulo3.estados_dispositivos_iot   ✅
+INSERT/SELECT modulo3.heartbeats           ✅
+INSERT modulo3.transmisiones_mqtt          ✅
+EXECUTE modulo3.fn_ingesta_telemetria      ✅
+```
+
+Se mantuvo el modelo:
+
+```text
+member_iot
+   ↓ INHERIT
+grp_iot
+   ↓
+permisos AIoT
+```
+
+PostgreSQL confirmó:
+
+```text
+modulo3_usage          = true
+modulo9_usage          = true
+dispositivos_select    = true
+heartbeats_insert      = true
+transmisiones_insert   = true
+```
+
+Desde el Gateway:
+
+```text
+SCHEMAS AIOT VISIBLES: modulo3, modulo9
+```
+
+Lecturas verificadas:
+
+```text
+READ OK: modulo9.dispositivos_iot
+READ OK: modulo9.variables_ambientales
+READ OK: modulo9.sensores
+READ OK: modulo3.estados_dispositivos_iot
+```
+
+Este ajuste corresponde exclusivamente a la instancia de integración HU-06 y debe reportarse al responsable de HU-04/DBA como hallazgo; no se considera una modificación oficial de HU-04.
+
+---
+
+# 10. Build y validación de Mosquitto
+
+`docker compose ... config --quiet` pasó sin errores.
+
+Gateway reconstruido desde el repositorio AIoT oficial:
+
+```text
+Image sgpmp-dev-gateway Built
+```
+
+Mosquitto DEV:
+
+```text
+Contenedor: sgpmp-mosquitto-dev
+Imagen: eclipse-mosquitto:2
+Estado: running
+Health: healthy
+Proyecto Compose: sgpmp-dev
+```
+
+Puertos publicados:
+
+```text
+1883 → MQTT
+9001 → WebSocket MQTT
+```
+
+Logs:
+
+```text
+Opening ipv4 listen socket on port 1883
+Opening ipv6 listen socket on port 1883
+Opening ipv4 listen socket on port 9001
+Opening ipv6 listen socket on port 9001
+mosquitto version 2.1.2 running
+```
+
+Los clientes `mosquitto_pub` y `mosquitto_sub` están disponibles dentro del contenedor.
+
+Prueba publish/subscribe:
+
+```text
+Topic: sgpmp/hu06/test
+Payload: HU06_MQTT_OK
+Resultado recibido: HU06_MQTT_OK
+```
+
+Resultado:
+
+```text
+✅ broker operativo
+✅ listener MQTT
+✅ listener WebSocket
+✅ publish
+✅ subscribe
+```
+
+---
+
+# 11. Gateway DEV permanente
+
+Gateway levantado con:
+
+```text
+sgpmp-gateway-dev
+```
+
+Estado:
 
 ```text
 project=sgpmp-dev
-service=backend
 status=running
+health=healthy
 ```
 
-Estado Docker:
+Puerto:
 
 ```text
-Up (...) (healthy)
-0.0.0.0:8000->8000/tcp
+8002 → 8000
 ```
 
 Logs:
 
 ```text
 Application startup complete.
-GET /health → 200 OK
+Uvicorn running on 0.0.0.0:8000
+GET /v1/healthz → 200 OK
 ```
 
-Prueba HTTP:
+Validación desde host:
 
 ```text
-GET /docs → HTTP 200
+http://localhost:8002/v1/healthz
+HTTP 200
 ```
 
-Resultado consolidado:
+Conectividad Gateway → Mosquitto usando las variables reales del contenedor:
 
 ```text
-✅ backend DEV construido
-✅ backend DEV iniciado
-✅ healthcheck correcto
-✅ HTTP correcto
-✅ backend consume HU-04 externa
-✅ no se levanta una segunda BD interna
+GATEWAY MQTT TCP OK: mosquitto:1883
 ```
 
 ---
 
-# 10. Frontend DEV real
+# 12. Estado consolidado del ambiente DEV al cierre de ST-02
 
-Se levantó únicamente el frontend DEV:
-
-```text
-docker compose ... up -d --build --no-deps frontend
-```
-
-Validación:
+`docker compose ... ps`:
 
 ```text
-project=sgpmp-dev
-service=frontend
-status=running
-```
-
-Vite inició correctamente:
-
-```text
-VITE v5.4.21 ready
-Local: http://localhost:5173/
-```
-
-Prueba HTTP:
-
-```text
-GET http://localhost:5173/ → HTTP 200
-```
-
-Variable de API validada dentro del contenedor:
-
-```text
-VITE_API_BASE_URL=http://localhost:8000
-```
-
-Resultado:
-
-```text
-✅ frontend DEV construido
-✅ frontend DEV iniciado
-✅ HTTP 200
-✅ frontend apunta al backend DEV correcto
-```
-
----
-
-# 11. Validación Frontend → Backend / CORS
-
-Se realizó una solicitud al backend con:
-
-```text
-Origin: http://localhost:5173
-```
-
-Resultado:
-
-```text
-HTTP/1.1 200 OK
-access-control-allow-credentials: true
-access-control-allow-origin: http://localhost:5173
-```
-
-Esto confirma:
-
-```text
-Frontend DEV :5173
-      ↓
-Backend DEV :8000
-      ↓
-CORS permitido
-      ↓
-HU-04 PostgreSQL :5433
-```
-
-Resultado:
-
-```text
-✅ conectividad frontend/backend
-✅ origen DEV autorizado
-✅ credenciales CORS habilitadas
-```
-
----
-
-# 12. Estado operativo actual
-
-Servicios activos y validados:
-
-```text
-sgpmp-backend-dev    healthy
-sgpmp-frontend-dev   running
+sgpmp-backend-dev     running / healthy
+sgpmp-frontend-dev    running
+sgpmp-gateway-dev     running / healthy
+sgpmp-mosquitto-dev   running / healthy
 ```
 
 Puertos:
 
 ```text
-backend   → 8000
-frontend  → 5173
+backend     8000 → 8000
+frontend    5173 → 5173
+gateway     8002 → 8000
+mosquitto   1883 → 1883
+mosquitto   9001 → 9001
 ```
 
-La capa de BD HU-04 funciona externamente por:
+La base de datos no aparece en `docker compose ps` porque se consume externamente mediante:
 
 ```text
+SGP-HU06-DB
 host.docker.internal:5433
 ```
 
 ---
 
-# 13. Estado actual de ST-02
+# 13. Cierre de ST-02
 
-Parte HU-04 / frontend-backend:
-
-```text
-Restauración                    ✅
-Schemas / tablas / roles        ✅
-pg_cron                         ✅
-TCP backend → BD                ✅
-Autenticación backend → BD      ✅
-DATABASE_URL Compose → BD       ✅
-Adaptación Compose DEV          ✅
-Backend real → HU-04            ✅
-Health backend                  ✅
-HTTP backend                    ✅
-Frontend DEV                    ✅
-VITE_API_BASE_URL               ✅
-CORS frontend → backend         ✅
-```
-
-**La integración de base de datos, backend y frontend DEV queda validada.**
-
-Parte HU-05:
+Resultado:
 
 ```text
-Integración AIoT / MQTT / Gateway → PENDIENTE
+HU-04 / PostgreSQL                     ✅
+Backend → PostgreSQL                   ✅
+Frontend                               ✅
+Frontend → Backend                     ✅
+HU-05 / repositorio AIoT               ✅
+Gateway build                          ✅
+Gateway → PostgreSQL                   ✅
+member_iot / grp_iot                   ✅
+modulo3 / modulo9                      ✅
+Mosquitto DEV                          ✅
+MQTT publish/subscribe                 ✅
+Gateway → Mosquitto                    ✅
+Gateway /v1/healthz                    ✅
 ```
+
+**ST-02 queda técnicamente completada.**
 
 ---
 
-# 14. Bloqueo externo de ST-02
+# 14. Pendiente para ST-03
 
-En el momento de esta validación no se encontró una rama publicada claramente identificable como entrega de HU-05, AIoT, MQTT o Gateway para esta historia.
+La siguiente subtarea será la verificación integral del ambiente DEV:
 
-Las ramas visibles asociadas al trabajo de ambiente fueron:
-
-```text
-feat/compose-base
-feat/db-restauracion-dbintegrador
-feat/env-unificado
-feature/docker-setup
-```
-
-No se asume que `feature/docker-setup` corresponda a HU-05 porque no existe evidencia suficiente para afirmarlo.
-
-Por tanto, HU-06 se detiene en el siguiente punto:
-
-```text
-ST-02
-├── BD HU-04                         ✅
-├── Backend DEV                      ✅
-├── Frontend DEV                     ✅
-├── Frontend ↔ Backend               ✅
-├── AIoT / MQTT / Gateway HU-05      ⏸️ BLOQUEADO
-└── ST-03 extremo a extremo          ⏳ NO EJECUTABLE TODAVÍA
-```
-
-Motivo:
-
-```text
-Dependencia HU-05 todavía no disponible o no identificada de forma verificable.
-```
-
-No se implementará ni se inventará la funcionalidad correspondiente a HU-05 desde HU-06.
-
----
-
-# 15. Próximos pasos
-
-Cuando HU-05 esté disponible:
-
-1. verificar la rama/commit oficial de HU-05;
-2. integrar Mosquitto y Gateway con el ambiente DEV;
-3. validar conexión Gateway → MQTT;
-4. validar conexión Gateway → PostgreSQL/HU-04;
-5. comprobar `/v1/healthz`;
-6. ejecutar la verificación integral de ST-03;
-7. recopilar evidencias finales del ambiente DEV;
-8. cerrar HU-IMP-AMB-06.
+1. ejecutar Compose completo con la definición DEV;
+2. validar todos los servicios y healthchecks;
+3. comprobar endpoints principales;
+4. revisar logs en búsqueda de errores críticos;
+5. validar reinicio/control de dependencias;
+6. recopilar evidencias finales;
+7. documentar hallazgos, limitaciones y criterios de cierre;
+8. preparar el cierre de HU-06.
