@@ -1,0 +1,5 @@
+NAME                  IMAGE                 COMMAND                  SERVICE     CREATED          STATUS                    PORTS
+sgpmp-backend-dev     sgpmp-dev-backend     "uvicorn main:app --…"   backend     15 minutes ago   Up 15 minutes (healthy)   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+sgpmp-frontend-dev    sgpmp-dev-frontend    "docker-entrypoint.s…"   frontend    15 minutes ago   Up 14 minutes             0.0.0.0:5173->5173/tcp, [::]:5173->5173/tcp
+sgpmp-gateway-dev     sgpmp-dev-gateway     "uvicorn app.main:ap…"   gateway     15 minutes ago   Up 15 minutes (healthy)   0.0.0.0:8002->8000/tcp, [::]:8002->8000/tcp
+sgpmp-mosquitto-dev   eclipse-mosquitto:2   "/docker-entrypoint.…"   mosquitto   15 minutes ago   Up 15 minutes (healthy)   0.0.0.0:1883->1883/tcp, [::]:1883->1883/tcp, 0.0.0.0:9001->9001/tcp, [::]:9001->9001/tcp

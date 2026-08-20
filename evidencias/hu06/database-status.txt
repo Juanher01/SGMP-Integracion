@@ -1,0 +1,1 @@
+SGP-HU06-DB status=running health=healthy

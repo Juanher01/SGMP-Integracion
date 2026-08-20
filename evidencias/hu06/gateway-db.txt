@@ -1,0 +1,1 @@
+GATEWAY DB OK: database=dba user=member_iot

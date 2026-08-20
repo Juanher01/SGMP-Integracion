@@ -1,0 +1,4 @@
+]633;E;{   echo "HU-IMP-AMB-06 - Evidencia final DEV"\x3b   echo "Fecha: $(date '+%Y-%m-%d %H:%M:%S')"\x3b   echo "Rama: $(git branch --show-current)"\x3b   echo "Commit base de evidencia: $(git rev-parse --short HEAD)"\x3b } > evidencias/hu06/version.txt;9fa7117b-0243-4cd5-9a92-f56669cd0b70]633;CHU-IMP-AMB-06 - Evidencia final DEV
+Fecha: 2026-08-20 09:32:17
+Rama: feat/ambiente-dev
+Commit base de evidencia: a964eb9
