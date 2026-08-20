@@ -2,7 +2,8 @@
 # ANDAMIAJE: el sistema aún no ha superado el pipeline de integración completo
 # (ver docs/FLUJO-TRABAJO.md, etapas E1-E7). Esta estructura queda lista para
 # cuando corresponda encenderla — no se recomienda levantarla todavía.
-# Uso (cuando aplique): docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.prod up --build
+# Uso desde la raíz del repositorio:
+# docker compose -f compose/docker-compose.yml -f compose/compose.prod.yml --env-file .env.prod up
 
 services:
   backend:

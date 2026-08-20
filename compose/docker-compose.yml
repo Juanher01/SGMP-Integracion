@@ -3,7 +3,7 @@
 # Requisitos para que este compose funcione:
 # 1. Los repos backend y frontend deben estar clonados como HERMANOS de este repo
 #    (misma carpeta padre): ../sgpmp-backend y ../SGPMP-FRONT-END-PWA
-# 2. Cada uno debe tener ya su Dockerfile colocado en la raíz (ver docs/dockerFiles/
+# 2. Cada uno debe tener ya su Dockerfile colocado en la raíz (ver dockerFiles/
 #    para las copias de referencia, mientras se fusionan sus respectivos PR).
 # 3. La BD del DBA debe estar corriendo ANTES de levantar este compose
 #    (scripts/restaurar-bd.sh, o "docker start SGPMP" si ya fue restaurada).
@@ -13,12 +13,12 @@
 services:
   backend:
     build:
-      context: ../sgpmp-backend
+      context: ../../sgpmp-backend
       dockerfile: Dockerfile
 
   frontend:
     build:
-      context: ../SGPMP-FRONT-END-PWA
+      context: ../../SGPMP-FRONT-END-PWA
       dockerfile: Dockerfile
     depends_on:
       backend:
