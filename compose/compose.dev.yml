@@ -1,8 +1,9 @@
-# docker-compose.dev.yml — override de DESARROLLO
+# compose.dev.yml — override de DESARROLLO
 # Uso desde la raíz del repositorio:
 # docker compose -f compose/docker-compose.yml -f compose/compose.dev.yml --env-file .env.dev up --build
 
 name: sgpmp-dev
+
 services:
 
   database:
@@ -25,8 +26,8 @@ services:
       dockerfile: Dockerfile
     container_name: sgpmp-gateway-dev
     environment:
-      ENVIRONMENT: dev
-      DATABASE_URL: ${GATEWAY_DATABASE_URL}
+      ENVIRONMENT: ${ENVIRONMENT}
+      DATABASE_URL: postgresql+asyncpg://${DB_IOT_USER}:${DB_IOT_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
       API_TOKEN: ${GATEWAY_API_TOKEN}
     ports:
       - "8002:8000"
@@ -37,16 +38,42 @@ services:
       dockerfile: Dockerfile
     container_name: sgpmp-backend-dev
     environment:
-      ENVIRONMENT: dev
+      ENVIRONMENT: ${ENVIRONMENT}
+      ENV: development
+
+      # JWT / Seguridad
       SECRET_KEY: ${SECRET_KEY}
+      JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS}
+      RF71_INTERNAL_KEY: ${RF71_INTERNAL_KEY}
+
       FRONTEND_URL: ${FRONTEND_URL}
-      # DATABASE_URL se ensambla aquí a partir de las piezas sueltas del .env —
-      # así, si cambia el rol o el host, no hay que reescribir una URL completa a mano.
+
+      # DATABASE_URL se ensambla a partir de las piezas del .env.
       DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+      FIREBASE_CREDENTIALS_PATH: ${FIREBASE_CREDENTIALS_PATH}
+
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+
+      MODELOS_STORAGE_PATH: ${MODELOS_STORAGE_PATH}
+
     ports:
       - "8000:8000"
-    # --reload solo en dev: recarga en caliente al editar código.
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+    # Recarga en caliente únicamente en DEV.
+    command:
+      [
+        "uvicorn",
+        "main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload"
+      ]
 
   frontend:
     build:
@@ -54,10 +81,21 @@ services:
       dockerfile: Dockerfile
       target: dev
     container_name: sgpmp-frontend-dev
-    # En el target "dev", Vite SÍ puede leer esta variable en tiempo de ejecución
-    # (a diferencia del build de prod, donde se hornea). Por eso aquí basta con
-    # "environment", sin necesidad de "build.args".
+
+    # En DEV, Vite se ejecuta dentro del contenedor.
+    # Por ello se suministra el contrato VITE_* al proceso.
     environment:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      VITE_SW: ${VITE_SW}
+      VITE_AGROFUSION_LOGIN_URL: ${VITE_AGROFUSION_LOGIN_URL}
+
+      VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY}
+      VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN}
+      VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID}
+      VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET}
+      VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID}
+      VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
+      VITE_VAPID_KEY: ${VITE_VAPID_KEY}
+
     ports:
       - "5173:5173"

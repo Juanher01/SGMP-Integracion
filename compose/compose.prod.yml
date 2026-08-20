@@ -11,6 +11,7 @@
 # docker compose -f compose/docker-compose.yml -f compose/compose.prod.yml --env-file .env.prod config
 
 name: sgpmp-prod
+
 services:
 
   database:
@@ -24,19 +25,33 @@ services:
     image: ${GATEWAY_IMAGE}
     container_name: sgpmp-gateway-prod
     environment:
-      ENVIRONMENT: prod
-      DATABASE_URL: ${GATEWAY_DATABASE_URL}
+      ENVIRONMENT: ${ENVIRONMENT}
+      DATABASE_URL: postgresql+asyncpg://${DB_IOT_USER}:${DB_IOT_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
       API_TOKEN: ${GATEWAY_API_TOKEN}
-      MQTT_TLS: "true"
 
   backend:
     image: ${BACKEND_IMAGE}
     container_name: sgpmp-backend-prod
     environment:
-      ENVIRONMENT: prod
+      ENVIRONMENT: ${ENVIRONMENT}
+      ENV: production
+
+      # JWT / Seguridad
       SECRET_KEY: ${SECRET_KEY}
+      JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS}
+      RF71_INTERNAL_KEY: ${RF71_INTERNAL_KEY}
+
       FRONTEND_URL: ${FRONTEND_URL}
       DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+      FIREBASE_CREDENTIALS_PATH: ${FIREBASE_CREDENTIALS_PATH}
+
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+
+      MODELOS_STORAGE_PATH: ${MODELOS_STORAGE_PATH}
 
   frontend:
     image: ${FRONTEND_IMAGE}

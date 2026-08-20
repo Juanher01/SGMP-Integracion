@@ -7,25 +7,34 @@
 #   compose.test.yml
 #   compose.prod.yml
 #
-# Backend y frontend se construyen desde sus repositorios correspondientes.
+# DEV construye localmente los componentes correspondientes.
+# TEST y PROD consumen imágenes versionadas definidas en sus overrides.
+#
 # La capa de base de datos se integra a partir de DBIntegrador.
 # La capa AIoT se integra a partir de BROKER-MQTT-SGPMP.
 #
 # Los valores sensibles y específicos de cada ambiente se suministran
-# mediante los archivos .env correspondientes y no se almacenan aquí.
+# mediante variables de entorno y no se almacenan directamente aquí.
 
 services:
 
   database:
     networks:
       - sgpmp-network
+
     volumes:
       - postgres-data:/var/lib/postgresql
+
     command: >
       -c shared_preload_libraries=pg_cron
       -c cron.database_name=${DB_NAME:-dba}
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_ADMIN_USER:-dba} -d ${DB_NAME:-dba}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_ADMIN_USER:-dba} -d ${DB_NAME:-dba}"
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,10 +42,16 @@ services:
 
   mosquitto:
     image: eclipse-mosquitto:2
+
     networks:
       - sgpmp-network
+
     healthcheck:
-      test: ["CMD-SHELL", "nc -z 127.0.0.1 1883"]
+      test:
+        [
+          "CMD-SHELL",
+          "nc -z 127.0.0.1 1883"
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -48,16 +63,36 @@ services:
         condition: service_healthy
       mosquitto:
         condition: service_healthy
+
     networks:
       - sgpmp-network
+
     environment:
-      MQTT_HOST: mosquitto
-      MQTT_PORT: "1883"
-      MQTT_TLS: "false"
-      DB_SCHEMA_INGEST: modulo3
-      DB_SCHEMA_REGISTRY: modulo9
+
+      # Broker MQTT
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_PORT: ${MQTT_PORT}
+      MQTT_USERNAME: ${MQTT_USERNAME}
+      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      MQTT_TLS: ${MQTT_TLS}
+      MQTT_CLIENT_ID: ${MQTT_CLIENT_ID}
+      MQTT_RECONNECT_DELAY: ${MQTT_RECONNECT_DELAY}
+
+      # Topics MQTT
+      MQTT_TOPIC_PREFIX: ${MQTT_TOPIC_PREFIX}
+      MQTT_TOPIC_TELEMETRY: ${MQTT_TOPIC_TELEMETRY}
+      MQTT_TOPIC_HEARTBEAT: ${MQTT_TOPIC_HEARTBEAT}
+      MQTT_TOPIC_COMMAND: ${MQTT_TOPIC_COMMAND}
+      MQTT_TOPIC_STATUS: ${MQTT_TOPIC_STATUS}
+
+      # Esquemas PostgreSQL utilizados por AIoT
+      DB_SCHEMA_INGEST: ${DB_SCHEMA_INGEST}
+      DB_SCHEMA_REGISTRY: ${DB_SCHEMA_REGISTRY}
+
+      # API interna del gateway
       API_HOST: 0.0.0.0
       API_PORT: "8000"
+
     healthcheck:
       test:
         [
@@ -75,6 +110,7 @@ services:
     depends_on:
       database:
         condition: service_healthy
+
     networks:
       - sgpmp-network
 
@@ -82,14 +118,17 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+
     networks:
       - sgpmp-network
 
 
 networks:
+
   sgpmp-network:
     driver: bridge
 
 
 volumes:
+
   postgres-data:
