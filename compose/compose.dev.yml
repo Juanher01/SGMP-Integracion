@@ -3,6 +3,32 @@
 # docker compose -f compose/docker-compose.yml -f compose/compose.dev.yml --env-file .env.dev up --build
 
 services:
+
+  database:
+    build:
+      context: ../../DBIntegrador-master
+      dockerfile: dockerfile
+    container_name: sgpmp-database-dev
+
+  mosquitto:
+    container_name: sgpmp-mosquitto-dev
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ../../BROKER-MQTT-SGPMP-develop/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  gateway:
+    build:
+      context: ../../BROKER-MQTT-SGPMP-develop
+      dockerfile: Dockerfile
+    container_name: sgpmp-gateway-dev
+    environment:
+      DATABASE_URL: ${GATEWAY_DATABASE_URL}
+      API_TOKEN: ${GATEWAY_API_TOKEN}
+    ports:
+      - "8002:8000"
+
   backend:
     container_name: sgpmp-backend-dev
     environment:
