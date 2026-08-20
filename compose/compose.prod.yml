@@ -11,6 +11,7 @@
 # docker compose -f compose/docker-compose.yml -f compose/compose.prod.yml --env-file .env.prod config
 
 name: sgpmp-prod
+
 services:
 
   database:
@@ -27,14 +28,18 @@ services:
       ENVIRONMENT: prod
       DATABASE_URL: ${GATEWAY_DATABASE_URL}
       API_TOKEN: ${GATEWAY_API_TOKEN}
-      MQTT_TLS: "true"
 
   backend:
     image: ${BACKEND_IMAGE}
     container_name: sgpmp-backend-prod
     environment:
       ENVIRONMENT: prod
+
+      # JWT / Seguridad
       SECRET_KEY: ${SECRET_KEY}
+      JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS}
+      RF71_INTERNAL_KEY: ${RF71_INTERNAL_KEY}
+
       FRONTEND_URL: ${FRONTEND_URL}
       DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 

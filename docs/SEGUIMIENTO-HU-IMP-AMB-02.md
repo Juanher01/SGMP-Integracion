@@ -1,19 +1,19 @@
 # Seguimiento técnico — HU-IMP-AMB-02
 ## Catálogo unificado de variables de entorno
 
-**Responsable:** Juan Esteban Hernández Lozano  
-**Rama de trabajo:** `feat/env-unificado`  
-**Repositorio:** `SGMP-Integracion`  
-**Historia de Usuario:** HU-IMP-AMB-02 — Catálogo unificado de variables de entorno  
+**Responsable:** Juan Esteban Hernández Lozano
+**Rama de trabajo:** `feat/env-unificado`
+**Repositorio:** `SGMP-Integracion`
+**Historia de Usuario:** HU-IMP-AMB-02 — Catálogo unificado de variables de entorno
 **Estado:** ⏳ En progreso
 
 ---
 
-# 1. Objetivo de la Historia de Usuario
+# 1. Objetivo
 
-Consolidar los archivos de ejemplo de variables de entorno de DEV, TEST y PROD en un catálogo coherente, completo y consistente, incorporando las variables requeridas por backend, frontend y la capa AIoT.
+Consolidar los archivos de ejemplo de variables de entorno de DEV, TEST y PROD en un catálogo coherente, completo y consistente para frontend, backend, JWT, gateway AIoT y MQTT.
 
-La historia debe producir:
+Entregables esperados de la HU:
 
 ```text
 env/.env.dev.example
@@ -23,60 +23,28 @@ docs/VARIABLES-ENTORNO.md
 FR-IMP-CE-04
 ```
 
-El catálogo deberá clasificar las variables por función y sensibilidad.
-
 ---
 
-# 2. Criterios de aceptación
-
-| Criterio | Estado |
-|---|---|
-| Los tres `.env.*.example` quedan completos y consistentes para backend, frontend, JWT y MQTT | ⏳ En progreso |
-| Cada variable queda clasificada por tipo y sensibilidad | ⏳ Pendiente |
-| Se resuelven discrepancias de nombre de base de datos y puerto | ⏳ Pendiente |
-| Se redacta el artefacto `FR-IMP-CE-04` | ⏳ Pendiente |
-
-Tipos de variable previstos:
-
-```text
-Conexión
-Comportamiento
-Autenticación / Seguridad
-AIoT / Analítica
-```
-
----
-
-# 3. Subtareas
+# 2. Estado de subtareas
 
 | Subtarea | Descripción | Estado |
 |---|---|---|
 | ST-01 | Incorporar variables del frontend desde `origin/dev` | ✅ Completada |
-| ST-02 | Incorporar variables MQTT y de seguridad | ⏳ Pendiente |
+| ST-02 | Incorporar variables MQTT y de seguridad | ✅ Completada |
 | ST-03 | Reconciliar nombres de base de datos y puertos | ⏳ Pendiente |
 | ST-04 | Catálogo por sensibilidad, `FR-IMP-CE-04` y `docs/VARIABLES-ENTORNO.md` | ⏳ Pendiente |
 
 ---
 
-# 4. Dependencia con HU-IMP-AMB-01
+# 3. Dependencia con HU-IMP-AMB-01
 
-HU-02 depende de la definición Compose construida durante HU-IMP-AMB-01.
+HU-02 se creó a partir de `feat/compose-base` porque HU-01 todavía está pendiente de revisión del Líder y no ha sido fusionada a `main`.
 
-HU-01 fue desarrollada en:
-
-```text
-feat/compose-base
-```
-
-y fue subida al remoto para revisión del Líder, sin merge directo a `main`.
-
-Por esta razón, HU-02 se inició temporalmente a partir de `feat/compose-base`.
-
-Antes del Pull Request definitivo de HU-02, una vez HU-01 haya sido aprobada y fusionada, la rama deberá reubicarse sobre el `main` actualizado.
+Antes del Pull Request definitivo de HU-02, la rama deberá reubicarse sobre el `main` que contenga HU-01 aprobada.
 
 ---
 
-# 5. Inventario inicial
+# 4. Inventario inicial de archivos de ambiente
 
 Se encontraron:
 
@@ -89,17 +57,9 @@ env/.env.prod
 env/.env.prod.example
 ```
 
-Los archivos reales:
+Los archivos reales no están versionados.
 
-```text
-env/.env.dev
-env/.env.test
-env/.env.prod
-```
-
-no están versionados.
-
-Validación con `git ls-files`:
+`git ls-files` confirmó que solo están bajo control de versiones:
 
 ```text
 env/.env.dev.example
@@ -107,92 +67,38 @@ env/.env.prod.example
 env/.env.test.example
 ```
 
-Validación con `git check-ignore`:
+`git check-ignore` confirmó que:
 
 ```text
-.gitignore:3:.env.dev
-.gitignore:4:.env.test
-.gitignore:5:.env.prod
+env/.env.dev
+env/.env.test
+env/.env.prod
 ```
 
-Por tanto, únicamente los archivos `.example` forman parte del repositorio.
+están protegidos por `.gitignore`.
 
 ---
 
-# 6. Inventario de variables actuales del Compose
-
-Se identificaron referencias a:
-
-```text
-BACKEND_IMAGE
-DATABASE_IMAGE
-DB_ADMIN_USER
-DB_APP_PASSWORD
-DB_APP_USER
-DB_HOST
-DB_NAME
-DB_PORT
-FRONTEND_IMAGE
-FRONTEND_URL
-GATEWAY_API_TOKEN
-GATEWAY_DATABASE_URL
-GATEWAY_IMAGE
-SECRET_KEY
-VITE_API_BASE_URL
-```
-
-Este inventario se utilizará principalmente en ST-02 y ST-03.
-
----
-
-# 7. ST-01 — Incorporación de variables del frontend
+# 5. ST-01 — Contrato del frontend
 
 **Estado:** ✅ Completada
 
-## 7.1 Fuente de referencia
+## 5.1 Fuente utilizada
 
-La subtarea requería tomar como referencia el frontend en:
+Se tomó como referencia `origin/dev` del repositorio `SGPMP-FRONT-END-PWA`.
 
-```text
-origin/dev
-```
-
-del repositorio:
-
-```text
-SGPMP-FRONT-END-PWA
-```
-
-Se actualizó la referencia remota mediante:
-
-```bash
-git -C ../SGPMP-FRONT-END-PWA fetch origin
-```
-
-Luego se verificó si existía un archivo `.env.example` dentro de `origin/dev`.
-
-Resultado:
+No existe un `.env.example` versionado en esa rama. Por ello el contrato se reconstruyó a partir de:
 
 ```text
 README.md
+CLAUDE.md
+src/
 ```
 
-No existe `.env.example` versionado en esa rama.
-
-Por ello, el contrato real del frontend se reconstruyó mediante dos fuentes:
+## 5.2 Variables frontend confirmadas
 
 ```text
-README.md / CLAUDE.md
-código fuente bajo src/
-```
-
----
-
-## 7.2 Variables respaldadas por código o documentación
-
-Las variables identificadas fueron:
-
-```text
+VITE_AGROFUSION_LOGIN_URL
 VITE_API_BASE_URL
 VITE_FIREBASE_API_KEY
 VITE_FIREBASE_APP_ID
@@ -200,35 +106,19 @@ VITE_FIREBASE_AUTH_DOMAIN
 VITE_FIREBASE_MESSAGING_SENDER_ID
 VITE_FIREBASE_PROJECT_ID
 VITE_FIREBASE_STORAGE_BUCKET
-VITE_VAPID_KEY
 VITE_SW
-VITE_AGROFUSION_LOGIN_URL
+VITE_VAPID_KEY
 ```
 
----
+## 5.3 Cambios realizados
 
-## 7.3 `VITE_AGROFUSION_LOGIN_URL`
-
-Se encontró uso directo en:
+Se eliminó de los tres `.env.*.example`:
 
 ```text
-src/auth/pages/LoginPage.tsx
+VITE_APP_ENV
 ```
 
-mediante:
-
-```text
-import.meta.env.VITE_AGROFUSION_LOGIN_URL
-```
-
-El comportamiento del frontend es:
-
-```text
-Si la variable existe → redirección hacia AgroFusion
-Si la variable no existe → no se ejecuta la redirección
-```
-
-Los tres `.env.*.example` no contenían esta variable inicialmente.
+porque no apareció en código ni documentación actual de `origin/dev`.
 
 Se agregó:
 
@@ -236,218 +126,416 @@ Se agregó:
 VITE_AGROFUSION_LOGIN_URL=
 ```
 
-como placeholder vacío, sin inventar una URL.
+porque `src/auth/pages/LoginPage.tsx` la consume mediante `import.meta.env.VITE_AGROFUSION_LOGIN_URL`.
 
----
-
-## 7.4 `VITE_SW`
-
-La variable:
+Se conservó:
 
 ```text
 VITE_SW
 ```
 
-no apareció en el primer barrido de `import.meta.env.*` dentro de `src/`, pero sí está documentada en:
+porque está documentada para controlar el Service Worker.
+
+Valores conservados:
 
 ```text
-README.md
-CLAUDE.md
+DEV  → false
+TEST → false
+PROD → true
 ```
 
-como control del Service Worker.
+## 5.4 Validaciones
 
-Por ello se conserva.
-
-Valores actuales:
+`VITE_APP_ENV`:
 
 ```text
-DEV  → VITE_SW=false
-TEST → VITE_SW=false
-PROD → VITE_SW=true
+Sin resultados
 ```
 
----
-
-## 7.5 `VITE_APP_ENV`
-
-La variable:
+`VITE_AGROFUSION_LOGIN_URL`:
 
 ```text
-VITE_APP_ENV
+Presente en DEV
+Presente en TEST
+Presente en PROD
 ```
 
-existía inicialmente en:
+Los tres archivos quedaron con el mismo conjunto de variables `VITE_*`.
+
+## 5.5 Ajuste complementario posterior
+
+Durante ST-02 se detectó que DEV solo inyectaba `VITE_API_BASE_URL` al contenedor frontend.
+
+Se amplió `compose/compose.dev.yml` para suministrar también el resto del contrato `VITE_*` necesario durante la ejecución de Vite en DEV:
 
 ```text
-.env.dev.example
-.env.test.example
-.env.prod.example
-```
-
-pero no apareció en:
-
-```text
-código de origin/dev
-README.md
-CLAUDE.md
-```
-
-Se consideró una variable no respaldada por la versión actual del frontend.
-
-Fue retirada de los tres `.env.*.example`.
-
----
-
-## 7.6 Contrato frontend resultante
-
-Los tres ambientes quedaron con el mismo conjunto de variables frontend:
-
-```text
+VITE_SW
 VITE_AGROFUSION_LOGIN_URL
-VITE_API_BASE_URL
 VITE_FIREBASE_API_KEY
-VITE_FIREBASE_APP_ID
 VITE_FIREBASE_AUTH_DOMAIN
-VITE_FIREBASE_MESSAGING_SENDER_ID
 VITE_FIREBASE_PROJECT_ID
 VITE_FIREBASE_STORAGE_BUCKET
-VITE_SW
+VITE_FIREBASE_MESSAGING_SENDER_ID
+VITE_FIREBASE_APP_ID
 VITE_VAPID_KEY
 ```
 
----
-
-## 7.7 Validaciones realizadas
-
-### Eliminación de variable obsoleta
-
-Comando:
-
-```bash
-grep -Rni "VITE_APP_ENV" env/.env.*.example
-```
-
-Resultado:
-
-```text
-Sin salida
-```
-
-Esto confirma que `VITE_APP_ENV` ya no está presente.
-
-### Incorporación de AgroFusion
-
-Comando:
-
-```bash
-grep -n "VITE_AGROFUSION_LOGIN_URL" env/.env.*.example
-```
-
-Resultado:
-
-```text
-env/.env.dev.example:30:VITE_AGROFUSION_LOGIN_URL=
-env/.env.prod.example:29:VITE_AGROFUSION_LOGIN_URL=
-env/.env.test.example:30:VITE_AGROFUSION_LOGIN_URL=
-```
-
-### Consistencia del contrato `VITE_*`
-
-Se extrajeron y ordenaron todas las variables `VITE_*` de los tres archivos.
-
-DEV:
-
-```text
-VITE_AGROFUSION_LOGIN_URL
-VITE_API_BASE_URL
-VITE_FIREBASE_API_KEY
-VITE_FIREBASE_APP_ID
-VITE_FIREBASE_AUTH_DOMAIN
-VITE_FIREBASE_MESSAGING_SENDER_ID
-VITE_FIREBASE_PROJECT_ID
-VITE_FIREBASE_STORAGE_BUCKET
-VITE_SW
-VITE_VAPID_KEY
-```
-
-TEST:
-
-```text
-VITE_AGROFUSION_LOGIN_URL
-VITE_API_BASE_URL
-VITE_FIREBASE_API_KEY
-VITE_FIREBASE_APP_ID
-VITE_FIREBASE_AUTH_DOMAIN
-VITE_FIREBASE_MESSAGING_SENDER_ID
-VITE_FIREBASE_PROJECT_ID
-VITE_FIREBASE_STORAGE_BUCKET
-VITE_SW
-VITE_VAPID_KEY
-```
-
-PROD:
-
-```text
-VITE_AGROFUSION_LOGIN_URL
-VITE_API_BASE_URL
-VITE_FIREBASE_API_KEY
-VITE_FIREBASE_APP_ID
-VITE_FIREBASE_AUTH_DOMAIN
-VITE_FIREBASE_MESSAGING_SENDER_ID
-VITE_FIREBASE_PROJECT_ID
-VITE_FIREBASE_STORAGE_BUCKET
-VITE_SW
-VITE_VAPID_KEY
-```
-
-Los tres contratos coinciden.
+Este cambio se documenta como complemento de ST-01 porque garantiza que las variables ya inventariadas puedan llegar efectivamente al frontend DEV.
 
 ---
 
-# 8. Hallazgos reservados para subtareas posteriores
+# 6. ST-02 — MQTT y seguridad
 
-Durante ST-01 también se detectaron discrepancias que se resolverán más adelante.
+**Estado:** ✅ Completada
 
-Los `.env.*.example` actuales utilizan:
+## 6.1 Fuente AIoT utilizada
+
+Se revisaron:
+
+```text
+BROKER-MQTT-SGPMP-develop/app/config.py
+BROKER-MQTT-SGPMP-develop/.env.example
+```
+
+El gateway utiliza Pydantic Settings y declara el siguiente contrato.
+
+### Base de datos / esquemas
+
+```text
+DATABASE_URL
+DB_SCHEMA_INGEST
+DB_SCHEMA_REGISTRY
+```
+
+### Broker MQTT
+
+```text
+MQTT_HOST
+MQTT_PORT
+MQTT_USERNAME
+MQTT_PASSWORD
+MQTT_TLS
+MQTT_CLIENT_ID
+MQTT_RECONNECT_DELAY
+```
+
+### Topics MQTT
+
+```text
+MQTT_TOPIC_PREFIX
+MQTT_TOPIC_TELEMETRY
+MQTT_TOPIC_HEARTBEAT
+MQTT_TOPIC_COMMAND
+MQTT_TOPIC_STATUS
+```
+
+### API del gateway
+
+```text
+API_TOKEN
+API_HOST
+API_PORT
+```
+
+Las variables de BD, esquemas y puertos se reservan para ST-03 cuando corresponda.
+
+---
+
+# 7. Contrato MQTT incorporado
+
+Los tres `.env.*.example` incorporaron:
+
+```text
+MQTT_HOST
+MQTT_PORT
+MQTT_USERNAME
+MQTT_PASSWORD
+MQTT_TLS
+MQTT_CLIENT_ID
+MQTT_RECONNECT_DELAY
+MQTT_TOPIC_PREFIX
+MQTT_TOPIC_TELEMETRY
+MQTT_TOPIC_HEARTBEAT
+MQTT_TOPIC_COMMAND
+MQTT_TOPIC_STATUS
+```
+
+Valores base de DEV y TEST:
+
+```text
+MQTT_HOST=mosquitto
+MQTT_PORT=1883
+MQTT_TLS=false
+MQTT_CLIENT_ID=sgpmp
+MQTT_RECONNECT_DELAY=5
+MQTT_TOPIC_PREFIX=sgpmp
+MQTT_TOPIC_TELEMETRY=telemetry
+MQTT_TOPIC_HEARTBEAT=heartbeat
+MQTT_TOPIC_COMMAND=command
+MQTT_TOPIC_STATUS=status
+```
+
+En PROD:
+
+```text
+MQTT_TLS=true
+```
+
+`MQTT_HOST` y `MQTT_PORT` se mantienen como placeholders pendientes del contrato definitivo de producción con AIoT/Despliegue.
+
+No se registran credenciales reales en los `.example`.
+
+---
+
+# 8. Token de seguridad del gateway
+
+El gateway espera internamente:
+
+```text
+API_TOKEN
+```
+
+La infraestructura utiliza el nombre externo:
+
+```text
+GATEWAY_API_TOKEN
+```
+
+y Compose realiza la traducción:
+
+```text
+GATEWAY_API_TOKEN → API_TOKEN
+```
+
+Esto evita usar un nombre genérico de token fuera del contenedor.
+
+Los tres `.env.*.example` contienen:
+
+```text
+GATEWAY_API_TOKEN=
+```
+
+sin valor real.
+
+---
+
+# 9. JWT y seguridad del backend
+
+Se revisó `src/shared/jwt.py`.
+
+El backend utiliza realmente:
+
+```text
+SECRET_KEY
+JWT_EXPIRE_HOURS
+```
+
+El algoritmo no proviene del entorno. Está fijado en código:
+
+```text
+HS256
+```
+
+Por ello se eliminaron de los tres `.env.*.example`:
+
+```text
+JWT_SECRET_KEY
+JWT_ALGORITHM
+```
+
+y se incorporaron:
+
+```text
+SECRET_KEY=
+JWT_EXPIRE_HOURS=24
+```
+
+El valor `24` corresponde al default actual del código.
+
+También se confirmó el uso real de:
+
+```text
+RF71_INTERNAL_KEY
+```
+
+para validación del header interno `X-RF71-Internal-Key`.
+
+Se agregó:
+
+```text
+RF71_INTERNAL_KEY=
+```
+
+sin valor real.
+
+---
+
+# 10. Cableado efectivo en Docker Compose
+
+No se dejó el catálogo únicamente como documentación.
+
+## 10.1 Gateway
+
+`compose/docker-compose.yml` fue ajustado para pasar al gateway:
+
+```text
+MQTT_HOST
+MQTT_PORT
+MQTT_USERNAME
+MQTT_PASSWORD
+MQTT_TLS
+MQTT_CLIENT_ID
+MQTT_RECONNECT_DELAY
+MQTT_TOPIC_PREFIX
+MQTT_TOPIC_TELEMETRY
+MQTT_TOPIC_HEARTBEAT
+MQTT_TOPIC_COMMAND
+MQTT_TOPIC_STATUS
+```
+
+`MQTT_TLS` dejó de estar hardcodeado en los overrides TEST y PROD y pasa a resolverse desde el archivo de ambiente.
+
+## 10.2 Backend
+
+Los overrides DEV, TEST y PROD pasan al backend:
+
+```text
+SECRET_KEY
+JWT_EXPIRE_HOURS
+RF71_INTERNAL_KEY
+```
+
+además de sus variables ya existentes.
+
+---
+
+# 11. Validaciones de ST-02
+
+## 11.1 JWT antiguo eliminado
+
+La búsqueda de:
+
+```text
+JWT_SECRET_KEY
+JWT_ALGORITHM
+```
+
+en los tres `.env.*.example` no produjo resultados.
+
+## 11.2 Seguridad nueva
+
+Se confirmó la presencia de:
+
+```text
+SECRET_KEY
+JWT_EXPIRE_HOURS
+RF71_INTERNAL_KEY
+GATEWAY_API_TOKEN
+```
+
+en DEV, TEST y PROD.
+
+## 11.3 Contrato MQTT
+
+Los tres ambientes contienen exactamente:
+
+```text
+MQTT_CLIENT_ID
+MQTT_HOST
+MQTT_PASSWORD
+MQTT_PORT
+MQTT_RECONNECT_DELAY
+MQTT_TLS
+MQTT_TOPIC_COMMAND
+MQTT_TOPIC_HEARTBEAT
+MQTT_TOPIC_PREFIX
+MQTT_TOPIC_STATUS
+MQTT_TOPIC_TELEMETRY
+MQTT_USERNAME
+```
+
+## 11.4 TLS por ambiente
+
+```text
+DEV  → MQTT_TLS=false
+TEST → MQTT_TLS=false
+PROD → MQTT_TLS=true
+```
+
+## 11.5 Gateway DEV resuelto
+
+Docker Compose resolvió:
+
+```text
+MQTT_HOST=mosquitto
+MQTT_PORT=1883
+MQTT_RECONNECT_DELAY=5
+MQTT_TLS=false
+MQTT_TOPIC_COMMAND=command
+MQTT_TOPIC_HEARTBEAT=heartbeat
+MQTT_TOPIC_PREFIX=sgpmp
+MQTT_TOPIC_STATUS=status
+MQTT_TOPIC_TELEMETRY=telemetry
+```
+
+Las credenciales vacías de DEV se mantuvieron como cadenas vacías, de acuerdo con la configuración anónima actual del broker local.
+
+## 11.6 Backend DEV resuelto
+
+Se confirmó:
+
+```text
+JWT_EXPIRE_HOURS=24
+```
+
+y la presencia de `RF71_INTERNAL_KEY` en los tres overrides.
+
+## 11.7 Sintaxis Compose
+
+```text
+DEV  → config --quiet sin errores
+TEST → config --quiet sin errores
+```
+
+La validación integral de PROD queda pendiente de disponer del conjunto completo de variables de producción.
+
+---
+
+# 12. Hallazgos para ST-03
+
+Todavía existen discrepancias deliberadamente no resueltas:
 
 ```text
 APP_ENV
-POSTGRES_*
-JWT_SECRET_KEY
-```
-
-mientras Compose/backend utilizan:
-
-```text
-ENVIRONMENT / ENV
-DB_*
-SECRET_KEY
+POSTGRES_HOST
+POSTGRES_PORT
+POSTGRES_HOST_PORT
+POSTGRES_DB
+POSTGRES_USER
+POSTGRES_PASSWORD
+BACKEND_HOST
+BACKEND_PORT
+BACKEND_HOST_PORT
+FRONTEND_HOST_PORT
 DATABASE_URL
-```
-
-La reconciliación corresponde a ST-03.
-
-También se identificaron variables backend adicionales:
-
-```text
-JWT_EXPIRE_HOURS
-RF71_INTERNAL_KEY
-MODELOS_STORAGE_PATH
-FIREBASE_CREDENTIALS_PATH
+GATEWAY_DATABASE_URL
+DB_*
 ENV
+ENVIRONMENT
 ```
 
-Estas deberán evaluarse antes del catálogo definitivo.
+También deben reconciliarse los puertos definidos en los `.env.*.example` con la matriz real establecida en HU-01.
+
+Estos puntos corresponden a ST-03.
 
 ---
 
-# 9. Estado general
+# 13. Estado general
 
 ```text
 HU-IMP-AMB-02
 ├── ST-01 ✅ Frontend
-├── ST-02 ⏳ MQTT / seguridad
-├── ST-03 ⏳ BD / puertos
-└── ST-04 ⏳ Catálogo / FR-IMP-CE-04
+├── ST-02 ✅ MQTT / seguridad
+├── ST-03 ⏳ BD / nombres / puertos
+└── ST-04 ⏳ Catálogo / sensibilidad / FR-IMP-CE-04
 ```

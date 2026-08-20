@@ -7,6 +7,7 @@
 # docker compose -f compose/docker-compose.yml -f compose/compose.test.yml --env-file .env.test up -d
 
 name: sgpmp-test
+
 services:
 
   database:
@@ -28,7 +29,6 @@ services:
       ENVIRONMENT: test
       DATABASE_URL: ${GATEWAY_DATABASE_URL}
       API_TOKEN: ${GATEWAY_API_TOKEN}
-      MQTT_TLS: "false"
     ports:
       - "8003:8000"
 
@@ -37,9 +37,15 @@ services:
     container_name: sgpmp-backend-test
     environment:
       ENVIRONMENT: test
+
+      # JWT / Seguridad
       SECRET_KEY: ${SECRET_KEY}
+      JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS}
+      RF71_INTERNAL_KEY: ${RF71_INTERNAL_KEY}
+
       FRONTEND_URL: ${FRONTEND_URL}
       DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
     ports:
       - "8001:8000"
 
