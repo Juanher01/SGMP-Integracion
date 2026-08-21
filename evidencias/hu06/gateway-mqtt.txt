@@ -1,0 +1,1 @@
+GATEWAY MQTT TCP OK: mosquitto:1883

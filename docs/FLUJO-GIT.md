@@ -3,7 +3,7 @@
 Este documento define, por un lado, el **flujo Git global** del proyecto SGPMP y, por otro, las **convenciones Git propias del grupo de Implementación** (nomenclatura de ramas, modelo de integración, convención de commits y buenas prácticas).
 
 > [!NOTE]
-> Las ramas descritas en la Sección 2 **viven en los repositorios de código del proyecto** (frontend y backend), no en este repositorio. El repositorio `SGMP-Integracion` únicamente **documenta** la convención de trabajo del ecosistema de Implementación.
+> Las ramas descritas para la integración de módulos aplican a los repositorios de código del proyecto (frontend y backend). El repositorio de infraestructura `SGMP-Integracion` utiliza una convención propia de ramas para cambios de orquestación, configuración y documentación, definida en este mismo documento.
 
 ---
 
@@ -104,6 +104,47 @@ Reglas de nomenclatura:
 - Siempre en **minúsculas**, sin espacios ni tildes; separar palabras con guion (`-`).
 - Incluir el **módulo** (`m0X`) para trazabilidad por módulo.
 - Incluir la **versión** de la entrega (`vY.Z.W`) en las ramas de recepción, para enlazar con el registro de recepción.
+
+
+## Convención de ramas del repositorio de infraestructura
+
+El repositorio `SGMP-Integracion` centraliza la configuración y documentación relacionada con los ambientes de Implementación. Los cambios realizados en este repositorio deben partir de la rama `main` actualizada y regresar a `main` mediante Pull Request.
+
+La nomenclatura utilizada es:
+
+| Tipo de cambio | Convención | Ejemplo |
+|---|---|---|
+| Nueva funcionalidad o configuración | `feat/<area>-<descripcion>` | `feat/compose-base` |
+| Corrección | `fix/<area>-<descripcion>` | `fix/compose-healthcheck` |
+| Documentación | `docs/<descripcion>` | `docs/variables-entorno` |
+| Mantenimiento o ajuste técnico | `chore/<descripcion>` | `chore/estructura-repo` |
+
+El flujo general es:
+
+```text
+main actualizado
+      │
+      ▼
+crear rama de trabajo
+      │
+      ▼
+realizar y validar cambios
+      │
+      ▼
+commit
+      │
+      ▼
+push de la rama
+      │
+      ▼
+Pull Request hacia main
+      │
+      ▼
+revisión y aprobación del Líder
+      │
+      ▼
+merge a main
+
 
 ### 2.4 Convención de commits
 

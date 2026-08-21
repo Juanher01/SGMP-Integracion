@@ -1,0 +1,3 @@
+]633;E;{   curl -s -o /dev/null     -w "BACKEND HEALTH: HTTP %{http_code}\\n"     http://localhost:8000/health\x3b    curl -s -o /dev/null     -w "FRONTEND: HTTP %{http_code}\\n"     http://localhost:5173/\x3b    curl -s -o /dev/null     -w "GATEWAY HEALTH: HTTP %{http_code}\\n"     http://localhost:8002/v1/healthz\x3b } > evidencias/hu06/http-status.txt;9fa7117b-0243-4cd5-9a92-f56669cd0b70]633;CBACKEND HEALTH: HTTP 200
+FRONTEND: HTTP 200
+GATEWAY HEALTH: HTTP 200

@@ -1,0 +1,117 @@
+# compose.dev.yml — override de DESARROLLO
+# Uso desde la raíz del repositorio:
+# docker compose -f compose/docker-compose.yml -f compose/compose.dev.yml --env-file .env.dev up --build
+
+name: sgpmp-dev
+
+services:
+
+  database:
+    # HU-04 entrega DBIntegrador como capa externa en DEV.
+    # Este servicio queda disponible solo si se habilita explícitamente
+    # el perfil internal-db.
+    profiles:
+      - internal-db
+
+    build:
+      context: ../../DBIntegrador-master
+      dockerfile: dockerfile
+    container_name: sgpmp-database-dev
+
+  mosquitto:
+    container_name: sgpmp-mosquitto-dev
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ../../BROKER-MQTT-SGPMP/docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  gateway:
+    # En DEV la BD proviene de HU-04 externamente.
+    # Se conserva únicamente la dependencia de Mosquitto.
+    depends_on: !override
+      mosquitto:
+        condition: service_healthy
+
+    build:
+      context: ../../BROKER-MQTT-SGPMP
+      dockerfile: Dockerfile
+    container_name: sgpmp-gateway-dev
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT}
+      DATABASE_URL: postgresql+asyncpg://${DB_IOT_USER}:${DB_IOT_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+      API_TOKEN: ${GATEWAY_API_TOKEN}
+    ports:
+      - "8002:8000"
+
+  backend:
+    # El backend DEV consume DBIntegrador externa (HU-04),
+    # por lo que no debe esperar al servicio database interno.
+    depends_on: !reset []
+
+    build:
+      context: ../../sgpmp-backend
+      dockerfile: Dockerfile
+    container_name: sgpmp-backend-dev
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT}
+      ENV: development
+
+      # JWT / Seguridad
+      SECRET_KEY: ${SECRET_KEY}
+      JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS}
+      RF71_INTERNAL_KEY: ${RF71_INTERNAL_KEY}
+
+      FRONTEND_URL: ${FRONTEND_URL}
+
+      # DATABASE_URL se ensambla a partir de las piezas del .env.
+      DATABASE_URL: postgresql://${DB_APP_USER}:${DB_APP_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+      FIREBASE_CREDENTIALS_PATH: ${FIREBASE_CREDENTIALS_PATH}
+
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+
+      MODELOS_STORAGE_PATH: ${MODELOS_STORAGE_PATH}
+
+    ports:
+      - "8000:8000"
+
+    # Recarga en caliente únicamente en DEV.
+    command:
+      [
+        "uvicorn",
+        "main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload"
+      ]
+
+  frontend:
+    build:
+      context: ../../SGPMP-FRONT-END-PWA
+      dockerfile: Dockerfile
+      target: dev
+    container_name: sgpmp-frontend-dev
+
+    # En DEV, Vite se ejecuta dentro del contenedor.
+    # Por ello se suministra el contrato VITE_* al proceso.
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      VITE_SW: ${VITE_SW}
+      VITE_AGROFUSION_LOGIN_URL: ${VITE_AGROFUSION_LOGIN_URL}
+
+      VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY}
+      VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN}
+      VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID}
+      VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET}
+      VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID}
+      VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
+      VITE_VAPID_KEY: ${VITE_VAPID_KEY}
+
+    ports:
+      - "5173:5173"
