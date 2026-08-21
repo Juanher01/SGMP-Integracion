@@ -10,6 +10,7 @@
 # Backups / dumps de base de datos
 database/dumps/*.dump
 database/dumps/*.sql
+database/*.dump
 
 # Logs
 *.log
