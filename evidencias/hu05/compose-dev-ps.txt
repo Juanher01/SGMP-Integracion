@@ -1,0 +1,5 @@
+HU-05 DEV service evidence
+Date: 2026-08-20
+Mosquitto: Up, healthy; ports 1883 and 9001
+Gateway: Up, healthy; port 8002 -> 8000
+Gateway was started with --no-deps to avoid claiming PostgreSQL integration without authorized credentials.

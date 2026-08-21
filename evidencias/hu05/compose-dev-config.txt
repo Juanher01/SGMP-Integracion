@@ -1,0 +1,12 @@
+HU-05 DEV Compose validation
+Date: 2026-08-20
+Command: docker compose -f compose/docker-compose.yml -f compose/compose.dev.yml --env-file env/.env.dev config
+Result: PASS (exit 0)
+Services resolved: database, mosquitto, gateway, backend, frontend
+Gateway build context: ../../BROKER-MQTT-SGPMP
+Gateway internal port: 8000
+Gateway host port: 8002
+Gateway MQTT host: mosquitto
+Database host: database
+Mosquitto host ports: 1883, 9001
+Note: DB_IOT_* and GATEWAY_API_TOKEN remain empty; Compose syntax/topology validation does not prove database authentication.
