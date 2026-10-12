@@ -28,3 +28,8 @@ Thumbs.db
 node_modules/
 __pycache__/
 *.pyc
+
+# Salidas de herramientas/md2docx.ps1
+salida/
+# Copias locales de variables reales
+docs/.envs/
