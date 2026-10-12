@@ -97,7 +97,7 @@ Se mantuvieron vacías en `.env.test` todas las variables que requieren insumos 
 
 ## 5. Procedimiento de reinicio de la base de datos para TEST
 
-Con base en la inspección operativa del script [`scripts/restaurar-bd.sh`](SGMP-Integracion/scripts/restaurar-bd.sh) y de la orquestación `compose/compose.test.yml`, el procedimiento reproducible para destruir y restaurar la base de datos del ambiente TEST a su estado inicial determinista es:
+Con base en la inspección operativa del script [`scripts/restaurar-bd.sh`](../../../scripts/restaurar-bd.sh) y de la orquestación `compose/compose.test.yml`, el procedimiento reproducible para destruir y restaurar la base de datos del ambiente TEST a su estado inicial determinista es:
 
 ### Paso 1: Destrucción de la infraestructura y volumen persistente de TEST
 ```bash

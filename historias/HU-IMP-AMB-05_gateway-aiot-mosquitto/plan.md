@@ -429,7 +429,7 @@ La integración está cableada estáticamente en DEV: el Gateway usa el reposito
 
 **Fecha:** 2026-08-20  
 **Rama:** `feat/aiot-gateway-mosquitto`  
-**Resultado:** [VALIDADO] Auditoría ejecutada y documentada en [AUDITORIA-CREDENCIALES-HU-05.md](AUDITORIA-CREDENCIALES-HU-05.md).
+**Resultado:** [VALIDADO] Auditoría ejecutada y documentada en [AUDITORIA-CREDENCIALES-HU-05.md](auditoria-credenciales.md).
 
 ### Credenciales encontradas
 
@@ -478,7 +478,7 @@ La integración está cableada estáticamente en DEV: el Gateway usa el reposito
 
 ### Estado de HU-05
 
-**[PARCIALMENTE AVANZADA]**. La capa Mosquitto/Gateway está integrada estáticamente y es adelantable en DEV. La validación funcional completa sigue requiriendo autorizaciones externas, restauración y contrato AIoT. El informe completo se encuentra en [AUDITORIA-CREDENCIALES-HU-05.md](AUDITORIA-CREDENCIALES-HU-05.md).
+**[PARCIALMENTE AVANZADA]**. La capa Mosquitto/Gateway está integrada estáticamente y es adelantable en DEV. La validación funcional completa sigue requiriendo autorizaciones externas, restauración y contrato AIoT. El informe completo se encuentra en [AUDITORIA-CREDENCIALES-HU-05.md](auditoria-credenciales.md).
 
 
 # HU-05 — Integración AIoT Gateway / Mosquitto
