@@ -82,6 +82,8 @@ Las variables se clasifican según:
 | `SMTP_USER` | Backend | Autenticación / Seguridad | Interna | Cuenta utilizada para autenticación SMTP. |
 | `SMTP_PASSWORD` | Backend | Autenticación / Seguridad | **Secreta** | Contraseña de la cuenta SMTP. |
 | `MODELOS_STORAGE_PATH` | Backend / Predicción | AIoT / Analítica | Interna | Ruta donde se almacenan versiones de modelos. Default actual: `/tmp/sgpmp_modelos`. |
+| `AUDITORIA_M02_EVENTOS_POR_SEGUNDO` | Backend (bitácora M02) | Comportamiento | No sensible | Umbral de eventos por segundo (ventana de 5 s) a partir del cual los eventos INFO de la bitácora de auditoría se encolan y se persisten por lotes. Default del código: `100` (BE `src/biological_assets/application/use_cases/_registrar_evento_bitacora.py:87`). |
+| `ALEMBIC_DATABASE_URL` | Backend (migraciones) | Conexión | **Secreta** | URL de conexión de Alembic con el rol dueño de los objetos. Opcional: si no está definida, Alembic usa `DATABASE_URL` (BE `alembic/env.py:40`). Contiene credenciales. |
 | `VITE_API_BASE_URL` | Frontend | Conexión | No sensible | URL base utilizada por el frontend para acceder al backend. |
 | `VITE_SW` | Frontend | Comportamiento | No sensible | Controla el comportamiento del Service Worker según el flujo actual del frontend. |
 | `VITE_AGROFUSION_LOGIN_URL` | Frontend | Conexión | No sensible | URL de redirección para inicio de sesión AgroFusion. |

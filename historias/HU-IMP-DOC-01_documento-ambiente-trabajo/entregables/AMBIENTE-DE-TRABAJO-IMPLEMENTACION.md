@@ -2,7 +2,7 @@
 title: "Documento de Ambiente de Trabajo — Área de Implementación"
 subtitle: "Sistema de Gestión Pecuaria Multiespecie de Precisión (SGPMP)"
 author: ["Sebastián Sandoval Chavarro", "Juan Hernando Perdomo Mosquera"]
-date: "Octubre de 2026"
+date: "Universidad Surcolombiana · Facultad de Ingeniería · Octubre de 2026"
 version: "1.5"
 lang: es-CO
 ---
@@ -48,7 +48,7 @@ Otras fuentes:
 | `decisiones/ADR-001-flujos-por-tipo-de-trabajo.md` | Los tres flujos del Camino B (Sección 5) | 2026-10-12 |
 | `registros/seguridad/registro-SEG.md` | Estado de las directrices SEG por rama (Sección 7) | Corte 2026-10-13 |
 | `registros/incidencias/registro.md` | Registro vivo de incidencias (Sección 11.4) | 2026-10-13 |
-| `historias/HU-IMP-AMB-09_mapa-puertos-protocolos/entregables/` | Mapa de puertos y protocolos v1.5 (Diagrama 3) | 2026-10-12 |
+| `historias/HU-IMP-AMB-09_mapa-puertos-protocolos/entregables/` | Mapa de puertos y protocolos v1.5 (Diagrama 1) | 2026-10-12 |
 | Despliegue (consola de Dokploy) | Dominios, rutas, puertos de host y valores no sensibles de las variables | Corte 2026-10-12 |
 
 **Convención de citas.** `BE main@8a7e6327 docker-compose.prod.yml:67-68` significa: repositorio sgpmp-backend, rama `main`, commit `8a7e6327`, archivo `docker-compose.prod.yml`, líneas 67 a 68. Cuando una afirmación es información recibida de otro equipo, se indica el equipo y la fecha en lugar del commit.
@@ -229,7 +229,7 @@ El `Dockerfile` compila con pnpm en `node:22-slim` y sirve con `nginx:1.27-alpin
 
 - SPA: `try_files $uri $uri/ /index.html` (l. 53-55).
 - `Cache-Control` por URI mediante `map` (l. 5-22, 30): `no-cache` para `/index.html`, `/sw.js`, `/registerSW.js` y `/firebase-messaging-sw.js`; `public, immutable` para `/assets/*` con hash.
-- Además, la `location` de extensiones estáticas aplica `expires 7d` (l. 57-59). Como `expires` también emite `Cache-Control`, los archivos de `/assets/*` reciben dos cabeceras `Cache-Control` (hallazgo conocido, REV-02 N-12). La misma `location` alcanza a los service workers `.js`. Pendiente de comprobar con `curl -sSI` en un entorno desplegado.
+- Además, la `location` de extensiones estáticas aplica `expires 7d` (l. 57-59). Como `expires` también emite `Cache-Control`, los archivos de `/assets/*` reciben dos cabeceras `Cache-Control` (hallazgo conocido, REV-02 N-12). La misma `location` alcanza a los service workers `.js`, de modo que `sw.js` también recibe dos `Cache-Control` (INC-FE-04, relacionada con HU-IMP-SEG-02). Pendiente de comprobar con `curl -sSI` en un entorno desplegado.
 
 El contenedor declara solo `expose: 80`, no publica `ports:` y no se une a ninguna red: las llamadas a la API las hace el navegador contra la URL pública HTTPS del backend. Las cabeceras de seguridad se describen en la Sección 3.8.
 
@@ -245,10 +245,6 @@ El contenedor declara solo `expose: 80`, no publica `ports:` y no se une a ningu
 | `release.yml` | Push a `main` o `dev` | Versionamiento semántico: `dev` publica release candidates y `main` la versión estable | dev, test y main |
 
 Fuente: bloque `on:` de cada archivo en `.github/workflows/` de BE dev@bd8b6d4f, test@81487428 y main@8a7e6327. Ningún workflow publica imágenes (INC-IMP-03).
-
-*Diagrama 1. Relación entre los Dockerfiles, las imágenes, el compose base, sus archivos por entorno y los tres entornos de ejecución.*
-
-**[PENDIENTE: Diagrama 1 sin imagen fuente.** La v1.4 lo atribuía a `SGPMP_IMPL_Proceso_Ejecucion.drawio`, página 4, que no existe en SGMP-Integracion@895d81c. Revisión manual del líder: incluir la imagen desde su fuente o retirar el diagrama.**]**
 
 ## 3.4 Catálogo de variables por tipo y sensibilidad
 
@@ -320,7 +316,7 @@ Las variables `MQTT_HOST`, `MQTT_PORT`, `MQTT_USERNAME` y `MQTT_PASSWORD` no per
 |---|---|---|---|
 | `VITE_API_BASE_URL` | `https://api.inmero.co/back-sigab-dev` | `https://api.inmero.co/back-sigab-test`; obligatoria (FE test `docker-compose.test.yml:10`) | URL HTTPS del backend de PROD, sin barra final (Despliegue) |
 | `VITE_RECAPTCHA_SITE_KEY` | Site key de DEV | Site key de TEST; obligatoria (FE test l. 18) | Misma site key que DEV por ahora (Despliegue, 2026-10-12) |
-| `VITE_FIREBASE_API_KEY` | Proyecto Firebase del equipo | Ídem DEV o proyecto propio de TEST [PENDIENTE: confirmar con Desarrollo] | Proyecto Firebase de PROD por definir (Desarrollo y Despliegue) |
+| `VITE_FIREBASE_API_KEY` | Proyecto Firebase del equipo | Valor propio de TEST (público por diseño, ver Grupo D) | Proyecto Firebase de PROD por definir (Desarrollo y Despliegue) |
 | `VITE_FIREBASE_AUTH_DOMAIN` | `<proyecto>.firebaseapp.com` | Ídem | Ídem |
 | `VITE_FIREBASE_PROJECT_ID` | ID del proyecto | Ídem | Ídem |
 | `VITE_FIREBASE_STORAGE_BUCKET` | `<proyecto>.firebasestorage.app` | Ídem | Ídem |
@@ -408,9 +404,9 @@ Dokploy, con Traefik como proxy inverso, aloja los ambientes DEV y TEST. Traefik
 | Mosquitto MQTT | 1883 (texto plano); 8883 (TLS) | Host 1884 | Host 1885 | Por asignar (Despliegue) |
 | Mosquitto WebSocket | 9001 (WS); 9002 (WSS) | Host 9001 | Host 9002 → 9001 | Por asignar (Despliegue) |
 
-![Diagrama 3. Mapa de despliegue, puertos y protocolos v1.5 (HU-IMP-AMB-09).](../../HU-IMP-AMB-09_mapa-puertos-protocolos/entregables/imp_diag_despliegue_puertos_protocolos_v1.5.png)
+![Diagrama 1. Mapa de despliegue, puertos y protocolos v1.5 (HU-IMP-AMB-09).](../../HU-IMP-AMB-09_mapa-puertos-protocolos/entregables/imp_diag_despliegue_puertos_protocolos_v1.5.png)
 
-*Diagrama 3. Mapa de despliegue, puertos y protocolos v1.5. Fuente: `historias/HU-IMP-AMB-09_mapa-puertos-protocolos/entregables/imp_diag_despliegue_puertos_protocolos_v1.5.png` (HU-IMP-AMB-09, corte 2026-10-12).* **Nota:** este diagrama está en corrección (REV-02 de HU-IMP-AMB-09) en dos puntos: la base de datos de PROD (el diagrama dice "PROD sin puerto publicado"; el código publica 5449) y la ACL y el TLS de `main` del broker (el diagrama dice "PROD no"; `main@cebd430` ya tiene dynamic-security y soporte TLS, sin activar). Mientras no se publique la corrección, mandan el texto de esta sección y la Sección 8.
+*Diagrama 1. Mapa de despliegue, puertos y protocolos v1.5. Fuente: `historias/HU-IMP-AMB-09_mapa-puertos-protocolos/entregables/imp_diag_despliegue_puertos_protocolos_v1.5.png` (HU-IMP-AMB-09, corte 2026-10-12).* **Nota:** este diagrama está en corrección (REV-02 de HU-IMP-AMB-09) en dos puntos: la base de datos de PROD (el diagrama dice "PROD sin puerto publicado"; el código publica 5449) y la ACL y el TLS de `main` del broker (el diagrama dice "PROD no"; `main@cebd430` ya tiene dynamic-security y soporte TLS, sin activar). Mientras no se publique la corrección, mandan el texto de esta sección y la Sección 8.
 
 ### Criterios de red y exposición
 
@@ -585,10 +581,6 @@ El rol de Implementación frente a AIoT es de coordinación: mantiene las variab
 
 **Pendientes con AIoT y Despliegue.** La ACL con dynamic-security y el soporte TLS están en `develop`, `test` y `main`. Falta activar TLS hacia afuera en TEST y PROD (`MQTT_PUERTO_PUBLICO=8883`, certificados montados; HU-IMP-SEG-03 e INC-BRK-01), confirmar qué compose usa TEST (INC-BRK-02), asignar los puertos de host de PROD (Despliegue) y cerrar la convención final de topics (AIoT).
 
-*Diagrama 2. Punto de integración entre Implementación y AIoT a través del gateway MQTT↔HTTPS y Mosquitto: el backend llama al gateway por HTTPS (vía Traefik) y solo el gateway habla MQTT con Mosquitto.*
-
-**[PENDIENTE: Diagrama 2 sin imagen fuente** en el repositorio ni en la v1.5 entregada. Revisión manual del líder: incluir la imagen o retirar la leyenda. El Diagrama 3 (mapa de AMB-09) ya muestra backend → Traefik → gateway (`POST /v1/commands`) y gateway → Mosquitto.**]**
-
 # 9. Seguimiento y retroalimentación
 
 El trabajo de Implementación no sigue sprints ni fechas fijas: cada cambio entra por su historia de usuario y su Pull Request, de forma asíncrona respecto de los demás equipos.
@@ -674,12 +666,14 @@ Las salvedades técnicas se gestionan en el registro vivo `registros/incidencias
 | INC-FE-01 | `VITE_AGROFUSION_LOGIN_URL` no llega a ningún build Docker | Por confirmar (Implementación: Dockerfile y compose) | detectado — pendiente de triage |
 | INC-FE-02 | El service worker podría servir la app en rutas del backend o del gateway que comparten host en TEST | Por confirmar (Desarrollo: `vite.config.ts`; Despliegue: hosts) | detectado — pendiente de triage |
 | INC-FE-03 | `main` del frontend no tiene compose de PROD; PROD usa `docker-compose.yml` sin guardas | Implementación | diagnosticado |
+| INC-FE-04 | `sw.js` recibe dos `Cache-Control` (`no-cache` del `map` y el de `expires 7d`) | Implementación | detectado |
 | INC-BE-01 | El código de la Sandbox existe solo en la rama `test` del backend | Desarrollo (informar a Pruebas) | detectado — confirmar con Desarrollo |
 | INC-BE-02 | El compose de TEST no reenvía `LOGOS_STORAGE_PATH` y `MODELOS_STORAGE_PATH` cae a `/tmp` sin volumen | Implementación | diagnosticado |
 | INC-BE-03 | `ROOT_PATH` difiere del prefijo público; afecta los enlaces de `/docs` | Implementación (confirmar con Desarrollo) | detectado — verificar |
 | INC-BE-04 | `.env.test.example` desalineada con el compose de TEST | Implementación | diagnosticado |
-| INC-BE-05 | `AUDITORIA_M02_EVENTOS_POR_SEGUNDO` y `ALEMBIC_DATABASE_URL` faltan en el catálogo vivo | Implementación | diagnosticado |
+| INC-BE-05 | `AUDITORIA_M02_EVENTOS_POR_SEGUNDO` y `ALEMBIC_DATABASE_URL` faltaban en el catálogo vivo; agregadas a `registros/variables/VARIABLES-ENTORNO.md` | Implementación | resuelto |
 | INC-BE-06 | `AGROFUSION_SSO_PUBLIC_KEY_PATH` de DEV apunta a una ruta local no montada | Desarrollo (valor: Despliegue) | detectado — por confirmar |
+| INC-BE-07 | El compose de PROD del backend no tiene guarda `:?` en `MQTT_BROKER_URL` ni en `MQTT_BROKER_TOKEN` | Implementación | detectado |
 | INC-BD-01 | Rol de conexión: `member_app` no existe; el gateway usa `dba` por host y puerto publicado | DBA y AIoT | diagnosticado |
 | INC-BD-02 | La BD de PROD publica 5449; depende de la restricción del firewall | Despliegue (firewall) e Implementación (compose) | diagnosticado |
 | INC-BD-03 | `alembic upgrade head` falla en una base vacía con un `POSTGRES_USER` distinto de `postgres` | Desarrollo y DBA | diagnosticado |
@@ -689,6 +683,7 @@ Las salvedades técnicas se gestionan en el registro vivo `registros/incidencias
 | INC-IMP-02 | Restauración de la BD validada en una rama divergente, sin integrar a `main` | Implementación | detectado — por confirmar |
 | INC-IMP-03 | Ningún repositorio publica imágenes; Dokploy construye en cada despliegue | Implementación y Desarrollo | diagnosticado |
 | INC-IMP-04 | Credenciales circularon fuera de Dokploy; DEV y TEST comparten contraseña de BD y clave de reCAPTCHA | Despliegue (rotación) e Implementación | diagnosticado — rotación pendiente |
+| INC-IMP-05 | `compose/` de SGMP-Integracion todavía pasa `API_TOKEN` al gateway, que ya no lo lee | Implementación | detectado |
 
 ### Correspondencia con los identificadores provisionales
 
@@ -775,3 +770,4 @@ ADR-001 reemplazó el pipeline E1→E7, que procesaba módulos (M01…M09) y cuy
 | 7 | Estado SEG al corte 2026-10-13, con SEG-CICD-01 y SEG-BROKER-01/03. | REV-02 N-03, N-04, N-19 |
 | 8 | ACL y soporte TLS en las tres ramas del broker; gateway → BD por host y puerto publicado; puertos de PROD por Despliegue; aclaración de `MQTT_TLS`. | REV-02 N-04, N-13, D-1, D-3, D-5 |
 | 11.4 | Salvedades migradas a `registros/incidencias/registro.md` con identificadores definitivos; correspondencia SAL-IMP → INC; SAL-IMP-03 resuelta y SAL-IMP-09 reabierta. | REV-02 N-08, N-15, N-20; CA-5 |
+| Portada, 3.3, 3.4, 3.8, 8, 11.4 | Institución en la portada; se retiran las leyendas de los diagramas sin imagen fuente y el mapa de AMB-09 pasa a ser el Diagrama 1; `VITE_FIREBASE_API_KEY` de TEST como valor propio de TEST; INC-FE-04, INC-BE-07 e INC-IMP-05 nuevas; INC-BE-05 resuelta en el catálogo vivo. | Indicaciones del líder sobre la corrección de REV-02 |
