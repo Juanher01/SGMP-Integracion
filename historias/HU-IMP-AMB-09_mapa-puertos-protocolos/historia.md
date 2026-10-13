@@ -23,7 +23,7 @@ Además, el estado de seguridad del broker (ACL y TLS) está desactualizado, y n
 **Criterios de aceptación.**
 1. CA-1 Cada flecha de la capa Protocolos corresponde a una comunicación real y se puede rastrear a un archivo de una rama (compose, `mosquitto.conf`, adaptador del backend) o a una fuente externa nombrada.
 2. CA-2 El flujo del broker queda así: Backend → Traefik → Gateway (HTTPS, `/broker-sigab-<env>` → 8000); Gateway ↔ Mosquitto (MQTT 1883 interno); Gateway → PostgreSQL (5432 interno); Edge → Mosquitto por el puerto de host del ambiente (y 8883 al activar TLS).
-3. CA-3 El estado de seguridad del broker se muestra por rama: ACL dynamic-security y soporte TLS en DEV y TEST, TLS sin activar, PROD pendiente de promoción.
+3. CA-3 El estado de seguridad del broker se muestra por rama: ACL dynamic-security y soporte TLS en develop, test y main; TLS desactivado por defecto en el código de las tres ramas, y su activación en Dokploy la confirma Despliegue.
 4. CA-4 Una leyenda "Fuente" indica quién define cada dato (Despliegue: dominios y puertos de host; AIoT: MQTT y TLS; compose: `expose`/`ports`) y la fecha de corte.
 5. CA-5 Los elementos no desplegados (segunda instancia del backend, réplica de BD, servidor ML separado, SendGrid, balanceo) se distinguen como "Objetivo (no desplegado)".
 6. CA-6 Los puertos de PROD coinciden con los del documento de ambiente de trabajo v1.5 y citan su fuente.
@@ -36,7 +36,7 @@ Además, el estado de seguridad del broker (ACL y TLS) está desactualizado, y n
 |---|---|---|---|
 | CA-1 | Tabla flecha → fuente en `revisiones/REV-02.md`; contraste con `git show origin/<rama>:<archivo>` | 100 % de las flechas con fuente | Tabla |
 | CA-2 | Inspección del diagrama frente a `edge_sincronizacion_mqtt_adapter.py` (backend), `app/config.py` y `docker-compose.yml` (broker) | Las 4 conexiones dibujadas como en el CA | Captura de la capa Protocolos |
-| CA-3 | `git merge-base --is-ancestor origin/feature/seg-broker-0{1,2}-* origin/<rama>` en el broker | Coincide con lo dibujado | Salida del comando |
+| CA-3 | Contraste con `registros/entornos/corte-2026-10-13.md` §2.4–§2.6 (`git merge-base --is-ancestor` de `seg-broker-01/02` y `git grep` de dynamic-security y `MQTT_PUERTO_PUBLICO` en `develop`, `test` y `main`) | Caja de Mosquitto y detalle CN-002/CN-003: ACL y soporte TLS en las tres ramas; TLS desactivado por defecto en el código; activación en Dokploy "por confirmar (Despliegue)" mientras no haya respuesta | Referencia al corte en la leyenda "Fuente" y, si existe, la confirmación de Despliegue en `evidencias/` |
 | CA-4 | Inspección | Leyenda presente con fecha | Captura |
 | CA-5 | Inspección | Elementos objetivo con estilo diferenciado | Captura |
 | CA-6 | Comparación de la capa PROD con la §3.8 del documento v1.5 | Sin diferencias | Nota en REV-02 |
@@ -48,7 +48,7 @@ Además, el estado de seguridad del broker (ACL y TLS) está desactualizado, y n
 - [ ] PR en `SGMP-Integracion` aprobado por el líder.
 - [ ] REV-02 con dictamen APROBAR.
 
-**Dependencias y aprobaciones.** Confirmar con Despliegue los puertos de PROD (MQTT y WS) y que el 5449 siga reservado. Confirmar con AIoT la fecha de activación de TLS (HU-IMP-SEG-03). Aprueba: Líder de Implementación.
+**Dependencias y aprobaciones.** Confirmar con Despliegue los puertos de PROD (MQTT y WS) y 5449 publicado y restringido por firewall: confirmar las reglas con Despliegue. Confirmar con AIoT la fecha de activación de TLS (HU-IMP-SEG-03). Aprueba: Líder de Implementación.
 
 **Riesgos.** El diagrama se desactualiza con cada promoción entre ramas: se mitiga con la fecha de corte (CA-4) y con la tabla de fuentes (CA-1), que permite reverificarlo rápido.
 
