@@ -677,8 +677,10 @@ Las salvedades técnicas se gestionan en el registro vivo `registros/incidencias
 | INC-BD-01 | Rol de conexión: `member_app` no existe; el gateway usa `dba` por host y puerto publicado | DBA y AIoT | diagnosticado |
 | INC-BD-02 | La BD de PROD publica 5449; depende de la restricción del firewall | Despliegue (firewall) e Implementación (compose) | diagnosticado |
 | INC-BD-03 | `alembic upgrade head` falla en una base vacía con un `POSTGRES_USER` distinto de `postgres` | Desarrollo y DBA | diagnosticado |
+| INC-BD-04 | PostgreSQL sin TLS: ningún `DATABASE_URL` fija `sslmode` y la imagen de la base no configura certificados | DBA + Implementación (`sslmode` del compose y certificados de la imagen) | diagnosticado |
 | INC-BRK-01 | MQTT en texto plano publicado al host mientras Dokploy no fije `MQTT_PUERTO_PUBLICO=8883` | Despliegue + AIoT | detectado |
 | INC-BRK-02 | Sin confirmar qué compose y qué rama del broker alimentan TEST | AIoT y Despliegue | detectado — confirmar con AIoT |
+| INC-BRK-03 | La ACL dynamic-security de Mosquitto no estaba en `main` del broker; resuelta en código (`main@cebd430`) | AIoT | resuelto |
 | INC-IMP-01 | El compose local de TEST montaba Mosquitto desde `BROKER-MQTT-SGPMP-develop` | Implementación | resuelto |
 | INC-IMP-02 | Restauración de la BD validada en una rama divergente, sin integrar a `main` | Implementación | detectado — por confirmar |
 | INC-IMP-03 | Ningún repositorio publica imágenes; Dokploy construye en cada despliegue | Implementación y Desarrollo | diagnosticado |
@@ -708,6 +710,9 @@ Las salvedades técnicas se gestionan en el registro vivo `registros/incidencias
 | SAL-IMP-17 | INC-BE-06 | — |
 | — | INC-FE-03 | Nueva (REV-02 N-02) |
 | — | INC-FE-02 | Ya existía en el registro; no proviene de una salvedad |
+| CN-001 | INC-BD-04 | Hallazgo del mapa de puertos (HU-IMP-AMB-09) |
+| CN-002 | INC-BRK-03 | Hallazgo del mapa de puertos; resuelto en código (`main@cebd430`) |
+| CN-003 | INC-BRK-01 | Hallazgo del mapa de puertos; misma incidencia, sin fila nueva |
 
 # 12. Trazabilidad con la metodología anterior (v1.4)
 
