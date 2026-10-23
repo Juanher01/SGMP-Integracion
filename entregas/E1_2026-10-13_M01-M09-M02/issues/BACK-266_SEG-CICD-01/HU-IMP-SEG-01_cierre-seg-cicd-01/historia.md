@@ -1,6 +1,6 @@
 # HU-IMP-SEG-01 — Cerrar SEG-CICD-01: evidencia por rama, justificación de `release.yml` y cierre con Análisis
 
-> Estado: borrador para Taiga · Redactado: 2026-10-12 · Actualizado: 2026-10-13 contra el corte [`registros/entornos/corte-2026-10-13.md`](../../registros/entornos/corte-2026-10-13.md) · Fuente: [sgpmp-backend#266](https://github.com/Arekkazu/sgpmp-backend/issues/266)
+> Estado: borrador para Taiga · Redactado: 2026-10-12 · Actualizado: 2026-10-13 contra el corte [`registros/entornos/corte-2026-10-13.md`](../../../../../registros/entornos/corte-2026-10-13.md) · Fuente: [sgpmp-backend#266](https://github.com/Arekkazu/sgpmp-backend/issues/266)
 
 ## Para copiar en Taiga — Descripción de la HU
 
@@ -72,7 +72,7 @@ Dato adicional: los otros workflows del corte (`migrate-prod.yml`, `sast.yml` y,
 2. Construir la imagen desde `8a7e6327` con `git archive` y ejecutar las pruebas de `id` y de compilador (CA-2).
 3. Ejecutar el `grep` de CA-3 y el de CA-4 sobre los tres hashes.
 4. Ejecutar los dos `gh run list` de CA-6 y copiar el enlace de una ejecución exitosa de cada workflow.
-5. Guardar todo en `historias/HU-IMP-SEG-01_cierre-seg-cicd-01/evidencias/ca1-ca4-ca6.md` con fecha, hora y hash de cada rama (formato de la skill `verificacion` §9).
+5. Guardar todo en `entregas/E1_2026-10-13_M01-M09-M02/issues/BACK-266_SEG-CICD-01/HU-IMP-SEG-01_cierre-seg-cicd-01/evidencias/ca1-ca4-ca6.md` con fecha, hora y hash de cada rama (formato de la skill `verificacion` §9).
 **Entregable.** Archivo de evidencias.
 **Verificación.** Salidas iguales a las esperadas en la tabla (CA-1, CA-2, CA-3, CA-4, CA-6).
 **Estimación.** 2,5 h
@@ -100,7 +100,7 @@ Dato adicional: los otros workflows del corte (`migrate-prod.yml`, `sast.yml` y,
 1. Tras el merge del PR de ST-02, avisar al Líder de Desarrollo y dar seguimiento.
 2. Cuando Despliegue fusione el siguiente release `dev → main`, ejecutar `git -C sgpmp-backend fetch --prune origin` y el comando de CA-5 sobre `origin/main`.
 3. Anotar el hash de `main` en que aparece el comentario en `evidencias/ca5.md`.
-**Entregable.** `historias/HU-IMP-SEG-01_cierre-seg-cicd-01/evidencias/ca5.md`.
+**Entregable.** `entregas/E1_2026-10-13_M01-M09-M02/issues/BACK-266_SEG-CICD-01/HU-IMP-SEG-01_cierre-seg-cicd-01/evidencias/ca5.md`.
 **Verificación.** CA-5 sobre `origin/dev` y `origin/main`.
 **Estimación.** 1 h (repartida según la fecha del release)
 

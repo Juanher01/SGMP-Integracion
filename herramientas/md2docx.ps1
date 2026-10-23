@@ -1,7 +1,7 @@
 # Convierte un Markdown del repositorio a Word usando los estilos de plantillas/referencia.docx.
 # Uso:
-#   powershell -ExecutionPolicy Bypass -File herramientas/md2docx.ps1 entregables/ambiente.md
-#   powershell -ExecutionPolicy Bypass -File herramientas/md2docx.ps1 entregables/ambiente.md -SinIndice
+#   powershell -ExecutionPolicy Bypass -File herramientas/md2docx.ps1 entregas/<E>/documentos/<documento>.md
+#   powershell -ExecutionPolicy Bypass -File herramientas/md2docx.ps1 entregas/<E>/documentos/<documento>.md -SinIndice
 # Requiere Pandoc (https://pandoc.org/installing.html o: winget install --id JohnMacFarlane.Pandoc)
 
 param(

@@ -1,6 +1,6 @@
 # HU-IMP-SEG-02 — Cerrar SEG-FE-02: evidencia de las cabeceras de seguridad del frontend, validación de la CSP y cierre con Análisis
 
-> Estado: borrador para Taiga · Redactado: 2026-10-12 · Actualizado: 2026-10-13 contra el corte [`registros/entornos/corte-2026-10-13.md`](../../registros/entornos/corte-2026-10-13.md) · Fuente: [SGPMP-FRONT-END-PWA#113](https://github.com/Arekkazu/SGPMP-FRONT-END-PWA/issues/113)
+> Estado: borrador para Taiga · Redactado: 2026-10-12 · Actualizado: 2026-10-13 contra el corte [`registros/entornos/corte-2026-10-13.md`](../../../../../registros/entornos/corte-2026-10-13.md) · Fuente: [SGPMP-FRONT-END-PWA#113](https://github.com/Arekkazu/SGPMP-FRONT-END-PWA/issues/113)
 
 ## Para copiar en Taiga — Descripción de la HU
 
@@ -66,7 +66,7 @@ Lo que falta no es código: evidencia en los entornos desplegados (DEV, TEST), l
 **Pasos.**
 1. Obtener el nombre de un asset real de cada entorno.
 2. Ejecutar los comandos de CA-1 y CA-2.
-3. Guardar las salidas en `historias/HU-IMP-SEG-02_cabeceras-nginx-prod/evidencias/ca1-ca2.md` con fecha, hora y el hash de rama del corte.
+3. Guardar las salidas en `entregas/E1_2026-10-13_M01-M09-M02/issues/FRONT-113_SEG-FE-02/HU-IMP-SEG-02_cabeceras-nginx-prod/evidencias/ca1-ca2.md` con fecha, hora y el hash de rama del corte.
 **Entregable.** Archivo de evidencias.
 **Verificación.** Las 6 cabeceras en las 4 rutas de ambos entornos y HSTS una sola vez.
 **Estimación.** 1,5 h
@@ -78,7 +78,7 @@ Lo que falta no es código: evidencia en los entornos desplegados (DEV, TEST), l
 2. Recorrer: login, panel, una vista con logo, registro con reCAPTCHA, activar notificaciones push.
 3. Copiar cada violación de CSP (directiva y origen bloqueado) y tomar capturas de los flujos.
 4. Clasificar cada violación como "esperada" (ej. extensiones del navegador) o "hay que permitir" (con el origen exacto).
-**Entregable.** `historias/HU-IMP-SEG-02_cabeceras-nginx-prod/evidencias/ca3-csp.md` con capturas y la tabla de violaciones.
+**Entregable.** `entregas/E1_2026-10-13_M01-M09-M02/issues/FRONT-113_SEG-FE-02/HU-IMP-SEG-02_cabeceras-nginx-prod/evidencias/ca3-csp.md` con capturas y la tabla de violaciones.
 **Verificación.** CA-3.
 **Estimación.** 2 h
 
@@ -94,7 +94,7 @@ Lo que falta no es código: evidencia en los entornos desplegados (DEV, TEST), l
 1. Construir la imagen desde `2132c62` con `git archive` y el build arg de CA-4.
 2. Levantarla, ejecutar `nginx -t` y los `curl` de las cuatro rutas.
 3. Confirmar que la CSP lleva `https://api.inmero.co` en `connect-src` e `img-src`.
-4. Guardar las salidas en `historias/HU-IMP-SEG-02_cabeceras-nginx-prod/evidencias/ca4.md`.
+4. Guardar las salidas en `entregas/E1_2026-10-13_M01-M09-M02/issues/FRONT-113_SEG-FE-02/HU-IMP-SEG-02_cabeceras-nginx-prod/evidencias/ca4.md`.
 **Entregable.** Archivo de evidencias.
 **Verificación.** CA-4.
 **Estimación.** 1,5 h
