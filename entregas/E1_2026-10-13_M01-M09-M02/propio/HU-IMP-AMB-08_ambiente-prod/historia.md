@@ -16,8 +16,8 @@
 
 | # | Subtarea | Estado | Entregable en el repositorio |
 |---|---|---|---|
-| #1732 | ST-01 confirmar con Despliegue artefactos y equivalencia TEST/STAGING | Closed | [`registros/entornos/CONTRATO-PROD.md`](../../registros/entornos/CONTRATO-PROD.md) |
-| #1733 | ST-02 documento de frontera Implementación → Despliegue | Closed | [`registros/entornos/CONTRATO-PROD.md`](../../registros/entornos/CONTRATO-PROD.md) |
+| #1732 | ST-01 confirmar con Despliegue artefactos y equivalencia TEST/STAGING | Closed | [`registros/entornos/CONTRATO-PROD.md`](../../../../registros/entornos/CONTRATO-PROD.md) |
+| #1733 | ST-02 documento de frontera Implementación → Despliegue | Closed | [`registros/entornos/CONTRATO-PROD.md`](../../../../registros/entornos/CONTRATO-PROD.md) |
 | #1734 | ST-03 `compose.prod.yml` + `.env.prod.example` (cuatro capas, GHCR) | Closed | [`entregables/ST-03-configuracion-env-prod.md`](entregables/ST-03-configuracion-env-prod.md) |
 | #1735 | ST-04 acordar orquestación de gateway/BD en PROD | Closed | [`entregables/ST-04-orquestacion-gateway-bd-prod.md`](entregables/ST-04-orquestacion-gateway-bd-prod.md) |
 

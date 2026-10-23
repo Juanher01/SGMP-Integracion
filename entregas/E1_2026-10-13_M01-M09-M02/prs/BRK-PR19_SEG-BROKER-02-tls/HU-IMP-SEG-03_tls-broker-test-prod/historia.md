@@ -1,6 +1,6 @@
 # HU-IMP-SEG-03 — Activar TLS del broker MQTT en TEST y preparar PROD (SEG-BROKER-02 / TC-M09-253)
 
-> Estado: borrador para Taiga · Redactado: 2026-10-12 · Actualizado: 2026-10-13 contra el corte [`registros/entornos/corte-2026-10-13.md`](../../registros/entornos/corte-2026-10-13.md) · Fuente: [BROKER-MQTT-SGPMP PR #19](https://github.com/SerBy48/BROKER-MQTT-SGPMP/pull/19)
+> Estado: borrador para Taiga · Redactado: 2026-10-12 · Actualizado: 2026-10-13 contra el corte [`registros/entornos/corte-2026-10-13.md`](../../../../../registros/entornos/corte-2026-10-13.md) · Fuente: [BROKER-MQTT-SGPMP PR #19](https://github.com/SerBy48/BROKER-MQTT-SGPMP/pull/19)
 
 ## Para copiar en Taiga — Descripción de la HU
 
@@ -43,7 +43,7 @@ Que TLS no esté activo en ningún entorno depende de los valores cargados en Do
 |---|---|---|---|
 | CA-1 | Revisión de `registros/variables/VARIABLES-ENTORNO.md` y `registros/variables/fichas/HU-IMP-SEG-03.md` contra `git -C BROKER-MQTT-SGPMP show <hash>:.env.example` | Las 3 variables con su valor por entorno y la nota sobre `MQTT_TLS`, sin secretos | Commit |
 | CA-2 | Confirmación escrita de Despliegue; si aplica, `gh pr view <n> -R SerBy48/BROKER-MQTT-SGPMP --json state,baseRefName` y `git -C BROKER-MQTT-SGPMP show origin/test:docker-compose.test.yml \| grep -nE 'certs\|MQTT_PUERTO_PUBLICO'` | Archivo identificado; si es `docker-compose.test.yml`, PR `MERGED` y el archivo monta `./docker/certs` y usa `MQTT_PUERTO_PUBLICO` (o ya no existe) | Captura o enlace a la confirmación; enlace al PR |
-| CA-3 | Revisión de `historias/HU-IMP-SEG-03_tls-broker-test-prod/evidencias/plan-activacion.md` y de la confirmación de cada equipo | Plan con responsables, fecha y reversión | Enlaces o capturas |
+| CA-3 | Revisión de `entregas/E1_2026-10-13_M01-M09-M02/prs/BRK-PR19_SEG-BROKER-02-tls/HU-IMP-SEG-03_tls-broker-test-prod/evidencias/plan-activacion.md` y de la confirmación de cada equipo | Plan con responsables, fecha y reversión | Enlaces o capturas |
 | CA-4 | `openssl s_client -connect <host-mqtt-test>:<puerto-host-test> -servername <host-mqtt-test> </dev/null 2>/dev/null \| openssl x509 -noout -subject -issuer -dates` | Certificado con el host correcto y fechas vigentes | Salida |
 | CA-5 | `mosquitto_sub -h <host-mqtt-test> -p <puerto-host-test> -u <usuario-de-prueba> -P "$MQTT_PASS" -t 'sgpmp/#' -C 1 -W 5` (texto plano; la contraseña sale de una variable de la sesión y nunca se escribe en la evidencia) | Error de conexión o de protocolo, sin mensajes | Salida sin credenciales |
 | CA-6 | `curl -sS https://api.inmero.co/broker-sigab-test/v1/healthz` y un comando de prueba desde TEST coordinado con Pruebas | `{"status":"ok"}` y ACK recibido | Salidas o capturas |
@@ -91,7 +91,7 @@ Que TLS no esté activo en ningún entorno depende de los valores cargados en Do
 **Pasos.**
 1. Inventariar con AIoT y Pruebas los clientes que se conectan al MQTT de TEST y si ya soportan TLS.
 2. Preguntar a Despliegue cómo montará los certificados en Dokploy y quién los renueva.
-3. Redactar `historias/HU-IMP-SEG-03_tls-broker-test-prod/evidencias/plan-activacion.md`: precondiciones (incluido el resultado de ST-02), pasos, fecha y hora, verificación y reversión.
+3. Redactar `entregas/E1_2026-10-13_M01-M09-M02/prs/BRK-PR19_SEG-BROKER-02-tls/HU-IMP-SEG-03_tls-broker-test-prod/evidencias/plan-activacion.md`: precondiciones (incluido el resultado de ST-02), pasos, fecha y hora, verificación y reversión.
 4. Obtener la confirmación de cada equipo.
 **Entregable.** Plan acordado.
 **Verificación.** CA-3.
@@ -101,7 +101,7 @@ Que TLS no esté activo en ningún entorno depende de los valores cargados en Do
 **Objetivo.** Cumplir CA-4, CA-5 y CA-6.
 **Pasos.**
 1. Reverificar el corte (CA-9). Cuando Despliegue active TLS, ejecutar las pruebas de CA-4, CA-5 y CA-6.
-2. Guardar las salidas sin credenciales en `historias/HU-IMP-SEG-03_tls-broker-test-prod/evidencias/ca4-ca6.md`.
+2. Guardar las salidas sin credenciales en `entregas/E1_2026-10-13_M01-M09-M02/prs/BRK-PR19_SEG-BROKER-02-tls/HU-IMP-SEG-03_tls-broker-test-prod/evidencias/ca4-ca6.md`.
 3. Si algo falla, aplicar la reversión del plan y abrir un triage.
 **Entregable.** Evidencias.
 **Verificación.** CA-4, CA-5 y CA-6.

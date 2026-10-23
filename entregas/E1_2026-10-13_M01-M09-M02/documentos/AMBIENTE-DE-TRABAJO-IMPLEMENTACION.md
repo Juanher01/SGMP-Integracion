@@ -404,9 +404,9 @@ Dokploy, con Traefik como proxy inverso, aloja los ambientes DEV y TEST. Traefik
 | Mosquitto MQTT | 1883 (texto plano); 8883 (TLS) | Host 1884 | Host 1885 | Por asignar (Despliegue) |
 | Mosquitto WebSocket | 9001 (WS); 9002 (WSS) | Host 9001 | Host 9002 → 9001 | Por asignar (Despliegue) |
 
-![Diagrama 1. Mapa de despliegue, puertos y protocolos v1.5 (HU-IMP-AMB-09).](../../HU-IMP-AMB-09_mapa-puertos-protocolos/entregables/imp_diag_despliegue_puertos_protocolos_v1.5.png)
+![Diagrama 1. Mapa de despliegue, puertos y protocolos v1.5 (HU-IMP-AMB-09).](img/imp_diag_despliegue_puertos_protocolos_v1.5.png)
 
-*Diagrama 1. Mapa de despliegue, puertos y protocolos v1.5. Fuente: `historias/HU-IMP-AMB-09_mapa-puertos-protocolos/entregables/imp_diag_despliegue_puertos_protocolos_v1.5.png` (HU-IMP-AMB-09, corte 2026-10-12).* **Nota:** este diagrama está en corrección (REV-02 de HU-IMP-AMB-09) en dos puntos: la base de datos de PROD (el diagrama dice "PROD sin puerto publicado"; el código publica 5449) y la ACL y el TLS de `main` del broker (el diagrama dice "PROD no"; `main@cebd430` ya tiene dynamic-security y soporte TLS, sin activar). Mientras no se publique la corrección, mandan el texto de esta sección y la Sección 8.
+*Diagrama 1. Mapa de despliegue, puertos y protocolos v1.5. Fuente: `entregas/E1_2026-10-13_M01-M09-M02/documentos/img/imp_diag_despliegue_puertos_protocolos_v1.5.png` (HU-IMP-AMB-09, corte 2026-10-12).* **Nota:** este diagrama está en corrección (REV-02 de HU-IMP-AMB-09) en dos puntos: la base de datos de PROD (el diagrama dice "PROD sin puerto publicado"; el código publica 5449) y la ACL y el TLS de `main` del broker (el diagrama dice "PROD no"; `main@cebd430` ya tiene dynamic-security y soporte TLS, sin activar). Mientras no se publique la corrección, mandan el texto de esta sección y la Sección 8.
 
 ### Criterios de red y exposición
 

@@ -13,7 +13,7 @@
 ### 1.1 Estado actual en el repositorio
 En el repositorio de infraestructura `SGMP-Integracion` **no existen archivos ni scripts de siembra de datos de negocio (`seeds.sql` o fixtures)**.
 
-La fuente de verdad para la inicialización del ambiente TEST se obtiene directamente del contenedor e insumos del DBA (`DBIntegrador`), mediante la ejecución automatizada del script [`scripts/restaurar-bd.sh`](../../../scripts/restaurar-bd.sh) sobre el archivo `backup7_1_0.dump`.
+La fuente de verdad para la inicialización del ambiente TEST se obtiene directamente del contenedor e insumos del DBA (`DBIntegrador`), mediante la ejecución automatizada del script [`scripts/restaurar-bd.sh`](../../../../../scripts/restaurar-bd.sh) sobre el archivo `backup7_1_0.dump`.
 
 ### 1.2 Estructura de tablas provista por Implementación
 Al ejecutar la restauración oficial, el ambiente TEST queda aprovisionado automáticamente con la estructura limpia de 187 tablas organizadas en los siguientes esquemas:
@@ -33,7 +33,7 @@ Al ejecutar la restauración oficial, el ambiente TEST queda aprovisionado autom
 | **Total** | **Estructura integral SGPMP** | **187** | **0** |
 
 ### 1.3 Delimitación de responsabilidad para la siembra de datos
-En alineación con los acuerdos formalizados en [`docs/REQUISITOS-PRUEBAS-TEST.md`](../../../registros/entornos/REQUISITOS-PRUEBAS-TEST.md) (ST-01) y [`docs/CONTRATO-TEST.md`](../../../registros/entornos/CONTRATO-TEST.md) (ST-02):
+En alineación con los acuerdos formalizados en [`docs/REQUISITOS-PRUEBAS-TEST.md`](../../../../../registros/entornos/REQUISITOS-PRUEBAS-TEST.md) (ST-01) y [`docs/CONTRATO-TEST.md`](../../../../../registros/entornos/CONTRATO-TEST.md) (ST-02):
 
 *   **Implementación:** Garantiza la disponibilidad del contenedor de base de datos (`sgpmp-database-test`), la red compartida `sgpmp-network`, las 187 tablas estructurales limpias y el mecanismo de reinicio determinista.
 *   **Pruebas (Cypress / Pytest / Newman):** Es responsable de la siembra (*seeding*) de sus propios datos de prueba y fixtures necesarios durante el ciclo de ejecución de las pruebas automatizadas (E2E, API REST y flujos IoT).
