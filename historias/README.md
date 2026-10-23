@@ -27,7 +27,7 @@ Formato de `historia.md`: skill `hu-taiga` (en la configuración de Claude Code 
 | HU-IMP-AMB-07 | Montaje del ambiente TEST | — | — | Juan Sebastián Gutiérrez | [AMB-07](HU-IMP-AMB-07_ambiente-test/) |
 | HU-IMP-AMB-08 | Definición y entrega del ambiente PROD | #1702 | Cerrada | Juan Sebastián Gutiérrez | [AMB-08](HU-IMP-AMB-08_ambiente-prod/) |
 | HU-IMP-AMB-09 | Mapa de puertos y protocolos por ambiente | por crear | Revisión REV-01: solicitar cambios | Juan Hernando Perdomo | [AMB-09](HU-IMP-AMB-09_mapa-puertos-protocolos/) |
-| HU-IMP-DOC-01 | Documento de ambiente de trabajo v1.4 → v1.5 | por crear | Revisión REV-01: solicitar cambios | Juan Hernando Perdomo | [DOC-01](HU-IMP-DOC-01_documento-ambiente-trabajo/) |
+| HU-IMP-DOC-01 | Documento de ambiente de trabajo v1.4 → v1.5 | por crear | v1.5 en revisión (REV-03 pendiente) | Juan Hernando Perdomo | [DOC-01](HU-IMP-DOC-01_documento-ambiente-trabajo/) |
 | HU-IMP-SEG-01 | Cerrar SEG-CICD-01 (evidencia por rama, `release.yml` y cierre con Análisis) | por crear | Borrador actualizado al corte 2026-10-13 | Juan Hernando Perdomo | [SEG-01](HU-IMP-SEG-01_cierre-seg-cicd-01/) |
 | HU-IMP-SEG-02 | Cerrar SEG-FE-02 (evidencia de cabeceras, CSP y cierre; código ya en `main`) | por crear | Borrador actualizado al corte 2026-10-13 | Juan Hernando Perdomo | [SEG-02](HU-IMP-SEG-02_cabeceras-nginx-prod/) |
 | HU-IMP-SEG-03 | Activar TLS del broker en TEST y preparar PROD | por crear | Borrador actualizado al corte 2026-10-13 | Juan Hernando Perdomo | [SEG-03](HU-IMP-SEG-03_tls-broker-test-prod/) |

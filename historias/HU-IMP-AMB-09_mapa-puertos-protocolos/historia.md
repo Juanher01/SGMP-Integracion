@@ -118,6 +118,7 @@ Además, el estado de seguridad del broker (ACL y TLS) está desactualizado, y n
 - **Subtareas cerradas:** ST-01 a ST-03 documentan lo ya hecho; créalas con estado *Closed* para que el tablero refleje el esfuerzo real.
 - **Plazo sugerido:** 2 a 3 días hábiles (9 h de trabajo pendiente).
 - **Pregunta abierta:** ¿confirmas que Juan Hernando es el autor de la v1.4? El archivo no lo registra.
+- **CA-7 (registro de CN), 2026-10-13:** CN-003 (TLS del broker sin activar) ya estaba registrada como INC-BRK-01, así que no se creó una fila nueva para ella. Por eso `registros/incidencias/registro.md` tiene 2 filas nuevas y no 3: CN-001 → INC-BD-04 y CN-002 → INC-BRK-03 (resuelta en código). La correspondencia CN → INC queda en las notas del registro y en la §11.4 del documento de ambiente de trabajo.
 
 ---
 Fuentes (2026-10-12): `Diag_DESP_Ptos_Ptcls_v1.4.drawio`; ramas citadas en REV-01.
