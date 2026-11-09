@@ -1,0 +1,9 @@
+# Verificación 6.1 — validez de los compose (2026-11-09 13:03 -0500)
+# rama: chore/agrofusion-sso-clave-publica · base origin/dev 3251d78d
+Docker Compose version v5.3.1
+$ docker compose -f docker-compose.yml config --no-interpolate --quiet && echo DEV-OK
+DEV-OK
+codigo=0
+$ docker compose -f docker-compose.prod.yml config --no-interpolate --quiet && echo PROD-OK
+PROD-OK
+codigo=0
