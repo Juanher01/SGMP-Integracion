@@ -57,5 +57,6 @@ Formato de `historia.md`: skill `hu-taiga` (en la configuración de Claude Code 
 | HU-IMP-SEG-01 | Cerrar SEG-CICD-01 (evidencia por rama, `release.yml` y cierre con Análisis) | E1 | por crear | Borrador actualizado al corte 2026-10-13 | Juan Hernando Perdomo | [SEG-01](E1_2026-10-13_M01-M09-M02/issues/BACK-266_SEG-CICD-01/HU-IMP-SEG-01_cierre-seg-cicd-01/) |
 | HU-IMP-SEG-02 | Cerrar SEG-FE-02 (evidencia de cabeceras, CSP y cierre; código ya en `main`) | E1 | por crear | Borrador actualizado al corte 2026-10-13 | Juan Hernando Perdomo | [SEG-02](E1_2026-10-13_M01-M09-M02/issues/FRONT-113_SEG-FE-02/HU-IMP-SEG-02_cabeceras-nginx-prod/) |
 | HU-IMP-SEG-03 | Activar TLS del broker en TEST y preparar PROD | E1 | por crear | Borrador actualizado al corte 2026-10-13 | Juan Hernando Perdomo | [SEG-03](E1_2026-10-13_M01-M09-M02/prs/BRK-PR19_SEG-BROKER-02-tls/HU-IMP-SEG-03_tls-broker-test-prod/) |
+| HU-IMP-CFG-03 | El backend monta la clave pública del SSO de AgroFusion y la imagen no incluye claves | E3 | por crear | ST-01 con commit `0dbe294` y PR #1051 abierto hacia `dev` (corte 2026-11-09); falta el PR a `test` | Juan Hernando Perdomo | [CFG-03](E3_2026-11-17_M05-M06/propio/HU-IMP-CFG-03_agrofusion-sso/) |
 
 Pendiente: importar a `historia.md` el texto de Taiga de AMB-01 a AMB-07 y completar los números de Taiga.
