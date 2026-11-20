@@ -1,0 +1,2 @@
+$ hadolint Dockerfile.motor-ia  (Haskell Dockerfile Linter 2.15.1)
+exit=0

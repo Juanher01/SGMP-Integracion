@@ -1,0 +1,11 @@
+{
+  "modelos": [
+    {
+      "id_activo_biologico": 0,
+      "id_version_modelo": 0,
+      "onnx": "<ID_ANIMAL>.onnx",
+      "linea_base": "<ID_ANIMAL>_linea_base.json",
+      "metadatos": "<ID_ANIMAL>_metadatos_rf69.json"
+    }
+  ]
+}

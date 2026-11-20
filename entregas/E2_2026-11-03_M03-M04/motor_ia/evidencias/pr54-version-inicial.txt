@@ -1,0 +1,14 @@
+# Versión inicial del PR #54 (89654ee) — docker build y hadolint, 2026-10-31
+
+## docker build -f Dockerfile.motor-ia (extracto)
+#12 29.20           raise OSError(message)
+#12 29.20       OSError: Readme file does not exist: README.md
+#12 29.21 error: metadata-generation-failed
+#12 ERROR: process "/bin/sh -c pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir \".[motor-ia]\"" did not complete successfully: exit code: 1
+29.21 error: metadata-generation-failed
+ERROR: failed to build: failed to solve: process "/bin/sh -c pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir \".[motor-ia]\"" did not complete successfully: exit code: 1
+
+## hadolint
+-:5 DL3008 warning: Pin versions in apt get install. Instead of `apt-get install <package>` use `apt-get install <package>=<version>`
+-:8 DL3013 warning: Pin versions in pip. Instead of `pip install <package>` use `pip install <package>==<version>` or `pip install --requirement <requirements file>`
+-:33 DL3025 warning: Use arguments JSON notation for CMD and ENTRYPOINT arguments
