@@ -129,7 +129,7 @@ Pendiente fuera de esta fase: las filas de estos dos cambios en `entregas/E3_202
 1. **Dónde viven las versiones nuevas (ADR-002).** Propuesta: en la entrega vigente, `entregas/E3_2026-11-17_M05-M06/documentos/AMBIENTE-DE-TRABAJO-IMPLEMENTACION_v1.6.md` (+ `.docx`) e `IMP_Diag_Despliegue_Puertos_Protocolos_v1.6.drawio`; la v1.5 sigue intacta en E1. ¿El `v1.6.drawio` de `Downloads` (2026-11-02) es un borrador tuyo? Si lo es, se partiría de él o se usaría v1.7 para no chocar.
 2. **¿CFG-03 o HU nueva?** Recomendación: CFG-03 se queda con T1, T2 y la ficha (son sus CA-4 y CA-6); la v1.6 del documento y del mapa va en una HU `DOC` nueva (abarca más que el SSO: dominios, TEST sin frontend). Si apruebas, `planificador` la numera.
 3. **¿Los archivos de la fase 2 van en la rama del PR #18 o en una rama nueva?** Recomendación: las correcciones de `<HU>` y del catálogo, en el PR #18 (ya los contiene); la v1.6, en la rama de la HU DOC.
-4. **`SGPMP_ENTORNO` en TEST:** ¿default `:-TEST` o guarda `:?`?
+4. **`SGPMP_ENTORNO` en TEST:** ¿default `:-TEST` o guarda `:?`? **Respuesta:** Decisión del líder, 2026-11-20: `:-TEST`, por paridad con `dev` (`:-DEV` y `:-PROD`) y con el PR Arekkazu/sgpmp-backend#1204.
 5. **¿Acordar con Desarrollo que avise antes de tocar compose o plantillas?** #1129 y #1130 se fusionaron sin revisión.
 
 **Para Despliegue:**
