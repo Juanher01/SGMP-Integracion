@@ -4,7 +4,7 @@
 
 Ejecución de [IMP-M04_paquete_instrucciones_motor-ia_v3.md](IMP-M04_paquete_instrucciones_motor-ia_v3.md)
 con los insumos [plan_motor_ia_modelos.md](plan_motor_ia_modelos.md) y el tablero de Desarrollo
-(`Motor M04 — tablero de estado.pdf`, corte 31-10; Drive: [PENDIENTE: enlace]).
+(`Motor M04 — tablero de estado.pdf`, corte 31-10; [Drive](https://drive.google.com/drive/folders/1e0KVSBvNxtBjUkZnKeNtw5sTlH1c-8G4)).
 
 ## Estado por fase
 
