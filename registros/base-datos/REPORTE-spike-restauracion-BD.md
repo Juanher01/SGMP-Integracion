@@ -212,6 +212,6 @@ El spike no dejó infraestructura montada (`docker compose down -v` final; sin c
 volúmenes) y **el repo `docuemntacionDB` quedó intacto** (`git status --porcelain` vacío).
 
 Archivos auxiliares usados, todos fuera del repo del DBA (en el scratchpad de la sesión):
-`dba-test.env` (contraseñas `dev123`), `compose.override.yml` (montaje LF), `compose.dedicada.yml`
+`dba-test.env` (contraseñas de prueba, no versionadas), `compose.override.yml` (montaje LF), `compose.dedicada.yml`
 (experimento de base dedicada), y los logs `restore-pg17.log`, `restore-owners.log`,
 `restore-sgpmp.log`, `restore-dedicada.log`.

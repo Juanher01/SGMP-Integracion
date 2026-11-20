@@ -53,7 +53,7 @@ backend.Dockerfile`, sin renombrar ni mover nada en el repo.
 - **Comando `docker run` usado:**
   ```
   docker run -d --name sgpmp-backend-test -p 8001:8000 \
-    -e DATABASE_URL="postgresql://dba:dev123@host.docker.internal:5433/dba" \
+    -e DATABASE_URL="postgresql://dba:<CONTRASEÑA>@host.docker.internal:5433/dba" \
     -e SECRET_KEY="dev-only-not-for-production" \
     -e FRONTEND_URL="http://localhost:5173" \
     sgpmp-backend:dev
@@ -96,7 +96,7 @@ backend.Dockerfile`, sin renombrar ni mover nada en el repo.
      `SGPMP`) y se probó una conexión directa por nombre de servicio:
      ```
      docker network connect docker_default sgpmp-backend-test
-     python -c "import psycopg2; print(psycopg2.connect(host='SGPMP', port=5432, dbname='dba', user='dba', password='dev123'))"
+     python -c "import psycopg2; print(psycopg2.connect(host='SGPMP', port=5432, dbname='dba', user='dba', password='<CONTRASEÑA>'))"
      ```
      **Resultado:** conexión exitosa —
      `<connection object ...; dsn: 'user=dba password=xxx dbname=dba host=SGPMP port=5432', closed: 0>`
@@ -176,7 +176,7 @@ en la imagen.
 docker run -d --name sgpmp-backend-test \
   --network docker_default \
   -p 8001:8000 \
-  -e DATABASE_URL="postgresql://dba:dev123@SGPMP:5432/dba" \
+  -e DATABASE_URL="postgresql://dba:<CONTRASEÑA>@SGPMP:5432/dba" \
   -e SECRET_KEY="dev-only-not-for-production" \
   -e FRONTEND_URL="http://localhost:5173" \
   sgpmp-backend:dev
