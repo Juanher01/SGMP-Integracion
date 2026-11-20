@@ -101,7 +101,7 @@ Detalle de C-4:
 | N-5 | Menor | `entregas/README.md:60` y descripción del PR #18 | Actualizar el estado de CFG-03 y el contenido del PR antes de fusionar. |
 | N-6 | Info | BE `d417c0c6` | `/impacto` y fila `M04_FIRMA_MODELOS_KEY` en el catálogo, en un trabajo aparte. |
 | N-7 | Info, fuera de alcance | `registros/contenedores/REPORTE-dockerfile-backend.md:99` (commit `935ad6d`; no está en este diff) | Contiene un valor literal de contraseña en un ejemplo. Conviene confirmar si es una credencial real de DEV (relacionado con INC-IMP-04) y, si lo es, sustituirla por un marcador en otro PR y pedir la rotación a Despliegue. **Resuelto:** valor no real (confirmado por el líder, 2026-11-20). Se reemplaza por un marcador. |
-| P-1 | Info | VERIF §1, ficha l.5 | Completar «Drive: [PENDIENTE: enlace]». |
+| P-1 | Info | VERIF §1, ficha l.5 | Completar «Drive: [PENDIENTE: enlace]». **Resuelto:** enlace agregado (2026-11-20). |
 | P-2 | Info | `historia.md`, Notas (P4) | Registrar la decisión del líder, con fecha. |
 | P-3 | Info | CA-6 | Enviar la ficha a Despliegue y archivar la respuesta en `evidencias/`. |
 

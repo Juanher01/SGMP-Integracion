@@ -23,7 +23,7 @@ Estado de los commits relevantes:
 
 Release pendiente: PR #941 `dev → main` (1.4.0), abierto.
 
-**Fuentes de Desarrollo** — Drive: [PENDIENTE: enlace] (SHA-256, primeros 16 caracteres). No se versionan en el repositorio: el doc. 05 §4.1 trae la clave pública completa (`brief-03-documentacion.md` l. 85: no copiarla a ningún archivo de SGMP-Integracion) y ADR-002 no prevé binarios de terceros (decisión del líder, 2026-11-20; REV-02 C-4).
+**Fuentes de Desarrollo** — [Drive](https://drive.google.com/drive/folders/12XkHN46-VG1QauB48AD1Ho0lYhkvCxXy) (SHA-256, primeros 16 caracteres). No se versionan en el repositorio: el doc. 05 §4.1 trae la clave pública completa (`brief-03-documentacion.md` l. 85: no copiarla a ningún archivo de SGMP-Integracion) y ADR-002 no prevé binarios de terceros (decisión del líder, 2026-11-20; REV-02 C-4).
 
 | Archivo | SHA-256 |
 |---|---|
@@ -166,7 +166,7 @@ Pendiente fuera de esta fase: las filas de estos dos cambios en `entregas/E3_202
 
 ## 9. Nota para Análisis (Miguel Ortiz, `miguelortiz13`) — hipótesis H
 
-Desarrollo documenta como **riesgo aceptado** (doc. 02 §3.4 y doc. 05 §9.1-9.2; fuentes en Drive, §1) que:
+Desarrollo documenta como **riesgo aceptado** (doc. 02 §3.4 y doc. 05 §9.1-9.2; fuentes en [Drive](https://drive.google.com/drive/folders/12XkHN46-VG1QauB48AD1Ho0lYhkvCxXy), §1) que:
 
 - el `client_secret` con el que AgroFusion pide el token de canal a SIGAB está escrito en el código de AgroFusion (`agrofusion-backendint/app/services/checks_service.py`);
 - la clave privada con la que AgroFusion firma los tokens del SSO está en su repositorio (`agrofusion-backendauth/app/keys/`).
