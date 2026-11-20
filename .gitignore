@@ -37,3 +37,6 @@ docs/.envs/
 # Respaldos temporales de draw.io
 .$*.bkp
 *.drawio.bkp
+
+# Memoria local de agentes de Claude Code (vive en PI4/.claude/)
+.claude/

@@ -1,0 +1,52 @@
+## compose config
+error while interpolating services.motor-ia.environment.IOT_INFERENCIA_M04_TOKEN: required variable IOT_INFERENCIA_M04_TOKEN is missing a value: IOT_INFERENCIA_M04_TOKEN es obligatoria (sin ella el motor no arranca)
+config OK (con token de prueba)
+
+## Paso 4a: sin MOTOR_IA_DIR_MODELOS
+ Container motoria-f6-motor-ia-1 Started 
+Health=healthy RestartCount=0
+{"status":"ok","modelos_cargados":0,"backend":null}
+
+## Paso 6: docker inspect
+User=1001 NanoCpus=1000000000 Memory=1073741824 MemoryReservation=268435456
+{"Test":["CMD","python","-c","import os, urllib.request as u; u.urlopen('http://127.0.0.1:%s/v1/healthz' % os.environ.get('PORT', '8000'), timeout=4)"],"Interval":30000000000,"Timeout":5000000000,"StartPeriod":30000000000,"Retries":3}
+uid=1001(motoria) gid=1001(motoria) groups=1001(motoria)
+
+## Paso 7a: POST sin token
+{"detail":{"error_code":"TOKEN_SERVICIO_INVALIDO","message":"Se requiere el token del motor de inferencia."}} -> HTTP 401
+## Paso 7b: POST con token, sin modelos
+{"error_code":"MOTOR_SIN_MODELOS","message":"El motor aún no tiene modelos cargados; 1 paquete(s) no procesado(s)."} -> HTTP 503
+
+## Paso 4b: MOTOR_IA_DIR_MODELOS=/data/modelos con volumen vacío
+ Container motoria-f6-motor-ia-1 Started 
+Status=running RestartCount=2
+motor_ia.individual.CatalogoInvalidoError: No se pudo leer /data/modelos/catalogo.json: [Errno 2] No such file or directory: '/data/modelos/catalogo.json'
+
+## Paso 4c: catalogo.json = {"modelos": []}
+ Container motoria-f6-motor-ia-1 Started 
+Health=healthy RestartCount=0
+{"status":"ok","modelos_cargados":0,"backend":null}
+
+## Paso 5: modelo BOV-001 del fixture tests/fixtures/et02_bov001 (activo 885, versión 12)
+total 1092
+-rwxr-xr-x 1 1001 1001 1094628 Nov  1 03:33 BOV-001.onnx
+-rwxr-xr-x 1 1001 1001    1694 Nov  1 03:33 BOV-001_linea_base.json
+-rwxr-xr-x 1 1001 1001    8802 Nov  1 03:33 BOV-001_metadatos_rf69.json
+-rw-r--r-- 1 1001 1001     225 Nov  1 03:33 catalogo.json
+### 5a sin BACKEND_URL
+ Container motoria-f6-motor-ia-1 Started 
+Status=running RestartCount=1
+    raise RuntimeError(
+### 5b con BACKEND_URL https (host inexistente, no hay backend local con TLS)
+ Container motoria-f6-motor-ia-1 Started 
+Health=healthy RestartCount=0
+{"status":"ok","modelos_cargados":1,"backend":"https://backend-local.invalid/api-sgpmp-dev/prediccion/inferencias"}
+INFO:     motor_ia.main: RF-66: 1 modelo(s) cargado(s); resultados hacia https://backend-local.invalid/api-sgpmp-dev/prediccion/inferencias
+
+## Paso 7c: POST con token y modelo cargado
+{"error_code":"BACKEND_NO_DISPONIBLE","message":"sin respuesta del backend (ConnectError)"} -> HTTP 503 en 1.254196s
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     motor_ia.individual: C3: activo 885: rangos={'frecuencia_cardiaca': {'sano': 'ET-02', 'plausible': 'ET-02'}, 'temperatura_corporal': {'sano': 'ET-02', 'plausible': 'ET-02'}}, fuera del rango sano=['temperatura_corporal']
+INFO:     172.18.0.1:36850 - "POST /v1/paquetes HTTP/1.1" 503 Service Unavailable
