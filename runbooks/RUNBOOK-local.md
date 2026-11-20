@@ -119,10 +119,12 @@ source .venv/Scripts/activate      # verás (.venv) en el prompt
 Asegúrate de que exista `sgpmp-backend/.env` con:
 
 ```bash
-DATABASE_URL=postgresql://dba:dev123@localhost:5433/dba
+DATABASE_URL=postgresql://dba:<CONTRASEÑA>@localhost:5433/dba
 SECRET_KEY=dev-only-not-for-production
 FRONTEND_URL=http://localhost:5173
 ```
+
+`<CONTRASEÑA>` es la que defines en `DBA_PASSWORD` al levantar la base local con `scripts/restaurar-bd.sh` (el script la pasa al contenedor como `POSTGRES_PASSWORD`, l. 78); no se versiona.
 
 ```bash
 python main.py                     # uvicorn en http://localhost:8000, no cierres esta terminal
