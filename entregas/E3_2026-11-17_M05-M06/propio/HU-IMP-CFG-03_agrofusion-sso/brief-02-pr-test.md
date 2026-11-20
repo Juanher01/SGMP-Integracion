@@ -1,6 +1,8 @@
 # Brief para Claude Code: SSO de AgroFusion en TEST (PR a `test`)
 
-> Brief 2 de 2. Antes, lee el brief 1 (`BRIEF-ClaudeCode-agrofusion-sso-PR-dev.md`): ahí está el contexto completo y la HU donde se registra este trabajo.
+> Brief 2 de 2. Antes, lee el brief 1 (`brief-01-pr-dev.md`): ahí está el contexto completo y la HU donde se registra este trabajo.
+
+> **Nota 2026-11-17 — paso 3.1 obsoleto.** Desarrollo ya agregó el montaje del `.pem` a `docker-compose.test.yml` en el PR #1130 (`9a52ad5c`, merge `64c69123`; `docker-compose.test.yml:86@5697ebbe`, idéntico a `0dbe294`). **No vuelvas a crear el bloque `volumes:`.** El alcance vigente del PR a `test` es el de ST-02 en `historia.md`: agregar `SGPMP_ENTORNO`, quitar `AGROFUSION_HUB_*` y comentar `.env.test.example`. El resto de este brief se conserva como texto histórico.
 
 ## Contexto
 

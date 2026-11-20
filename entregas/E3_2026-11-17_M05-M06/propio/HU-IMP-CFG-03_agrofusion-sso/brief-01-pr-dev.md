@@ -2,6 +2,8 @@
 
 > Brief 1 de 2. El brief 2 hace el mismo cambio en la rama `test`, porque `docker-compose.test.yml` solo existe allí.
 
+> **Corrección 2026-11-17.** Este brief decía que el código de DEV es `SGPMP-DEV`. Es incorrecto: los códigos registrados en AgroFusion son `SIGAB-DEV` (DEV), `SIGAB-TEST` (TEST) y `SIGAB` (PROD), y en minúscula coinciden con la ruta del frontend (`https://inmero.co/{código en minúscula}/sso`). Fuente: BE `.env.example:159-161@2b9ee221` y doc. 05 de Desarrollo §2-§3. Tampoco es cierto que el código use `agrofusion-auth` si `AGROFUSION_ISSUER` viene vacía (tabla de Contexto): `os.getenv` con default solo cubre la variable ausente, y la cadena vacía la resuelve el `${AGROFUSION_ISSUER:-agrofusion-auth}` del compose (`9ff4d38`, PR #1129). Se corrigieron las líneas afectadas; el resto del brief es histórico (PR #1051 ya fusionado). La plantilla `.env.prod.example:235` que salió de este brief se corrige en T1 (ver `historia.md`).
+
 ## Contexto
 
 El líder de Desarrollo pidió dejar configuradas tres variables del SSO con AgroFusion en el backend (`Arekkazu/sgpmp-backend`):
@@ -9,7 +11,7 @@ El líder de Desarrollo pidió dejar configuradas tres variables del SSO con Agr
 | Variable | Qué es | Sensibilidad |
 |---|---|---|
 | `AGROFUSION_ISSUER` | Emisor esperado en el claim `iss` del token. El código ya usa `agrofusion-auth` si viene vacía. | No sensible |
-| `AGROFUSION_PROJECT_CODE` | Código con que el proyecto está registrado en AgroFusion; se valida contra el claim `aud`. En DEV es `SGPMP-DEV`. | No sensible |
+| `AGROFUSION_PROJECT_CODE` | Código con que el proyecto está registrado en AgroFusion; se valida contra el claim `aud`. En DEV es `SIGAB-DEV` (corregido 2026-11-17). | No sensible |
 | `AGROFUSION_SSO_PUBLIC_KEY_PATH` | **Ruta** dentro del contenedor a la clave pública RS256 (`.pem`). No es la clave. | Interna (la ruta); el `.pem` es público, pero hay que proteger su integridad |
 
 Esto ya se revisó en la rama `dev`:
@@ -29,7 +31,7 @@ La ruta **no** se escribe fija en el compose: sigue saliendo de la variable. As�
 - **Solo** puedes tocar estos cinco archivos: `docker-compose.yml`, `docker-compose.prod.yml`, `.env.example`, `.env.prod.example` y `.dockerignore`.
 - No cambies código de aplicación (`src/`, `main.py`, `alembic/`). Si algo exige tocarlo, detente y repórtalo como hallazgo para Desarrollo.
 - No cambies otras variables, volúmenes ni puertos, aunque veas diferencias entre compose. La alineación general va en un PR aparte.
-- **Nunca** escribas valores reales. `AGROFUSION_PROJECT_CODE` queda vacía en los `.env.*.example`; el valor `SGPMP-DEV` solo va en un comentario.
+- **Nunca** escribas valores reales. `AGROFUSION_PROJECT_CODE` queda vacía en los `.env.*.example`; el valor `SIGAB-DEV` (corregido 2026-11-17) solo va en un comentario.
 - No hagas `git push` ni abras el PR sin mi aprobación. Primero muéstrame el diff y el reporte.
 
 ## Dónde va cada cosa
@@ -81,7 +83,7 @@ En el bloque `AGROFUSION — SSO`, deja las tres variables como están (`AGROFUS
 #   En Docker/Dokploy: /app/secrets/agrofusion_sso_public.pem (el compose monta
 #   ../files/agrofusion_sso_public.pem ahí). En ejecución local sin Docker: ruta local al .pem.
 # AGROFUSION_PROJECT_CODE: código del proyecto registrado en AgroFusion (claim "aud").
-#   DEV usa SGPMP-DEV; TEST y PROD usan el código con que se registre cada entorno.
+#   DEV SIGAB-DEV, TEST SIGAB-TEST, PROD SIGAB (corregido 2026-11-17; decía SGPMP-DEV).
 # AGROFUSION_ISSUER: claim "iss" esperado; agrofusion-auth por defecto.
 ```
 En `.env.prod.example`, reemplaza el párrafo que dice "Si se usa en PROD, Despliegue debe montar ese archivo" por esta aclaración: el compose ya monta el archivo, y Despliegue solo debe subirlo en Dokploy como *File Mount* `agrofusion_sso_public.pem` y cargar las dos variables. Agrega también una fila a la tabla de cambios de cada archivo.

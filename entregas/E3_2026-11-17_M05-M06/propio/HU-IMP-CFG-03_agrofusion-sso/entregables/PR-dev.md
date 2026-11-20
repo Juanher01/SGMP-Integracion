@@ -47,3 +47,7 @@
 - La ruta no queda fija en el compose: sale de la variable. Mientras Despliegue no la cargue, `POST /sesiones/sso` responde 503 `SSO_NO_CONFIGURADO` y el resto del backend funciona igual.
 - TEST se cubre en un PR aparte a `test`, porque `docker-compose.test.yml` solo existe en esa rama.
 - No hace falta reconstruir el frontend. Solo se redespliega el backend.
+
+---
+
+> **Nota 2026-11-17 (texto histórico).** Esta es la descripción del PR #1051 tal como se abrió; no se reescribe. Las instrucciones vigentes para Despliegue están en la ficha `registros/variables/fichas/HU-IMP-CFG-03_2026-11-17.md`: verificación principal con `curl -X POST {API}/sesiones/sso` (401 correcto, 503 faltan variables, 500 clave no montada) y `test -f` como complementaria (el `test -r` de arriba da verdadero también sobre una carpeta); Deploy y no Restart; desviación temporal de DEV (`…/agrofusion_sso_public.pem/clave.pem`); códigos `SIGAB-DEV`, `SIGAB-TEST` y `SIGAB`.
