@@ -1,0 +1,15 @@
+# Verificación 6.2 — montaje declarado en el servicio backend
+$ docker compose -f docker-compose.yml config --no-interpolate | grep -n "agrofusion_sso_public"
+73:        source: D:\USER\Documentos\Proyectos\PI4\files\agrofusion_sso_public.pem
+74:        target: /app/secrets/agrofusion_sso_public.pem
+codigo=0
+$ docker compose -f docker-compose.prod.yml config --no-interpolate | grep -n "agrofusion_sso_public"
+104:        source: D:\USER\Documentos\Proyectos\PI4\files\agrofusion_sso_public.pem
+105:        target: /app/secrets/agrofusion_sso_public.pem
+codigo=0
+== docker-compose.yml
+backend ['/app/secrets/agrofusion_sso_public.pem']
+db []
+== docker-compose.prod.yml
+backend ['/app/secrets/agrofusion_sso_public.pem']
+db []

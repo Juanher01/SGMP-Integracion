@@ -1,0 +1,12 @@
+# Verificación 6.4 — alcance del diff tras el amend (2026-11-09 13:33 -0500)
+# commit 0dbe294b · base origin/dev 3251d78d
+$ git diff --stat origin/dev...HEAD
+ .dockerignore           |  5 +++++
+ .env.example            |  7 +++++++
+ .env.prod.example       | 13 ++++++++++---
+ docker-compose.prod.yml |  7 +++++++
+ docker-compose.yml      |  7 +++++++
+ 5 files changed, 36 insertions(+), 3 deletions(-)
+codigo=0
+$ git status --short
+codigo=0

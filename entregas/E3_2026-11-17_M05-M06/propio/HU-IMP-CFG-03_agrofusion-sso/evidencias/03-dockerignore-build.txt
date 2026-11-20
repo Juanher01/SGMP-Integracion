@@ -1,0 +1,30 @@
+# Verificación 6.3 — .dockerignore excluye **/*.pem y **/*.key de la imagen (2026-11-09 13:29 -0500)
+# rama: chore/agrofusion-sso-clave-publica · commit 0dbe294b · Docker 29.7.2
+$ echo "prueba" > zz_prueba_dockerignore.pem
+codigo=0
+$ mkdir -p zz_prueba_dir && echo "prueba" > zz_prueba_dir/zz_prueba.key
+codigo=0
+$ docker build -q -t sgpmp-backend:prueba-dockerignore .
+sha256:0ccb8f0376ef9cecde20bab78c887f998272ff969e4d40481eefa78f87676911
+codigo=0
+$ docker run --rm --entrypoint sh sgpmp-backend:prueba-dockerignore -c "ls /app/zz_prueba_dockerignore.pem"
+ls: cannot access '/app/zz_prueba_dockerignore.pem': No such file or directory
+codigo=2
+$ docker run --rm --entrypoint sh sgpmp-backend:prueba-dockerignore -c "ls /app/zz_prueba_dir/zz_prueba.key"
+ls: cannot access '/app/zz_prueba_dir/zz_prueba.key': No such file or directory
+codigo=2
+# Control: la carpeta zz_prueba_dir sí entra (solo se excluye la clave), lo que prueba que el patrón actúa en subcarpetas
+$ docker run --rm --entrypoint sh sgpmp-backend:prueba-dockerignore -c "ls -la /app/zz_prueba_dir"
+total 8
+drwxr-xr-x 2 root root 4096 Nov  9 18:29 .
+drwxr-xr-x 1 root root 4096 Nov  9 18:32 ..
+codigo=0
+$ rm zz_prueba_dockerignore.pem && rm -r zz_prueba_dir
+codigo=0
+$ docker image rm sgpmp-backend:prueba-dockerignore
+Untagged: sgpmp-backend:prueba-dockerignore
+Deleted: sha256:0ccb8f0376ef9cecde20bab78c887f998272ff969e4d40481eefa78f87676911
+codigo=0
+$ git status --short --branch
+## chore/agrofusion-sso-clave-publica...origin/dev [ahead 1]
+codigo=0
