@@ -74,7 +74,7 @@
 **Estimación.** 2 h. Estado: commit `0dbe294` verificado (evidencias `01` a `04`). PR abierto el 2026-11-09: [Arekkazu/sgpmp-backend#1051](https://github.com/Arekkazu/sgpmp-backend/pull/1051) hacia `dev`, pendiente de aprobación del Líder de Desarrollo. Corte 2026-11-17: `0dbe294` está en `dev` y en `test` (no en `main`).
 
 ### ST-02 abrir PR hacia `test`: `SGPMP_ENTORNO`, retiro de `AGROFUSION_HUB_*` y plantilla
-> **Trasladada a HU-IMP-CFG-04 (2026-11-20).** `SGPMP_ENTORNO` lo corrige Desarrollo en Arekkazu/sgpmp-backend#1204; el retiro de `AGROFUSION_HUB_*` y la plantilla pasan a ST-04a y ST-04b de [HU-IMP-CFG-04](../../../E4_2026-11-24_M07-M08-final/issues/BACK-1180_sgpmp-entorno-test/HU-IMP-CFG-04_variables-m04-entorno-test/historia.md). Esta subtarea no se ejecuta en CFG-03.
+> **Trasladada a HU-IMP-CFG-04 (2026-11-20).** `SGPMP_ENTORNO` lo corrige Desarrollo en Arekkazu/sgpmp-backend#1204; el retiro de `AGROFUSION_HUB_*` y la plantilla pasan a ST-04a (plantilla) y ST-04c (compose; renumerada el 2026-11-21) de [HU-IMP-CFG-04](../../../E4_2026-11-24_M07-M08-final/issues/BACK-1180_sgpmp-entorno-test/HU-IMP-CFG-04_variables-m04-entorno-test/historia.md). Esta subtarea no se ejecuta en CFG-03.
 
 > **Reescrita el 2026-11-17 (T2 de `revisiones/VERIF-DOC-agrofusion.md`). NO se aplica hoy:** queda lista para ejecutar después de la presentación del 2026-11-17, con aprobación del líder. El paso 3.1 de `brief-02-pr-test.md` quedó obsoleto.
 
