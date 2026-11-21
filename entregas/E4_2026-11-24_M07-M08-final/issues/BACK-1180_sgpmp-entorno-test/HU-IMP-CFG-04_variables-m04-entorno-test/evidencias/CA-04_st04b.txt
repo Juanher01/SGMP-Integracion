@@ -1,0 +1,14 @@
+# Evidencia CA-4 — ST-04b (HU-IMP-CFG-04)
+# Cambio publicado después como 097f6d80 en fix/compose-test-entorno-m04-1180 (mismo contenido que el árbol probado): https://github.com/Arekkazu/sgpmp-backend/commit/097f6d803a0a75f708989dc63cff4f9022ed6629
+# Imagen construida desde ese árbol; docker run con MSYS_NO_PATHCONV=1 (Git Bash), sin --env-file.
+
+# CA-4 ST-04b — 2026-11-21T18:55:23Z — rama fix/compose-test-entorno-m04-1180 @ b8968e68 + cambio sin commit (l. 82 borrada)
+compose: sin línea, vale el ENV de la imagen
+sha256:ab0b8bbb6b040d39ed16b249c233b039a743aad89fca69c00338a15a48d74d5e
+1000
+/app/storage/auditoria_iot/fallas.sqlite3
+ESCRIBIBLE
+--- control negativo con la l. 82 de b8968e68 (var/auditoria_iot/fallas.sqlite3)
+1000
+var/auditoria_iot/fallas.sqlite3
+mkdir: cannot create directory ‘var’: Permission denied
