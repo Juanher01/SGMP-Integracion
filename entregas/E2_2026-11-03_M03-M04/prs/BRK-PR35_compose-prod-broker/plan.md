@@ -147,7 +147,7 @@ mismo conjunto de nombres (`diff` de nombres vacío).
 | HU | Contenido | Repos y ramas |
 |---|---|---|
 | HU-IMP-CFG-01 (nueva) | H-01 + H-01b | broker `develop`; backend `dev` |
-| HU-IMP-AMB-10 (nueva) | H-03 + H-04 (+ D3) | SGMP-Integracion `main` |
+| HU-IMP-AMB-11 (nueva; renumerada el 2026-11-21: AMB-10 quedó para la persistencia (HU-IMP-CFG-04)) | H-03 + H-04 (+ D3) | SGMP-Integracion `main` |
 
 Se redactan con `/planificar` sobre [analisis.md](analisis.md) y este plan; las ejecuta Juan Hernando.
 
@@ -296,7 +296,7 @@ Consecuencias:
 Para la tabla "Trabajo" de [`../../README.md`](../../README.md) (no se editó):
 
 ```markdown
-| BRK PR #35 (+ dominios de Despliegue) | PR externo | HU-IMP-CFG-01, HU-IMP-AMB-10 (por crear) | M03/M04 (gateway) | analizado · plan H-01/H-03/H-04 listo · H-02 en consulta con Desarrollo y Despliegue | prs/BRK-PR35_compose-prod-broker/ |
+| BRK PR #35 (+ dominios de Despliegue) | PR externo | HU-IMP-CFG-01, HU-IMP-AMB-11 (por crear; renumerada el 2026-11-21: AMB-10 quedó para la persistencia (HU-IMP-CFG-04)) | M03/M04 (gateway) | analizado · plan H-01/H-03/H-04 listo · H-02 en consulta con Desarrollo y Despliegue | prs/BRK-PR35_compose-prod-broker/ |
 ```
 
 ---
