@@ -1,7 +1,7 @@
 # CA-5 y CA-6 — Plantillas de TEST y de PROD (HU-IMP-CFG-04)
 
 **Fecha:** 2026-11-21 (America/Bogota) · **Corte:** BE `dev@8d4981f6` · `test@cd5f36de` · PR #1204 OPEN `097f6d80`.
-**PR:** ST-04a → [#1216](https://github.com/Arekkazu/sgpmp-backend/pull/1216) (`test`, `d873f740`) · ST-05 → [#1217](https://github.com/Arekkazu/sgpmp-backend/pull/1217) (`dev`, `d96449dd`). Los dos están abiertos: CA-5 y CA-6 se cumplen en `origin/test` y `origin/dev` cuando se fusionen. Hasta entonces, las salidas son las de la rama de cada PR.
+**PR:** ST-04a → [#1216](https://github.com/Arekkazu/sgpmp-backend/pull/1216) (`test`, `d873f740`) · ST-05 → [#1217](https://github.com/Arekkazu/sgpmp-backend/pull/1217) (`dev`, `d96449dd`). Los dos se fusionaron el 2026-11-21, 18:08 (America/Bogota; 23:08 UTC): #1216 en `test 35f3ec3b` y #1217 en `dev e372a059`. Las secciones CA-5 y CA-6 son las salidas sobre la rama de cada PR; la sección final repite las partes que no dependen de #1204 sobre las ramas de destino.
 
 En Git Bash: `MSYS_NO_PATHCONV=1`.
 
@@ -61,6 +61,25 @@ PLANTILLA-OK
 
 Sin avisos. Control negativo: sin `FRONTEND_URL` falla con `required variable FRONTEND_URL is missing a value`. Nota (REV-06 n-03): (b) prueba que la plantilla levanta el compose, no que tenga `OTA_URL_*`. Como el compose usa `${OTA_URL_*:-}`, la plantilla de `origin/dev` sin OTA también pasa. La presencia de `OTA_URL_*` la prueba (a).
 
+## Sobre `origin/test` y `origin/dev` (2026-11-21, 22:15, America/Bogota)
+
+Corte: BE `test@c698c656` (contiene `35f3ec3b`; después solo entran archivos de Testing/Modulo7) · `dev@5115b83d` (contiene `e372a059`).
+
+```
+$ git show origin/test:.env.test.example | grep -c AGROFUSION_HUB_                          # CA-5 (a)
+0
+$ git show origin/test:.env.test.example | grep -nE '^(M04_FIRMA_MODELOS_KEY|IOT_INFERENCIA_M04_TOKEN|OTA_URL_SECRET|MQTT_BROKER_TOKEN)=.+'   # CA-5 (c)
+(sin salida)
+$ git show origin/dev:.env.prod.example | grep -nE '^OTA_URL_(SECRET|BASE|TTL_SEGUNDOS)='  # CA-6 (a)
+220:OTA_URL_SECRET=
+222:OTA_URL_BASE=
+224:OTA_URL_TTL_SEGUNDOS=86400
+$ git show origin/dev:.env.prod.example | grep -nE '^OTA_URL_SECRET=.+'
+(sin salida)
+```
+
+CA-5 (a) y (c) y CA-6 (a) cumplen sobre las ramas de destino.
+
 ## Pendiente
 
-Repetir (a), (b) y (c) sobre `origin/test` y `origin/dev` después de las fusiones. La parte (b) de CA-5 sobre `origin/test`, después de la fusión de #1204.
+CA-5 (b) y (d) sobre `origin/test`, después de la fusión de #1204. Tabla de cabecera de la plantilla de TEST (REV-06 m-04): PR #1220, abierto.

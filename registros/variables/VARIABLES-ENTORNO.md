@@ -357,11 +357,11 @@ Actualización 2026-11-20 (HU-IMP-CFG-04; corte BE `dev@6cee5fc4` · `test@12965
 
 - **Diez filas nuevas** en §3 (M04, motor de inferencia, OTA y logos) y fila de `SGPMP_ENTORNO` al día. Ficha para Despliegue: `registros/variables/fichas/HU-IMP-CFG-04_2026-11-20.md`.
 - **`SGPMP_ENTORNO` en TEST**: la agrega el PR #1204 de Desarrollo (abierto); TEST informa `DEV` hasta que se fusione y se haga Deploy (issue #1180, INC-BE-09).
-- **`.env.test.example`**: variables de #1204 y retiro de `AGROFUSION_HUB_*` en ST-04a: PR #1216 a `test` (abierto al 2026-11-21), que agrega también `MQTT_BROKER_URL` y `MQTT_BROKER_TOKEN`, obligatorias en el compose de TEST y ausentes de la plantilla (INC-BE-04). El retiro de `AGROFUSION_HUB_*` del compose de TEST va en ST-04c, después de #1204.
+- **`.env.test.example`**: variables de #1204 y retiro de `AGROFUSION_HUB_*` en ST-04a: PR #1216 a `test` (fusionado el 2026-11-21, 18:08 America/Bogota; `test 35f3ec3b`), que agrega también `MQTT_BROKER_URL` y `MQTT_BROKER_TOKEN`, obligatorias en el compose de TEST y ausentes de la plantilla (INC-BE-04). El retiro de `AGROFUSION_HUB_*` del compose de TEST va en ST-04c, después de #1204.
 - **`IOT_AUDITORIA_RESPALDO_PATH`**: el PR #1204 la dejaba relativa en TEST (l. 82@b8968e68); ST-04b la quitó con el commit `097f6d80` en la rama del PR (2026-11-21). Si #1204 se fusionara sin ese commit, la corrige ST-04c.
 
 Corte reverificado el 2026-11-21: BE `dev@8d4981f6` · `test@918806ec` · `main@0abbeeef` · PR #1204 `097f6d80` (abierto). Entre `test@12965211` y `@918806ec` solo cambió `tests/`, y `dev` no tocó compose, plantillas ni `Dockerfile` desde `@6cee5fc4`: las citas `@12965211` y `@6cee5fc4` siguen vigentes. Corte del 2026-11-21 (17:55, America/Bogota): `test@cd5f36de` (merges de M08 desde `dev`), sin cambios en compose, plantillas ni `Dockerfile` desde `@12965211`.
-- **`OTA_URL_*` en `.env.prod.example` de `dev`**: PR #1217 a `dev` (ST-05, abierto al 2026-11-21).
+- **`OTA_URL_*` en `.env.prod.example` de `dev`**: PR #1217 a `dev` (ST-05, fusionado el 2026-11-21, 18:08 America/Bogota; `dev e372a059`).
 - **Volúmenes de logos, modelos y respaldo de auditoría** en TEST y PROD: HU-IMP-AMB-10 (borrador; depende de Desarrollo).
 
 Estos valores deben completarse cuando las historias dependientes entreguen sus contratos definitivos.
