@@ -37,8 +37,8 @@ Formato de `historia.md`: skill `hu-taiga` (en la configuración de Claude Code 
 |---|---|---|---|---|
 | E1 | 2026-10-13 | M01, M09, M02 | entregada | [E1](E1_2026-10-13_M01-M09-M02/) |
 | E2 | 2026-11-03 | M03, M04 | en curso | [E2](E2_2026-11-03_M03-M04/) |
-| E3 | 2026-11-17 | M05, M06 | por iniciar | [E3](E3_2026-11-17_M05-M06/) |
-| E4 | 2026-11-24 | M07, M08 y presentación final | por iniciar | [E4](E4_2026-11-24_M07-M08-final/) |
+| E3 | 2026-11-17 | M05, M06 | entregada (2026-11-17) | [E3](E3_2026-11-17_M05-M06/) |
+| E4 | 2026-11-24 | M07, M08 y presentación final | en curso | [E4](E4_2026-11-24_M07-M08-final/) |
 
 ## Tablero
 
