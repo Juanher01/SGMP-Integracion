@@ -49,9 +49,9 @@ A diferencia de DEV y TEST, el ambiente de Producción **no publica puertos dire
 
 ## 4. Requisitos de Seguridad y Certificados TLS (Mosquitto & Gateway)
 
-1.  **TLS Obligatorio:** Según la matriz de seguridad del proyecto SGPMP y el estándar `docs/FR-IMP-CE-04.md`, el ambiente de Producción fija la variable `MQTT_TLS=true`.
+1.  **TLS Obligatorio hacia los dispositivos:** Según la matriz de seguridad del proyecto SGPMP y el estándar `docs/FR-IMP-CE-04.md`, el tramo dispositivos → Mosquitto va cifrado (listeners 8883/9002 con certificados). `MQTT_TLS` es otro tramo, el del gateway hacia Mosquitto por la red interna, y en Producción queda `MQTT_TLS=false`: con `true` el gateway queda `healthy` sin ingerir. Ver la nota «Dos tramos MQTT» de `registros/variables/VARIABLES-ENTORNO.md` §3 (corregido el 2026-11-22, HU-IMP-AMB-11).
 2.  **Configuración de Mosquitto:** El contenedor `sgpmp-mosquitto-prod` en Producción requiere un archivo `mosquitto.conf` autenticado (con `allow_anonymous false`) y la provisión de certificados SSL/TLS válidos. Despliegue y AIoT son los encargados de inyectar y montar el volumen con las llaves SSL/TLS correspondientes en la instancia productiva.
-3.  **Seguridad del Gateway:** El Gateway opera con `ENVIRONMENT=prod` y exige autenticación mediante el header `Authorization: Bearer <GATEWAY_API_TOKEN>`.
+3.  **Seguridad del Gateway:** El Gateway opera con `ENVIRONMENT=prod` y exige el header `Authorization: Bearer <token>`, que valida contra las credenciales de servicio guardadas en la base de datos; no hay un token de entorno para esto (corregido el 2026-11-22, HU-IMP-AMB-11).
 
 ---
 
@@ -72,7 +72,7 @@ El catálogo completo de Producción vive en `env/.env.prod.example` (48 variabl
 | `DB_SCHEMA_REGISTRY` | `modulo9` | Esquema de registro de dispositivos AIoT |
 | `JWT_EXPIRE_HOURS` | `24` | Duración de los tokens JWT |
 | `VITE_SW` | `true` | Habilita el Service Worker PWA en Producción |
-| `MQTT_TLS` | `true` | Habilita la comunicación cifrada SSL/TLS en MQTT |
+| `MQTT_TLS` | `false` | TLS del gateway hacia Mosquitto por la red interna (en claro). El TLS de los dispositivos va por los listeners 8883/9002; ver la nota «Dos tramos MQTT» de `registros/variables/VARIABLES-ENTORNO.md` §3 (corregido el 2026-11-22, HU-IMP-AMB-11) |
 | `MQTT_CLIENT_ID` | `sgpmp` | Identificador de cliente MQTT |
 | `MQTT_RECONNECT_DELAY` | `5` | Tiempo de reconexión MQTT en segundos |
 | `MQTT_TOPIC_*` | Prefix `sgpmp`, topics `telemetry`, `heartbeat`, `command`, `status` | Estructura unificada de topics MQTT |
@@ -90,7 +90,6 @@ Las siguientes variables deben ser administradas e inyectadas como **Secretos de
 | `RF71_INTERNAL_KEY` | Implementación / DevOps | Clave privada para seguridad interna RF71 (Generada en ST-03) |
 | `FRONTEND_URL` | Despliegue | URL pública/dominio HTTPS del Frontend |
 | `VITE_API_BASE_URL` | Despliegue | URL pública/dominio HTTPS del Backend API |
-| `GATEWAY_API_TOKEN` | AIoT | Token de autenticación Backend → Gateway |
 | `MQTT_HOST`, `MQTT_PORT` | Despliegue / AIoT | Host y puerto del Broker MQTT de Producción |
 | `MQTT_USERNAME`, `MQTT_PASSWORD` | AIoT | Credenciales de autenticación en Broker MQTT |
 | `SMTP_USER`, `SMTP_PASSWORD` | Desarrollo / Despliegue | Credenciales del servidor de correo SMTP productivo |
@@ -112,7 +111,7 @@ Las siguientes variables deben ser administradas e inyectadas como **Secretos de
 | 2 | Catálogo unificado de variables de Producción (`env/.env.prod.example`) | ✅ Entregado |
 | 3 | Documento de Frontera de Entrega (`docs/CONTRATO-PROD.md`) | ✅ Entregado |
 | 4 | Ausencia de puertos publicados al host para compatibilidad con Dokploy | ✅ Entregado |
-| 5 | Habilitación de TLS para MQTT (`MQTT_TLS=true`) | ✅ Entregado |
+| 5 | TLS de MQTT hacia los dispositivos (listeners 8883/9002; `MQTT_TLS=false` para el tramo interno del gateway, la nota «Dos tramos MQTT» de `registros/variables/VARIABLES-ENTORNO.md` §3) | ✅ Entregado (corregido el 2026-11-22, HU-IMP-AMB-11; los certificados dependen de la fila 8) |
 | 6 | Tags finales de imágenes GHCR publicadas por pipeline | 🟡 Pendiente CI/CD |
 | 7 | Contraseñas reales de roles `member_app` y `member_iot` | 🟡 Pendiente DBA |
 | 8 | Certificados SSL/TLS e inyección de secretos en Dokploy | 🟡 Pendiente Despliegue |

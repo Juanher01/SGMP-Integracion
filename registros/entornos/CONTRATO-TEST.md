@@ -88,12 +88,11 @@ El catálogo completo vive en `env/.env.test.example` (48 variables, documentada
 | `DB_IOT_USER`, `DB_IOT_PASSWORD` | DBA | Conexión del gateway a la BD |
 | `SECRET_KEY` | Implementación / DevOps | Firma JWT del backend |
 | `RF71_INTERNAL_KEY` | Implementación / DevOps | Seguridad interna del backend |
-| `GATEWAY_API_TOKEN` | AIoT | Autenticación backend → gateway |
 | `MQTT_USERNAME`, `MQTT_PASSWORD` | AIoT | Autenticación del gateway al broker |
 | `FIREBASE_CREDENTIALS_PATH`, `SMTP_USER`, `SMTP_PASSWORD` | Implementación / Desarrollo | Notificaciones (no crítico para levantar el ambiente) |
 | `VITE_FIREBASE_*`, `VITE_VAPID_KEY`, `VITE_AGROFUSION_LOGIN_URL` | Desarrollo Frontend | Solo aplican a build de DEV; no bloquean TEST (frontend se consume como imagen ya construida) |
 
-> **Clasificación de sensibilidad** (según `docs/FR-IMP-CE-04.md`): `DB_APP_PASSWORD`, `DB_IOT_PASSWORD`, `SECRET_KEY`, `RF71_INTERNAL_KEY`, `SMTP_PASSWORD`, `GATEWAY_API_TOKEN` y `MQTT_PASSWORD` son **Secretas** — nunca se versionan con valores reales, solo se documentan como placeholders en `.env.test.example`.
+> **Clasificación de sensibilidad** (según `docs/FR-IMP-CE-04.md`): `DB_APP_PASSWORD`, `DB_IOT_PASSWORD`, `SECRET_KEY`, `RF71_INTERNAL_KEY`, `SMTP_PASSWORD` y `MQTT_PASSWORD` son **Secretas** — nunca se versionan con valores reales, solo se documentan como placeholders en `.env.test.example`.
 
 ### 4.3 Verificación de coherencia
 
@@ -132,7 +131,7 @@ Sigue abierto hasta recibir respuesta al catálogo enviado a Sara Sofía Gonzál
 | 1 | Tags de imágenes vacíos (`DATABASE_IMAGE`, `BACKEND_IMAGE`, `FRONTEND_IMAGE`, `GATEWAY_IMAGE`) | Sin esto, Docker Compose falla por referencia de imagen inválida | CI/CD / equipos de Desarrollo — no existe pipeline (`.github/workflows/`) todavía |
 | 2 | Credenciales de BD vacías (`DB_APP_USER`, `DB_APP_PASSWORD`, `DB_IOT_USER`, `DB_IOT_PASSWORD`) | Backend y gateway no pueden conectar a la BD | DBA (Samuel) |
 | 3 | Secretos de aplicación vacíos (`SECRET_KEY`, `RF71_INTERNAL_KEY`) | Backend no puede firmar JWT ni operar con seguridad interna | Implementación / DevOps — puede resolverse internamente sin depender de terceros |
-| 4 | `GATEWAY_API_TOKEN`, `MQTT_USERNAME`, `MQTT_PASSWORD` vacíos | Backend no puede autenticarse con el gateway; gateway no puede autenticarse con Mosquitto | AIoT |
+| 4 | `MQTT_USERNAME`, `MQTT_PASSWORD` vacíos | El gateway no puede autenticarse con Mosquitto | AIoT |
 | 5 | Datos semilla / RBAC de Pruebas sin confirmar | ST-04 no puede cerrarse | Pruebas (Sara Sofía González) |
 
 **Veredicto de ejecución:** el ambiente está **completamente definido y sincronizado** (compose + catálogo de variables), pero **no puede levantarse hoy** por las variables vacías del punto 1, 2 y 4. El punto 3 sí es accionable de forma inmediata por Implementación.
@@ -148,7 +147,7 @@ Sigue abierto hasta recibir respuesta al catálogo enviado a Sara Sofía Gonzál
 - [ ] `SECRET_KEY` y `RF71_INTERNAL_KEY` — accionable ya por Implementación (no bloqueado por terceros).
 - [ ] Tags de imágenes en GHCR — pendiente de pipeline CI/CD.
 - [ ] Credenciales de BD — pendiente del DBA.
-- [ ] `GATEWAY_API_TOKEN` / credenciales MQTT — pendiente de AIoT.
+- [ ] Credenciales MQTT — pendiente de AIoT.
 - [ ] Datos semilla / RBAC — pendiente de respuesta de Pruebas.
 
 **ST-02 se entrega completo y verificado.** La arquitectura de TEST está totalmente definida; lo que resta es la entrega de valores reales por parte de terceros (DBA, AIoT, CI/CD) y la respuesta de Pruebas sobre política de datos — ninguno de estos puntos requiere redefinir el contrato, solo completarlo.

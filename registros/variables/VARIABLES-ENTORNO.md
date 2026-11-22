@@ -115,12 +115,11 @@ Las variables se clasifican según:
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Frontend | Conexión | No sensible | Identificador de mensajería Firebase. |
 | `VITE_FIREBASE_APP_ID` | Frontend | Conexión | No sensible | Identificador de aplicación Firebase. |
 | `VITE_VAPID_KEY` | Frontend | Autenticación / Seguridad | No sensible | Clave pública VAPID usada por el cliente. No debe sustituirse por una clave privada. |
-| `GATEWAY_API_TOKEN` | Gateway AIoT | Autenticación / Seguridad | **Secreta** | Token externo de infraestructura que Compose entrega al gateway como `API_TOKEN`. |
-| `MQTT_HOST` | Gateway / Mosquitto | Conexión | Interna | Host del broker MQTT. DEV/TEST usan `mosquitto`. |
-| `MQTT_PORT` | Gateway / Mosquitto | Conexión | No sensible | Puerto MQTT del broker. DEV/TEST usan `1883`. PROD queda sujeto a configuración TLS definitiva. |
+| `MQTT_HOST` | Gateway / Mosquitto | Conexión | Interna | Host del broker MQTT para el gateway: `mosquitto` en DEV, TEST y PROD (servicio de la red interna del stack). Lo fijan los compose del broker: DEV `docker-compose.yml:77@2f8ea54`, TEST `docker-compose.test.yml:43@662e096` y PROD `docker-compose.prod.yml:203@2181993`. |
+| `MQTT_PORT` | Gateway / Mosquitto | Conexión | No sensible | Puerto interno de Mosquitto para el gateway: `1883`, en claro, en DEV, TEST y PROD. Lo fijan los compose del broker: DEV `docker-compose.yml:83@2f8ea54`, TEST `docker-compose.test.yml:46@662e096` y PROD `docker-compose.prod.yml:203–204@2181993`. No es `MQTT_HOST_PORT`, el puerto publicado al host, que define Despliegue (nota «Dos tramos MQTT»). |
 | `MQTT_USERNAME` | Gateway / Mosquitto | Autenticación / Seguridad | Interna | Usuario MQTT cuando el broker requiera autenticación. |
 | `MQTT_PASSWORD` | Gateway / Mosquitto | Autenticación / Seguridad | **Secreta** | Contraseña MQTT. |
-| `MQTT_TLS` | Gateway / Mosquitto | Autenticación / Seguridad | No sensible | Habilita o deshabilita TLS. DEV/TEST `false`; PROD `true`. |
+| `MQTT_TLS` | Gateway AIoT | Comportamiento | No sensible | TLS del **gateway** hacia Mosquitto por la red interna del stack (`mosquitto:1883`, en claro). **`false` en DEV, TEST y PROD.** Con `true` el handshake falla y el gateway queda `healthy` sin ingerir. No es el TLS de los dispositivos (ver nota «Dos tramos MQTT»). Default `False` (`app/config.py:27`); compose PROD `${MQTT_TLS:-false}` (`docker-compose.prod.yml:217@2181993`). |
 | `MQTT_CLIENT_ID` | Gateway / Mosquitto | AIoT / Analítica | Interna | Identificador del cliente MQTT. Default actual: `sgpmp`. |
 | `MQTT_RECONNECT_DELAY` | Gateway / Mosquitto | Comportamiento | No sensible | Tiempo de espera entre intentos de reconexión. Default actual: `5`. |
 | `MQTT_TOPIC_PREFIX` | Gateway / Mosquitto | AIoT / Analítica | Interna | Prefijo común de topics. Default: `sgpmp`. |
@@ -128,6 +127,15 @@ Las variables se clasifican según:
 | `MQTT_TOPIC_HEARTBEAT` | Gateway / Mosquitto | AIoT / Analítica | Interna | Sufijo del topic de heartbeat. |
 | `MQTT_TOPIC_COMMAND` | Gateway / Mosquitto | AIoT / Analítica | Interna | Sufijo del topic de comandos. |
 | `MQTT_TOPIC_STATUS` | Gateway / Mosquitto | AIoT / Analítica | Interna | Sufijo del topic de estado. |
+| `MQTT_ACK_REQUIERE_ID_COMANDO` | Gateway AIoT | Comportamiento | No sensible | Anti-replay (TC-M09-252): con `true`, todo ACK debe traer `id_comando`. Default `false` hasta que AIoT confirme el firmware (`app/config.py:65@2181993`; uso en `app/services/ingest.py:312`, l. 302 en `test@662e096`). Compose PROD `:-false` (`docker-compose.prod.yml:232`); DEV y TEST por `env_file`. Existe en `develop`, `test` y `main` del broker (en `main` desde el release 0.4.0). |
+| `MQTT_TOPIC_RESULTADO` | Gateway AIoT | AIoT / Analítica | Interna | Sufijo del topic de resultado de ingesta (BRK-01); contrato con el firmware. Default `resultado` (`app/config.py:48@2181993`, `app/mqtt/publisher.py:30`). Compose PROD `:-resultado` (`docker-compose.prod.yml:234`); DEV y TEST por `env_file`. Existe en `develop`, `test` y `main` del broker (en `main` desde el release 0.4.0). |
+| `BACKEND_URL` | Gateway AIoT | Conexión | Interna | Base del backend a la que el gateway reenvía buffer, visión, eventos Edge y OTA (BRK-02) (`app/config.py:77@2181993`, `app/backend/client.py:41,45`). Vacía por defecto: el gateway no reenvía y registra un error (`client.py:56`; aviso al arrancar en `app/main.py:35`). Obligatoria en el compose PROD (`:?`, `docker-compose.prod.yml:246`); DEV y TEST por `env_file`. Valor por entorno según D1 (pendiente con Despliegue). No confundir con la `BACKEND_URL` del motor M04, que vive en otro compose. Existe en `develop`, `test` y `main` del broker (en `main` desde el release 0.4.0). |
+| `BROKER_SERVICE_TOKEN` | Gateway AIoT y Backend | Autenticación / Seguridad | **Secreta** | Bearer del broker hacia el backend: el **mismo valor** en broker y backend de cada entorno; se genera una vez por entorno. Broker: `app/config.py:78@2181993`, `app/backend/client.py:47`; vacía, igual que `BACKEND_URL`; obligatoria en el compose PROD (`:?`, `docker-compose.prod.yml:247`). Backend: `src/shared/broker_auth.py:61` (`dev@e0c5c0e4`, `test@c698c656`, `main@bcc3cd17`). Existe en `develop`, `test` y `main` del broker (en `main` desde el release 0.4.0). |
+| `BACKEND_TIMEOUT_SECONDS` | Gateway AIoT | Comportamiento | No sensible | Timeout en segundos de las llamadas al backend. Default `10` (`app/config.py:79@2181993`, `app/backend/client.py:46`). Compose PROD `:-10` (`docker-compose.prod.yml:248`); DEV y TEST por `env_file`. Existe en `develop`, `test` y `main` del broker (en `main` desde el release 0.4.0). |
+| `MQTT_PUERTO_PUBLICO` | Gateway / Mosquitto | Conexión | No sensible | Puerto del listener MQTT de Mosquitto hacia los dispositivos (imagen de Mosquitto del broker, `docker/mosquitto-entrypoint.sh:88@2181993`). `8883` activa TLS y exige `fullchain.pem`/`privkey.pem` en `./docker/certs`; sin ellos el entrypoint aborta el arranque (l. 88–94). Default del entrypoint `1883`; compose PROD `:-8883` (`docker-compose.prod.yml:68`), DEV `:-1883` (`docker-compose.yml:20@2f8ea54`); el compose de TEST no la pasa. No es el puerto de host (nota «Dos tramos MQTT»). Existe en las tres ramas del broker. |
+| `MQTT_WS_PUERTO_PUBLICO` | Gateway / Mosquitto | Conexión | No sensible | Puerto del listener WebSocket de Mosquitto hacia los dispositivos (`docker/mosquitto-entrypoint.sh:89@2181993`). `9002` activa TLS (wss) y exige los mismos certificados (l. 88–94). Default del entrypoint `9001`; compose PROD `:-9002` (`docker-compose.prod.yml:69`), DEV `:-9001` (`docker-compose.yml:21@2f8ea54`); el compose de TEST no la pasa. No es el puerto de host (nota «Dos tramos MQTT»). Existe en las tres ramas del broker. |
+
+> **Dos tramos MQTT.** (1) **Dispositivos → Mosquitto**, por los puertos publicados al host. Los listeners los fijan `MQTT_PUERTO_PUBLICO` y `MQTT_WS_PUERTO_PUBLICO`: con 8883/9002, Mosquitto publica TLS y exige `fullchain.pem`/`privkey.pem` en `./docker/certs` (sin ellos no arranca). Estado por entorno según los compose del broker (corte `develop@2f8ea54`, `test@662e096`, `main@2181993`): **DEV**, en claro; **TEST**, en claro: `docker-compose.test.yml` no pasa `MQTT_PUERTO_PUBLICO` y publica los listeners sin TLS, lo que incumple SEG-BROKER-02 (pendiente de HU-IMP-SEG-03); **PROD**, 8883/9002 con los certificados en `./docker/certs`. El compose de PROD exige `MQTT_HOST_PORT` y `MQTT_WS_HOST_PORT` (`:?`, `docker-compose.prod.yml:92–93`): su valor lo define Despliegue y no se cataloga (regla 9). (2) **Gateway → Mosquitto**, por la red interna del stack (`mosquitto:1883`; en PROD, la red `broker-interna`, `docker-compose.prod.yml:327`; en DEV y TEST, la red por defecto del compose): en claro por diseño, no sale del host. `MQTT_TLS` controla solo este tramo y queda en `false`.
 
 ---
 
@@ -182,7 +190,9 @@ DB_HOST=database
 DB_PORT=5432
 DB_NAME=dba
 VITE_SW=true
-MQTT_TLS=true
+MQTT_HOST=mosquitto
+MQTT_PORT=1883
+MQTT_TLS=false
 ```
 
 En PROD se dejan como configuración externa valores dependientes del entorno real, entre ellos:
@@ -195,8 +205,6 @@ GATEWAY_IMAGE
 FRONTEND_URL
 VITE_API_BASE_URL
 VITE_AGROFUSION_LOGIN_URL
-MQTT_HOST
-MQTT_PORT
 ```
 
 Las credenciales y secretos reales deben ser administrados fuera del repositorio.
@@ -206,18 +214,6 @@ Las credenciales y secretos reales deben ser administrados fuera del repositorio
 ## 5. Traducciones realizadas por Compose
 
 ### Gateway
-
-El catálogo utiliza:
-
-```text
-GATEWAY_API_TOKEN
-```
-
-y Compose lo entrega al contenedor como:
-
-```text
-API_TOKEN
-```
 
 La URL PostgreSQL del gateway se construye mediante:
 
@@ -279,7 +275,10 @@ VITE_APP_ENV
 GATEWAY_DATABASE_URL
 DEBUG
 LOG_LEVEL
+GATEWAY_API_TOKEN
 ```
+
+`GATEWAY_API_TOKEN` (retirada el 2026-11-22, HU-IMP-AMB-11): diseño superado por `BROKER_SERVICE_TOKEN` y las credenciales de servicio en base de datos; el broker lo advierte en `.env.prod.example:244–246@2181993`. El gateway no lee `API_TOKEN` en ninguna rama: `require_api_token` es una función que valida el Bearer contra la base (`app/api/dependencies.py:18–32`).
 
 También se revisó el `.env.example` histórico del backend. No se incorporaron automáticamente variables que no fueron encontradas como consumidas por el código actual, entre ellas:
 
@@ -363,5 +362,13 @@ Actualización 2026-11-20 (HU-IMP-CFG-04; corte BE `dev@6cee5fc4` · `test@12965
 Corte reverificado el 2026-11-21: BE `dev@8d4981f6` · `test@918806ec` · `main@0abbeeef` · PR #1204 `097f6d80` (abierto). Entre `test@12965211` y `@918806ec` solo cambió `tests/`, y `dev` no tocó compose, plantillas ni `Dockerfile` desde `@6cee5fc4`: las citas `@12965211` y `@6cee5fc4` siguen vigentes. Corte del 2026-11-21 (17:55, America/Bogota): `test@cd5f36de` (merges de M08 desde `dev`), sin cambios en compose, plantillas ni `Dockerfile` desde `@12965211`.
 - **`OTA_URL_*` en `.env.prod.example` de `dev`**: PR #1217 a `dev` (ST-05, fusionado el 2026-11-21, 18:08 America/Bogota; `dev e372a059`).
 - **Volúmenes de logos, modelos y respaldo de auditoría** en TEST y PROD: HU-IMP-AMB-10 (borrador; depende de Desarrollo).
+
+Actualización 2026-11-22 (HU-IMP-AMB-11; corte broker `develop@2f8ea54` · `test@662e096` · `main@2181993`, BE `dev@e0c5c0e4` · `test@c698c656` · `main@bcc3cd17`):
+
+- **Corregido**: `MQTT_TLS` en `false` en DEV, TEST y PROD (el catálogo decía `true` para PROD; con `true` el gateway queda `healthy` sin ingerir); `GATEWAY_API_TOKEN` retirada (§6) y sin traducción a `API_TOKEN` (§5); `MQTT_HOST` y `MQTT_PORT` fijados por el compose; 7 filas nuevas (BRK-10 y puertos públicos de Mosquitto) y nota «Dos tramos MQTT» en §3.
+- **H-01**: el compose PROD del broker sigue con la red `sgpmp-network`, incluido el mensaje de la guarda de `BACKEND_URL` (`docker-compose.prod.yml:246`): HU-IMP-CFG-01 (propuesta, por crear).
+- **D1 `BACKEND_URL`**: el valor por entorno desplegado queda pendiente con Despliegue.
+- **TLS de los dispositivos en TEST**: el compose de TEST publica MQTT en claro; incumple SEG-BROKER-02 (HU-IMP-SEG-03, por crear).
+- **Variables de H-04 que quedan fuera**: `MQTT_DEVICE_*`, `MQTT_ACK_TIMEOUT_SECONDS` y `MQTT_COLA_*` (sin HU).
 
 Estos valores deben completarse cuando las historias dependientes entreguen sus contratos definitivos.

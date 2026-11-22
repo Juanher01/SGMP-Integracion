@@ -85,6 +85,13 @@ services:
       MQTT_TOPIC_COMMAND: ${MQTT_TOPIC_COMMAND}
       MQTT_TOPIC_STATUS: ${MQTT_TOPIC_STATUS}
 
+      # Gateway -> backend (BRK-10); defaults del compose PROD del broker
+      MQTT_ACK_REQUIERE_ID_COMANDO: ${MQTT_ACK_REQUIERE_ID_COMANDO:-false}
+      MQTT_TOPIC_RESULTADO: ${MQTT_TOPIC_RESULTADO:-resultado}
+      BACKEND_URL: ${BACKEND_URL:-}
+      BROKER_SERVICE_TOKEN: ${BROKER_SERVICE_TOKEN:-}
+      BACKEND_TIMEOUT_SECONDS: ${BACKEND_TIMEOUT_SECONDS:-10}
+
       # Esquemas PostgreSQL utilizados por AIoT
       DB_SCHEMA_INGEST: ${DB_SCHEMA_INGEST}
       DB_SCHEMA_REGISTRY: ${DB_SCHEMA_REGISTRY}
@@ -113,6 +120,10 @@ services:
 
     networks:
       - sgpmp-network
+
+    environment:
+      # BRK-10: el backend exige el mismo token que envía el gateway (src/shared/broker_auth.py:61)
+      BROKER_SERVICE_TOKEN: ${BROKER_SERVICE_TOKEN:-}
 
   frontend:
     depends_on:

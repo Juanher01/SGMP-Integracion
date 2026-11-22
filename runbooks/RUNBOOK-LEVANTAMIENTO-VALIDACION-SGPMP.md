@@ -462,7 +462,6 @@ DB_IOT_PASSWORD=<mismo valor elegido para DB_IOT_PASSWORD>
 
 SECRET_KEY=<valor local seguro>
 RF71_INTERNAL_KEY=<valor local seguro>
-GATEWAY_API_TOKEN=<valor local seguro>
 ```
 
 Para DEV, las variables SMTP/Firebase pueden permanecer sin valor si esas integraciones no forman parte de esta prueba.
@@ -911,8 +910,6 @@ DB_APP_PASSWORD
 
 DB_IOT_USER
 DB_IOT_PASSWORD
-
-GATEWAY_API_TOKEN
 ```
 
 También existen valores de seguridad/AIoT que deben ser suministrados por sus responsables.
@@ -975,7 +972,6 @@ PROD depende de:
 imágenes versionadas
 credenciales de BD
 SECRET_KEY / RF71_INTERNAL_KEY
-GATEWAY_API_TOKEN
 configuración MQTT
 certificados TLS
 dominios
@@ -1043,7 +1039,6 @@ DB_APP_PASSWORD
 DB_IOT_PASSWORD
 SECRET_KEY
 RF71_INTERNAL_KEY
-GATEWAY_API_TOKEN
 SMTP_PASSWORD
 tokens
 certificados privados
