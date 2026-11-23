@@ -84,10 +84,10 @@ Si una fuente contradice el contexto v1.7, gana el código y la diferencia se an
 
 **Definición de terminado.**
 
-- ☐ CA-1 a CA-10 con evidencia, entregados antes de las 17:00.
-- ☐ Ajustes de la revisión aplicados.
-- ☐ CA-11 cumplido y PR fusionado por el líder.
-- ☐ `entregas/README.md` y el README de E4 actualizados.
+- ☑ CA-1 a CA-10 cumplidos según REV-02 (APROBAR CON OBSERVACIONES). CA-10: PR #32 abierto el 2026-11-23 a las 17:57, después del plazo de las 17:00.
+- ☑ Ajustes de REV-01 aplicados (REV-02). Observaciones A y C cerradas en la ST-04; B y E por confirmar (Despliegue); D pendiente en el PR #32.
+- ☐ CA-11: v1.7 integrada en `documentos/` y `.docx` generado (ST-04); falta subirlo a Drive y anotar el enlace. PR #32 y PR de la ST-04 por fusionar.
+- ☑ `entregas/README.md` y el README de E4 actualizados (en revisión final).
 
 **Dependencias y aprobaciones.** El PR lo aprueba el líder de Implementación. Sin respuesta de Despliegue (puertos de Mosquitto, gateway de DEV) ni de AIoT (variables del broker), esos datos quedan «por confirmar» y no bloquean.
 
