@@ -73,3 +73,32 @@ $ git diff --stat a910760 9a099e4 -- $F env compose; for n in 118 119 120 123 13
 
 **Veredicto:** cumple al corte de la ejecución. Las citas del broker siguen vigentes. Las del backend pasan a `dev@e0c5c0e4` y `main@bcc3cd17`, en la misma línea. Se repite el día del PR.
 
+## Corte del 2026-11-23 (push de ST-05; REV-03 m-01)
+
+```bash
+$ for r in BROKER-MQTT-SGPMP sgpmp-backend SGMP-Integracion; do git -C $r fetch -q --prune origin; done
+$ for b in develop test main; do git -C BROKER-MQTT-SGPMP log -1 --format="broker $b %h %ad" --date=short origin/$b; done
+broker develop 2f8ea54 2026-11-22
+broker test 662e096 2026-11-01
+broker main 2181993 2026-11-22
+$ for b in dev test main; do git -C sgpmp-backend log -1 --format="backend $b %h %ad" --date=short origin/$b; done
+backend dev 77e0d772 2026-11-23
+backend test 1ee56516 2026-11-22
+backend main e3b07ae6 2026-11-23
+$ git -C SGMP-Integracion log -1 --format='SGMP-Integracion main %h' origin/main
+SGMP-Integracion main 9a099e4
+$ cd sgpmp-backend; for p in "e0c5c0e4 origin/dev" "c698c656 origin/test" "bcc3cd17 origin/main"; do set -- $p; echo "== $2"; git diff --stat $1 $2 -- Dockerfile .dockerignore 'docker-compose*.yml' src/shared/broker_auth.py | tail -3; done
+== origin/dev
+== origin/test
+ Dockerfile              | 9 +++++++--
+ docker-compose.prod.yml | 6 ++++++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+== origin/main
+$ for b in dev test main; do printf "broker_auth:61 $b: "; git show origin/$b:src/shared/broker_auth.py | sed -n '61p' | cut -c1-90; done
+broker_auth:61 dev:     _exigir_token(authorization, "BROKER_SERVICE_TOKEN", "con el broker MQTT", "del broker
+broker_auth:61 test:     _exigir_token(authorization, "BROKER_SERVICE_TOKEN", "con el broker MQTT", "del broker
+broker_auth:61 main:     _exigir_token(authorization, "BROKER_SERVICE_TOKEN", "con el broker MQTT", "del broker
+```
+
+**Veredicto (2026-11-23):** cumple. El broker y `main` de SGMP-Integracion no cambiaron. El backend avanzó en las tres ramas sin mover lo citado (`broker_auth.py:61`); en `test` cambian `Dockerfile` y `docker-compose.prod.yml` (`IOT_AUDITORIA_RESPALDO_PATH` y su volumen, según REV-03), que esta HU no cita.
+

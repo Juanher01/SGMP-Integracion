@@ -80,5 +80,17 @@ prod API_TOKEN: 0
 87:      - MQTT_TOPIC_RESULTADO=${MQTT_TOPIC_RESULTADO:-resultado}
 ```
 
+Complemento (REV-03 m-03, 2026-11-23; ejecutado por el líder en Git Bash): las 5 variables de BRK-10 que no busca el grep anterior, y `MQTT_HOST`/`MQTT_PORT` (REV-02 m-05).
+
+```bash
+$ for e in dev test prod; do printf '%s ' $e; grep -cE '^(MQTT_ACK_REQUIERE_ID_COMANDO|MQTT_TOPIC_RESULTADO|BACKEND_TIMEOUT_SECONDS|MQTT_HOST|MQTT_PORT)=' env/.env.$e.example; done
+dev 5
+test 5
+prod 5
+$ grep -nE '^(MQTT_HOST|MQTT_PORT)=' env/.env.prod.example
+78:MQTT_HOST=mosquitto
+79:MQTT_PORT=1883
+```
+
 **Veredicto (2026-11-23):** cumplen CA-7 (con el texto de la decisión 9: placeholder de URL pública en prod, sin valor real) y CA-8 (`exit=0` también en prod con el placeholder). En cada entorno hay 0 `API_TOKEN`, las 5 variables están en el gateway y `BROKER_SERVICE_TOKEN` también está en el backend (REV-01 m-02).
 

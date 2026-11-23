@@ -76,6 +76,7 @@ El catálogo completo vive en `env/.env.test.example` (48 variables, documentada
 | `VITE_API_BASE_URL` | `http://localhost:8001` | Frontend (solo build DEV) |
 | `MQTT_HOST` / `MQTT_PORT` | `mosquitto` / `1883` | Gateway / MQTT |
 | `MQTT_TLS` | `false` | Gateway / MQTT |
+| `BACKEND_URL` | `http://backend:8000` | Gateway → backend (stack local). En TEST desplegado, URL pública del backend (decisión 9 de HU-IMP-AMB-11, 2026-11-23) |
 | `MQTT_CLIENT_ID` | `sgpmp` | Gateway / MQTT |
 | `MQTT_TOPIC_*` (prefix, telemetry, heartbeat, command, status) | Definidos | Gateway / MQTT |
 

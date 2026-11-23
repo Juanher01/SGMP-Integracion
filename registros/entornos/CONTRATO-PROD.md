@@ -91,7 +91,8 @@ Las siguientes variables deben ser administradas e inyectadas como **Secretos de
 | `FRONTEND_URL` | Despliegue | URL pública/dominio HTTPS del Frontend |
 | `VITE_API_BASE_URL` | Despliegue | URL pública/dominio HTTPS del Backend API |
 | `BACKEND_URL` | Despliegue / AIoT | URL pública HTTPS del backend, con su prefijo de ruta, para el reenvío del gateway: el broker corre en otro servidor y no comparte red con el backend (agregado el 2026-11-23, HU-IMP-AMB-11) |
-| `MQTT_HOST`, `MQTT_PORT` | Despliegue / AIoT | Host y puerto del Broker MQTT de Producción |
+| `BROKER_SERVICE_TOKEN` | Implementación / AIoT | **Secreta**, sin valor en el repositorio: Bearer del gateway hacia el backend; el **mismo** valor en el gateway y en el backend de PROD (agregado el 2026-11-23, HU-IMP-AMB-11) |
+| `MQTT_HOST`, `MQTT_PORT` | — (fijas en el compose PROD del broker: `mosquitto` / `1883`) | No las carga Despliegue: el compose las fija y un valor en Dokploy no las cambia (corregido el 2026-11-23, HU-IMP-AMB-11, CA-10; ver la nota «Dos tramos MQTT» del catálogo) |
 | `MQTT_USERNAME`, `MQTT_PASSWORD` | AIoT | Credenciales de autenticación en Broker MQTT |
 | `SMTP_USER`, `SMTP_PASSWORD` | Desarrollo / Despliegue | Credenciales del servidor de correo SMTP productivo |
 
