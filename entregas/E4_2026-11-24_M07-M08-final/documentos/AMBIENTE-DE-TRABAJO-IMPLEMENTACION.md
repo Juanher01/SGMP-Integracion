@@ -3,60 +3,63 @@ title: "Documento de Ambiente de Trabajo — Área de Implementación"
 subtitle: "Sistema de Gestión Pecuaria Multiespecie de Precisión (SGPMP)"
 author: ["Sebastián Sandoval Chavarro", "Juan Hernando Perdomo Mosquera"]
 date: "Universidad Surcolombiana · Facultad de Ingeniería · Noviembre de 2026"
-version: "1.6"
+version: "1.7"
 lang: es-CO
 ---
 
 # Control del documento
 
 | Campo | Detalle |
-|:---|----|
+|---|---|
 | Título | Documento de Ambiente de Trabajo — Área de Implementación (SGPMP) |
 | Proyecto | Sistema de Gestión Pecuaria Multiespecie de Precisión (SGPMP) — Proyecto Integrador IV |
 | Institución | Universidad Surcolombiana — Facultad de Ingeniería |
 | Área | Implementación |
-| Versión | 1.6 (actualización por la imagen del motor M04) |
-| Fecha | Noviembre de 2026 (corte complementario: 2026-11-02 19:48 -0500; corte base: 2026-10-13) |
+| Versión | 1.7 (cuarta entrega, E4) |
+| Fecha | Noviembre de 2026 (fecha de corte del código: 2026-11-23) |
 | Autores | Sebastián Sandoval Chavarro · Juan Hernando Perdomo Mosquera |
-| Estado | Borrador para revisión REV-03 |
-| Revisiones | REV-01 (2026-10-12) y REV-02 (2026-10-13), Líder de Implementación |
-| Historia de usuario | HU-IMP-DOC-01 (E1). La actualización por el motor M04 queda pendiente de su historia de usuario en E2. |
-| Fuente | `entregas/E1_2026-10-13_M01-M09-M02/documentos/AMBIENTE-DE-TRABAJO-IMPLEMENTACION.md` en SGMP-Integracion (ruta vigente desde ADR-002). |
-| Rama de trabajo | Por crear desde `main` de SGMP-Integracion (0fa672e). La rama `docs/ambiente-trabajo-v1.5` no existe en el remoto. |
+| Estado | Versión para la entrega E4 |
+| Revisiones | REV-01 y REV-02 de HU-IMP-DOC-03 (2026-11-23), Líder de Implementación |
+| Historia de usuario | HU-IMP-DOC-03 (Taiga #6071) |
+| Fuente | `entregas/E4_2026-11-24_M07-M08-final/documentos/AMBIENTE-DE-TRABAJO-IMPLEMENTACION.md` en SGMP-Integracion. El Word se genera con `herramientas/md2docx.ps1`; no se edita a mano. |
+| Rama de trabajo | `docs/hu-imp-doc-03` (secciones de la v1.7, desde `main` `f69094b`) e integración sobre la v1.6 en `docs/ambiente-v1.7-final` (desde `main` `034c1f0`) |
 
 # Fuentes y fecha de corte
 
-Toda afirmación técnica de este documento se verificó contra los commits de la tabla siguiente, fijados en el corte del 2026-10-13 a las 10:59:47 -0500 (`registros/entornos/corte-2026-10-13.md`). Si una rama avanza después del corte, el documento describe el estado del commit citado, no el de la rama.
+Toda afirmación técnica de este documento se verificó contra los commits de la tabla siguiente, fijados en el corte del 2026-11-23 a las 11:38:28 -0500 (`entregas/E4_2026-11-24_M07-M08-final/propio/HU-IMP-DOC-03_ambiente-v1.7/evidencias/CA-1_corte.txt`). Si una rama avanza después del corte, el documento describe el estado del commit citado, no el de la rama.
 
-> **Corte complementario (2026-11-02 19:48 -0500).** Las secciones sobre el motor de inferencia M04 se verificaron contra BRK develop@d0bc51e (merge del PR \#61), BRK test@662e096 (merge del PR \#55, develop → test), BE dev@c3dc633 (merge del PR \#909), BE test@a2b56273 y BE main@0abbeee, posteriores al corte del 2026-10-13. Para el resto del documento sigue valiendo el corte del 2026-10-13.
+> **Corte del motor M04 (2026-11-02 19:48 -0500, v1.6).** Las secciones sobre el motor de inferencia M04 (3.3, Grupos C y F de 3.4, 8.1, 8.4, 11.2 y 11.4) no cambian en E4 y conservan su corte: BRK develop@d0bc51e (merge del PR \#61), BRK test@662e096 (merge del PR \#55, develop → test), BE dev@c3dc633 (merge del PR \#909), BE test@a2b56273 y BE main@0abbeee. Las demás secciones que no actualizó HU-IMP-DOC-03 conservan el corte del 2026-10-13 e indican su corte.
 
 | Repositorio (abreviatura) | Rama | Entorno | Commit | Fecha del commit |
-|:---|----|----|----|----|
-| sgpmp-backend (BE) | dev | DEV | bd8b6d4f | 2026-10-13 00:55:40 -0500 |
-| sgpmp-backend (BE) | test | TEST | 81487428 | 2026-10-12 17:58:22 -0500 |
-| sgpmp-backend (BE) | main | PROD | 8a7e6327 | 2026-10-13 05:55:27 +0000 |
-| SGPMP-FRONT-END-PWA (FE) | dev | DEV | 8c30fa3 | 2026-10-13 15:53:24 +0000 |
-| SGPMP-FRONT-END-PWA (FE) | test | TEST | 95fa674 | 2026-10-12 18:05:06 -0500 |
-| SGPMP-FRONT-END-PWA (FE) | main | PROD | 2132c62 | 2026-10-13 05:50:23 +0000 |
-| BROKER-MQTT-SGPMP (BRK) | develop | DEV | 44e29b6 | 2026-10-12 17:37:32 -0500 |
-| BROKER-MQTT-SGPMP (BRK) | test | TEST | 7cbdb3f | 2026-10-09 21:40:46 -0500 |
-| BROKER-MQTT-SGPMP (BRK) | main | PROD | cebd430 | 2026-10-12 22:33:39 +0000 |
-| SGMP-Integracion (INT) | main | — | 895d81c | Base de la rama `docs/ambiente-trabajo-v1.5` |
-| BROKER-MQTT-SGPMP (BRK) | develop | DEV | 102b2c5 (merge del PR \#54) | 2026-11-01 00:27:54 -0500 |
-| BROKER-MQTT-SGPMP (BRK) | develop | DEV | d0bc51e (merge del PR \#61) | 2026-11-02 19:48:49 -0500 |
-| BROKER-MQTT-SGPMP (BRK) | test | TEST | 662e096 (merge del PR \#55, develop → test) | 2026-11-01 00:29:27 -0500 |
-| sgpmp-backend (BE) | dev | DEV | c3dc633 (merge del PR \#909) | 2026-11-01 00:03:02 -0500 |
-| sgpmp-backend (BE) | test | TEST | a2b56273 (incluye el PR \#909) | 2026-11-02 17:50:00 -0500 |
-| sgpmp-backend (BE) | main | PROD | 0abbeee | 2026-10-13 16:58:47 +0000 (sin el PR \#909) |
+|---|---|---|---|---|
+| sgpmp-backend (BE) | dev | DEV | `77e0d772` | 2026-11-22 20:07:50 -0500 |
+| sgpmp-backend (BE) | test | TEST | `1ee56516` | 2026-11-22 20:50:44 -0500 |
+| sgpmp-backend (BE) | main | PROD | `e3b07ae6` | 2026-11-22 20:10:12 -0500 |
+| SGPMP-FRONT-END-PWA (FE) | dev | DEV | `1a8aad03` | 2026-11-22 20:24:15 -0500 |
+| SGPMP-FRONT-END-PWA (FE) | test | TEST | `6ebc1faa` | 2026-11-23 08:59:50 -0500 |
+| SGPMP-FRONT-END-PWA (FE) | main | PROD | `ed446c62` | 2026-11-22 20:25:45 -0500 |
+| BROKER-MQTT-SGPMP (BRK) | develop | DEV | `2f8ea54` | 2026-11-21 20:18:35 -0500 |
+| BROKER-MQTT-SGPMP (BRK) | test | TEST | `662e096` | 2026-11-01 00:29:27 -0500 |
+| BROKER-MQTT-SGPMP (BRK) | main | PROD | `2181993` | 2026-11-21 20:19:59 -0500 |
+| SGMP-Integracion (INT) | main | — | `f69094b` | Base de la rama `docs/hu-imp-doc-03` |
 
 Otras fuentes:
 
 | Fuente | Qué aporta | Fecha |
-|:---|----|----|
+|---|---|---|
+| `evidencias/curl-dominios.txt` (HU-IMP-DOC-03) | Código HTTP de cada dominio público y ETag del frontend de TEST y PROD (Secciones 3.8 y 8.2) | 2026-11-23 12:21 -0500 |
+| `evidencias/CA-4_puertos.md` (HU-IMP-DOC-03) | Cada puerto citado, con rama, commit, archivo y líneas | Corte 2026-11-23 |
+| `registros/variables/VARIABLES-ENTORNO.md` | Catálogo vivo de variables (Sección 3.4) | INT@`13cd3aa`, 2026-11-23 |
+| `entregas/E4_2026-11-24_M07-M08-final/prs/BRK-PR35_compose-prod-broker/HU-IMP-AMB-11_catalogo-broker-mqtt-tls/` | Broker en otro servidor y `BACKEND_URL` pública (decisión 9); comparación con Dokploy (`evidencias/ST-05_comparacion-dokploy.md`) | 2026-11-23 |
+| `entregas/E4_2026-11-24_M07-M08-final/issues/BACK-1180_sgpmp-entorno-test/HU-IMP-CFG-04_variables-m04-entorno-test/` | Variables M04 del entorno TEST | 2026-11-20 |
+| `registros/seguridad/registro-SEG.md` | Estado de SEG-BROKER-02 (TLS hacia los dispositivos) | Corte 2026-11-23 |
+| Taiga #5478 | Puerto publicado de PostgreSQL | 2026-11-14 |
+| Hallazgos DOC03-H-01 a DOC03-H-06 de HU-IMP-DOC-03, adjuntos a la subtarea ST-01 (Taiga #6072) | Irregularidades encontradas en el corte (Sección 11.4) | 2026-11-23 |
+| `insumos-2026-11-23.md` (HU-IMP-DOC-03), parte b | Gateway que usa el backend de cada entorno, según las variables de Dokploy compartidas por Despliegue (resumidas sin valores en `ST-05_comparacion-dokploy.md`) | 2026-11-23 |
 | `decisiones/ADR-001-flujos-por-tipo-de-trabajo.md` | Los tres flujos del Camino B (Sección 5) | 2026-10-12 |
 | `registros/seguridad/registro-SEG.md` | Estado de las directrices SEG por rama (Sección 7) | Corte 2026-10-13 |
 | `registros/incidencias/registro.md` | Registro vivo de incidencias (Sección 11.4) | 2026-10-13 |
-| `IMP_Diag_Despliegue_Puertos_Protocolos_v1.6.drawio` (HU-IMP-AMB-09; base: v1.5 de `entregas/E1_2026-10-13_M01-M09-M02/documentos/`) | Mapa de puertos y protocolos v1.6 (Diagrama 1) | 2026-11-02 |
+| `documentos/IMP_Diag_Despliegue_Puertos_Protocolos_v1.7.drawio` (HU-IMP-DOC-03; base: v1.6 de HU-IMP-DOC-02) | Mapa de puertos y protocolos v1.7 (Diagrama 1) | 2026-11-23 |
 | Despliegue (consola de Dokploy) | Dominios, rutas, puertos de host y valores no sensibles de las variables | Corte 2026-10-12 |
 | PR \#54 de BROKER-MQTT-SGPMP (`feat(motor-ia): despliegue E2`) | Imagen, `.dockerignore`, compose local y plantilla de variables del motor M04 (Sección 3.3 y Grupo F de 3.4) | 2026-11-01 |
 | PR \#909 de sgpmp-backend (`fix(rf-66)`) | Variables `IOT_INFERENCIA_*` en el compose del backend (Grupo C de 3.4) | 2026-11-01 |
@@ -65,7 +68,9 @@ Otras fuentes:
 | PR \#57 y \#58 de BROKER-MQTT-SGPMP (artefactos de ET-02 en la imagen) | Artefactos de BOV-001 y TER-001 dentro de la imagen y `catalogo.json` por File Mount (Secciones 3.3 y 8.4) | 2026-11-01 |
 | PR \#60 y \#61 de BROKER-MQTT-SGPMP (catálogo automático y reentrenador RF-71) | Cinco variables opcionales del motor y el argumento de construcción `MOTOR_IA_EXTRAS` (Secciones 3.3 y 3.4, Grupo F; Sección 8.4) | 2026-11-02 |
 
-**Convención de citas.** `BE main@8a7e6327 docker-compose.prod.yml:67-68` significa: repositorio sgpmp-backend, rama main, commit 8a7e6327, archivo `docker-compose.prod.yml`, líneas 67 a 68. Cuando una afirmación es información recibida de otro equipo, se indica el equipo y la fecha en lugar del commit.
+**Convención de citas.** `BE main@e3b07ae6 docker-compose.prod.yml:73-74` significa: repositorio sgpmp-backend, rama `main`, commit `e3b07ae6`, archivo `docker-compose.prod.yml`, líneas 73 a 74. Cuando una afirmación viene de una evidencia de comandos, se cita el archivo de evidencia.
+
+\newpage
 
 # 1. Introducción — Qué es el ambiente de trabajo
 
@@ -73,7 +78,7 @@ El ambiente de trabajo del equipo de Implementación se apoya, como el del resto
 
 Este documento describe cómo funciona ese ambiente: la estructura de ramas y roles, las entradas y salidas del equipo, los tres entornos de ejecución y su infraestructura en Dokploy, el catálogo de variables, la Sandbox de pruebas de base de datos, los tres flujos de trabajo del Camino B (ADR-001), las directrices de seguridad, la integración con AIoT, la comunicación entre equipos y el ambiente local. Incluye la trazabilidad con la metodología anterior (Sección 12) y el control de cambios (Sección 13).
 
-Los entornos DEV y TEST están desplegados en Dokploy, con dominios, rutas y puertos definidos por Despliegue (Sección 3.8). Las afirmaciones técnicas se contrastaron con los commits de la tabla de fuentes (corte 2026-10-13, más el corte complementario 2026-11-02 para el motor M04). El rol de Implementación se resume así:
+Los entornos DEV, TEST y PROD están desplegados en dos servidores con Dokploy: el del backend y el del broker (Sección 3.1). Sus dominios, rutas y puertos se describen en la Sección 3.8. Las afirmaciones técnicas se contrastaron con los commits de la tabla de fuentes (corte 2026-11-23). El rol de Implementación se resume así:
 
 **Imágenes · Entornos · Variables · nginx · Incidencias de comunicación · Directrices SEG**
 
