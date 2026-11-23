@@ -13,3 +13,5 @@ SerBy48/BROKER-MQTT-SGPMP    develop  2f8ea54   2026-11-21 20:18:35 -0500
 SerBy48/BROKER-MQTT-SGPMP    test     662e096   2026-11-01 00:29:27 -0500
 SerBy48/BROKER-MQTT-SGPMP    main     2181993   2026-11-21 20:19:59 -0500
 Juanher01/SGMP-Integracion   main     f69094b   2026-11-23 09:17:40 -0500
+
+Nota REV-01 (2026-11-23 16:40 -0500): BE y FE avanzaron hacia las 13:50, pero los archivos citados (compose, Dockerfile y nginx.conf) no cambiaron respecto de estos commits (git diff --stat <commit> origin/<rama> -- <archivos citados>: vacío). Repetido tras git fetch el 2026-11-23 a las 16:40 -0500 contra BE dev@7efb6538, test@d3ddd169, main@6802e3c4; FE dev@65987225, test@2e3d5c61, main@22933d94; BRK develop@ceb22fd, test@662e096, main@2181993: vacío en las 9 ramas. Se mantiene el corte de las 11:38.

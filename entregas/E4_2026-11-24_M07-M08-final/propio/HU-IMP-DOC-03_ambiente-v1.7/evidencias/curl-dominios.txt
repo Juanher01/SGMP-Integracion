@@ -23,3 +23,7 @@ PROD  Gateway           200   https://api.inmero.co/broker-sigab/v1/healthz
 ETag (curl.exe -sI <url>): si coinciden, /sigab captura /sigab-test (riesgo de PathPrefix)
 https://inmero.co/sigab-test/    Etag: "6b0248a0-f63"
 https://inmero.co/sigab/         Etag: "6b0248a0-f63"
+
+Agregado REV-01 (2026-11-23 16:42 -0500):
+TEST  Frontend          200   https://api.inmero.co/sigab-test/
+TEST  Frontend          404   https://www.api.inmero.co/sigab-test/

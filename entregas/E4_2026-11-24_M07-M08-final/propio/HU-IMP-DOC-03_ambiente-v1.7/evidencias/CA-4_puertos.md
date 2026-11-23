@@ -18,7 +18,7 @@ Convención: `REPO rama@commit archivo:líneas`. BE = sgpmp-backend · FE = SGPM
 | Frontend (nginx) | DEV | sin puerto de host · `expose: 80` | FE dev@1a8aad03 docker-compose.yml:18-19 · Dockerfile:56 |
 | Frontend (nginx) | TEST | sin puerto de host · `expose: 80` | FE test@6ebc1faa docker-compose.test.yml:20-21 · Dockerfile:56 |
 | Frontend (nginx) | PROD | sin puerto de host · `expose: 80` | FE main@ed446c62 docker-compose.yml:18-19 · Dockerfile:56 |
-| Frontend subruta | las 3 | `VITE_BASE_PATH` → `subruta.conf` (`location ^~ <base>`) | FE <rama> Dockerfile:13, 45-54 |
+| Frontend subruta | las 3 | `VITE_BASE_PATH` → `subruta.conf` (`location ^~ <base>`) | FE dev@1a8aad03 / test@6ebc1faa / main@ed446c62 Dockerfile:13, 45-54 (idéntico) |
 
 ## Servidor del broker
 
@@ -46,5 +46,5 @@ Convención: `REPO rama@commit archivo:líneas`. BE = sgpmp-backend · FE = SGPM
 
 | Dato | Estado | Hallazgo |
 |---|---|---|
-| Puertos de host de Mosquitto en PROD | El compose exige `MQTT_HOST_PORT` y `MQTT_WS_HOST_PORT` sin valor por defecto | Hallazgo H-06 (Despliegue / AIoT) |
+| Puertos de host de Mosquitto en PROD | Por definir en el despliegue; el compose los exige sin valor por defecto (`MQTT_HOST_PORT`, `MQTT_WS_HOST_PORT`) | Hallazgo DOC03-H-06 (Despliegue / AIoT) |
 | Valores de `DATABASE_URL` y `BACKEND_URL` del gateway en DEV/TEST | Se cargan desde `.env` en Dokploy: valor propio (Dokploy) | — |
