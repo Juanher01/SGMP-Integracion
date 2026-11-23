@@ -790,32 +790,61 @@ La operación de Dokploy es de Despliegue; estos pasos describen lo que Implemen
 3.  Despliegue asigna dominio y ruta según la Sección 3.8, con “Strip Path” cuando el servicio vive bajo un prefijo, hacia el puerto interno 80 (frontend) u 8000 (backend y gateway).
 4.  Dokploy construye la imagen en cada despliegue; en el frontend, cualquier cambio de una `VITE_*` exige un nuevo build.
 5.  En un despliegue nuevo de la base de datos, el DBA ejecuta `CREATE EXTENSION pg_cron;` y confirma la restauración del esquema (modulo1–modulo9).
-6.  Implementación verifica: el backend responde en `/health`; el frontend responde HTTP 200 en su dominio; el gateway responde en `/v1/healthz`; un cliente MQTT conecta al puerto del ambiente (1884 en DEV, 1885 en TEST).
-7.  En TEST se confirma además que la Sandbox esté habilitada (Sección 3.9) y, con Despliegue, que el firewall restrinja el puerto 5448 a IPs conocidas.
+6.  Implementación verifica: el backend responde en `/health`; el frontend responde HTTP 200 en su dominio; el gateway responde en `/v1/healthz`; un cliente MQTT conecta al puerto del ambiente en el servidor del broker (1884 en DEV, 1885 en TEST).
+7.  En TEST se confirma además que la Sandbox esté habilitada (Sección 3.9) y el control de acceso al puerto 5448 (alternativa en discusión, #5478).
 8.  Para el motor M04, Despliegue crea una Application por ambiente (`motor-ia-dev`, `motor-ia-test`, `motor-ia-main`) con la rama del ambiente y `Dockerfile.motor-ia`, dominio con Container Port 8100 y “Strip Path” del prefijo `/model-ia-*`, y el montaje de modelos que corresponda a la imagen de la rama: File Mount de `catalogo.json` o Bind Mount (Sección 8.4). Implementación verifica que `/v1/healthz` responda y que `modelos_cargados` sea el esperado.
 
 ## 11.3 Estado del ambiente de trabajo
 
-El ambiente se considera listo cuando los nueve elementos siguientes están resueltos:
+El ambiente se considera listo cuando los nueve elementos siguientes están resueltos. Las filas 1, 3, 7 y 8 conservan el estado de la v1.6 y no se revisaron en E4.
 
-| Elemento | Estado | Observación |
-|:---|----|----|
-| 1\. Repositorios | En progreso | Los cinco repositorios son clonables; el código vive en dev, test y main (backend y frontend) y en develop, test y main (AIoT). Queda la sincronización del fork de DBIntegrador (Sección 11.1). |
-| 2\. Ramas de entorno | Listo | Las ramas de entorno existen en los tres repositorios de código (tabla de fuentes) y el trabajo se hace con ramas propias y Pull Request (Sección 2.1). |
-| 3\. Entorno local | Listo | Verificado el 20 de agosto de 2026 (`entregas/E1_2026-10-13_M01-M09-M02/propio/HU-IMP-AMB-06_ambiente-dev/evidencias/`). Persiste INC-BD-01 sobre el rol de conexión. |
-| 4\. Docker y compose | En progreso | Dockerfiles de backend (USER 1000), frontend (multietapa) y base de datos (PostgreSQL 18 con pg_cron); compose por repositorio y entorno (Sección 3.3). Imagen del motor M04 verificada en local en su versión del PR \#54; está en `develop` y `test`, falta `main`, repetir la verificación tras los PR \#57 y \#61 y crear las Applications (INC-BRK-05). Abiertos: el frontend no tiene compose de PROD (INC-FE-03) y el compose de TEST del backend no persiste el almacenamiento (INC-BE-02). |
-| 5\. Puertos y dominios (Despliegue) | En progreso | Información recibida de Despliegue (corte 2026-10-12): PostgreSQL 5447 (DEV), 5448 (TEST) y 5449 (PROD, publicado por defecto según BE main@8a7e6327 docker-compose.prod.yml:67-68, con firewall por confirmar, INC-BD-02); Mosquitto 1884 (DEV) y 1885 (TEST); backend, frontend y gateway con expose. Motor M04: puerto interno 8100 y prefijos /model-ia-\*; Dokploy tiene /motor-ia-\* (INC-BRK-04). Dominios según Despliegue (oct. 2026). Pendientes de Despliegue: Strip Path del frontend y del backend, dominios del gateway y puertos MQTT de PROD. |
-| 6\. Variables de entorno | En progreso | Catálogo por grupos (Sección 3.4) reconciliado con el código al corte. Grupos C y F con las variables del motor (13 variables: 4 en el backend y 9 en el motor). El compose de TEST del backend no reenvía `IOT_INFERENCIA_*` (INC-BE-08). Pendientes: valores de PROD (Despliegue y DBA), plantillas desalineadas (INC-BE-04), catálogo vivo sin dos variables (INC-BE-05) e INC-FE-01. |
-| 7\. Base de datos y Sandbox | En progreso | Restauración validada contra DBIntegrador (187 tablas en modulo1–modulo9, PostgreSQL 18 y los roles del DBA), pendiente de integrar a main (INC-IMP-02). Sandbox disponible en TEST (Sección 3.9), con el riesgo de INC-BE-01. Creación de PROD desde cero bloqueada por INC-BD-03. |
-| 8\. Herramientas de prueba | En progreso | Swagger operativo; los scripts de Vitest y Cypress existen en el frontend; la colección Postman/Bruno está pendiente de publicación. `hadolint` y `trivy` sobre la imagen del motor del PR \#54 (Sección 3.3); pendientes sobre la imagen actual. El stack de Pruebas se formaliza en el Contrato de entrega del ambiente TEST. |
-| 9\. Flujos de trabajo (Camino B) | Listo | Los tres flujos de ADR-001 están descritos en la Sección 5 y sus registros existen en `registros/`. |
+| Elemento | Estado | Observación (corte 2026-11-23, salvo las filas de la v1.6) |
+|---|---|---|
+| 1. Repositorios | En progreso | Los cinco repositorios son clonables; el código vive en dev, test y main (backend y frontend) y en develop, test y main (AIoT). Queda la sincronización del fork de DBIntegrador (Sección 11.1). (v1.6; sin revisar en E4) |
+| 2. Ramas de entorno | En progreso | Backend y frontend promueven `dev` → `test` → `main`. En el broker, `develop` llega a `main` sin pasar por `test` (DOC03-H-01). |
+| 3. Entorno local | Listo | Verificado el 20 de agosto de 2026 (`entregas/E1_2026-10-13_M01-M09-M02/propio/HU-IMP-AMB-06_ambiente-dev/evidencias/`). Persiste INC-BD-01 sobre el rol de conexión. (v1.6; sin revisar en E4) |
+| 4. Docker y compose | En progreso | Compose por repositorio y entorno con `expose` para frontend, backend y gateway (`evidencias/CA-4_puertos.md`). El compose PROD del broker describe `BACKEND_URL` y la base como internas, pero el broker está en otro servidor (DOC03-H-04, DOC03-H-05). Imagen del motor M04: sin cambios en E4 (Sección 3.3; INC-BRK-05). |
+| 5. Puertos y dominios | En progreso | Frontend y backend responden en los tres entornos. `inmero.co/sigab-test/` entrega el build de PROD por la captura de `PathPrefix(/sigab)` (DOC03-H-02). Las rutas `api.inmero.co/broker-sigab*` no son las que usa el backend (gateways duplicados). Los puertos de host de Mosquitto en PROD están por definir en el despliegue (DOC03-H-06). Motor M04: puerto interno 8100 y prefijos `/model-ia-*`, sin cambios en E4 (INC-BRK-04). |
+| 6. Variables de entorno | En progreso | Catálogo vivo actualizado con los cambios de E4 (Sección 3.4). Grupos C y F con las variables del motor: sin cambios en E4 (INC-BE-08). |
+| 7. Base de datos y Sandbox | En progreso | Restauración validada contra DBIntegrador (187 tablas en modulo1–modulo9, PostgreSQL 18 y los roles del DBA), pendiente de integrar a main (INC-IMP-02). Sandbox disponible en TEST (Sección 3.9), con el riesgo de INC-BE-01. Creación de PROD desde cero bloqueada por INC-BD-03. (v1.6; sin revisar en E4) Riesgo del puerto publicado: Taiga #5478. |
+| 8. Herramientas de prueba | En progreso | Swagger operativo; los scripts de Vitest y Cypress existen en el frontend; la colección Postman/Bruno está pendiente de publicación. `hadolint` y `trivy` sobre la imagen del motor del PR \#54 (Sección 3.3); pendientes sobre la imagen actual. El stack de Pruebas se formaliza en el Contrato de entrega del ambiente TEST. (v1.6; sin revisar en E4) |
+| 9. Flujos de trabajo (Camino B) | Listo | Sin cambios. |
 
 ## 11.4 Supuestos y salvedades técnicas
 
 Las salvedades técnicas se gestionan en el registro vivo `registros/incidencias/registro.md`, con ID, fecha, entorno, capa, responsable y estado. Esta sección conserva el resumen y la correspondencia con los identificadores provisionales SAL-IMP-xx de la primera entrega de la v1.5. El único supuesto que no es una incidencia (repositorios hermanos, SAL-IMP-02) se describe en la Sección 11.2.
 
+Las irregularidades del corte 2026-11-23 se registraron como hallazgos de HU-IMP-DOC-03, adjuntos a la subtarea ST-01 (Taiga #6072), y aquí solo se citan.
+
+### Riesgos
+
+| Riesgo | Referencia | Responsable |
+|---|---|---|
+| Orígenes compartidos: el frontend de DEV y PROD usa el mismo origen `https://inmero.co` (almacenamiento del navegador y CORS) | Sección 3.8 | Despliegue (dominios) |
+| Captura de `PathPrefix(/sigab)`: `inmero.co/sigab-test/` entrega el build de PROD; alguien puede usarla creyendo que es TEST | DOC03-H-02 (Taiga #6072) | Despliegue |
+| Gateways duplicados: `api.inmero.co/broker-sigab` y `/broker-sigab-test` responden, pero el backend usa otros gateways (insumos 2026-11-23, parte b) | Sección 3.8 | Despliegue y AIoT |
+| Puerto de PostgreSQL publicado al host en los tres entornos | Taiga #5478 | Despliegue y Análisis (decisión); Implementación (compose) |
+| TEST sin TLS hacia los dispositivos (1885 → 1883 en claro), SEG-BROKER-02 | SEG-03 (HU-IMP-SEG-03) | AIoT y Despliegue |
+| `BACKEND_URL` descrita como interna en el compose PROD del broker | DOC03-H-04 (CFG-01; Taiga #6072) | AIoT (compose del broker) |
+
+### Pendientes por equipo
+
+| Equipo | Pendiente | Referencia |
+|---|---|---|
+| AIoT | Promover el broker por `test` antes de `main` | DOC03-H-01 (Taiga #6072) |
+| AIoT | Ajustar en el compose PROD del broker `BACKEND_URL` y la conexión a la base al despliegue en dos servidores | DOC03-H-04, DOC03-H-05 (Taiga #6072) |
+| Despliegue y AIoT | Confirmar el uso de `api.inmero.co/broker-sigab*` (gateways duplicados) y la ruta de DEV en 404 | DOC03-H-03 (Taiga #6072) |
+| Despliegue y AIoT | Puertos de host de Mosquitto en PROD | DOC03-H-06 (Taiga #6072) |
+| Despliegue | Captura de `PathPrefix(/sigab)` sobre `inmero.co/sigab-test/` | DOC03-H-02 (Taiga #6072) |
+| Despliegue y Análisis | Decisión sobre el puerto 5449, considerando que el gateway llega a la base desde otro servidor | Taiga #5478 · DOC03-H-05 |
+| Despliegue | Confirmar si el Dokploy de Arekkazu, donde corre el broker de PROD, está en el servidor del broker o en otro servidor: por confirmar (Despliegue) | REV-02 de HU-IMP-DOC-03, observación B |
+| Implementación | Integrar las secciones pendientes de la v1.8 | Sección 13 |
+
+\newpage
+
 ### Resumen (mismo contenido que el registro)
 
+*Sin cambios en E4; pendiente de actualizar en la v1.8.*
 | ID | Resumen | Responsable | Estado |
 |:---|----|----|----|
 | INC-FE-01 | `VITE_AGROFUSION_LOGIN_URL` no llega a ningún build Docker | Por confirmar (Implementación: Dockerfile y compose) | detectado — pendiente de triage |
@@ -849,6 +878,7 @@ Los cambios de los PR \#57, \#58 y \#61 a `Dockerfile.motor-ia`, a su `.dockerig
 
 ### Correspondencia con los identificadores provisionales
 
+*Sin cambios en E4; pendiente de actualizar en la v1.8.*
 | Provisional | Definitivo | Nota |
 |:---|----|----|
 | SAL-IMP-01 | INC-BD-01 | — |
