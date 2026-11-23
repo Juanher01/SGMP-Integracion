@@ -165,7 +165,7 @@ Implementación es un punto de coordinación: recibe de Despliegue los dominios 
 
 Un entorno no es una rama: es dónde y con qué configuración corre el sistema. Implementación define y mantiene los archivos con que se monta cada entorno; Despliegue opera Dokploy.
 
-**Estado de los entornos.** DEV y TEST están desplegados en Dokploy, con dominios, rutas y puertos asignados por Despliegue (Sección 3.8). PROD tiene definido su compose de backend con la base `sgpmp_prod` y el puerto de host 5449 publicado por defecto (BE main@8a7e6327 `docker-compose.prod.yml:67-68`); su dominio y su despliegue dependen de Despliegue y de la aprobación de Pruebas.
+**Estado de los entornos.** DEV, TEST y PROD están desplegados y responden por sus dominios públicos (Sección 3.8; `evidencias/curl-dominios.txt`).
 
 | Entorno | Quién define los archivos | Quién lo usa | Propósito |
 |:---|----|----|----|
@@ -173,22 +173,29 @@ Un entorno no es una rama: es dónde y con qué configuración corre el sistema.
 | TEST | Implementación | Pruebas | Validación funcional, de regresión, rendimiento, seguridad y UI/UX. Incluye la Sandbox de pruebas de base de datos (Sección 3.9). |
 | PROD | Implementación (define; no opera) | Despliegue | Producción, tras la aprobación de Pruebas. Despliegue ejecuta los artefactos con Dokploy. |
 
+### Los dos servidores
+
+El sistema corre en dos servidores, cada uno con su propio Dokploy. No comparten red Docker: lo que cruza de un servidor al otro va por la URL pública del servicio, a través de Traefik y en HTTPS (HU-IMP-AMB-11, decisión 9; `ST-05_comparacion-dokploy.md`).
+
+| Servidor | Qué aloja | Red Docker | Cómo lo alcanza el otro servidor |
+|---|---|---|---|
+| Servidor del backend | Traefik, frontend (nginx), backend (FastAPI) y PostgreSQL de DEV, TEST y PROD | `dokploy-network` (BE main@e3b07ae6 `docker-compose.prod.yml:251-252`) | Por la URL pública del backend de cada entorno (`BACKEND_URL` del gateway) |
+| Servidor del broker | Gateway HTTP y Mosquitto de DEV, TEST y PROD (Dokploy de AIoT; `ST-05_comparacion-dokploy.md`) | Red interna del stack del broker (`broker-interna` en PROD; BRK main@2181993 `docker-compose.prod.yml:327`) | `MQTT_BROKER_URL` del backend: DEV y TEST: host técnico del servidor del broker · PROD: broker del Dokploy de Arekkazu, en un servidor por confirmar (Despliegue; Sección 11.4) (insumos 2026-11-23, parte b; ST-05) |
+
 ### Las capas por entorno
 
-Las capas están presentes en los tres entornos. Entre DEV, TEST y PROD cambian la rama de origen, el puerto de host y la política de exposición.
+| Capa | Servidor | Origen de la imagen | DEV | TEST | PROD |
+|---|---|---|---|---|---|
+| Base de datos | Backend | `Dockerfile.postgres` (PostgreSQL 18 con `pg_cron`) en el stack del backend | Host 5447 → 5432 (BE dev@77e0d772 `docker-compose.yml:40-41`) | Host 5448 → 5432 (BE test@1ee56516 `docker-compose.test.yml:29-30`) | Host 5449 → 5432 (BE main@e3b07ae6 `docker-compose.prod.yml:73-74`) |
+| Backend | Backend | `Dockerfile` del backend; Dokploy construye en cada despliegue | Rama `dev` · `expose: 8000` | Rama `test` · `expose: 8000` | Rama `main` · `expose: 8000` |
+| Frontend | Backend | `Dockerfile` multietapa (`node` → `nginx`); `VITE_*` y `VITE_BASE_PATH` se incrustan al compilar (FE dev@1a8aad03 / test@6ebc1faa / main@ed446c62 `Dockerfile:13, 45-54`, idéntico en las tres) | Build de `dev` · `expose: 80` | Build de `test` · `expose: 80` | Build de `main` · `expose: 80` |
+| Gateway AIoT | Broker | `Dockerfile` del broker | Rama `develop` | Rama `test` | Rama `main` |
+| Broker Mosquitto | Broker | Imagen de Mosquitto del broker | Host 1884 → 1883 (BRK develop@2f8ea54 `docker-compose.yml:46-47`) | Host 1885 → 1883 (BRK test@662e096 `docker-compose.test.yml:28-29`) | Host por definir en el despliegue; el compose los exige sin valor por defecto → 8883 (BRK main@2181993 `docker-compose.prod.yml:91-92`) |
+| Motor de inferencia M04 | Por confirmar (AIoT) | `Dockerfile.motor-ia` en la raíz de BRK: multietapa sobre `python:3.13-slim` fijada por digest (3.13.18, Debian trixie), usuario 1001, `EXPOSE 8100`, healthcheck sobre `/v1/healthz` (BRK develop@102b2c5). Es un servicio aparte del gateway y de Mosquitto; el PR \#54 no modifica el `Dockerfile` ni los compose del broker. Desde el PR \#57 la imagen de develop incluye los artefactos de ET-02 (BRK develop@d0bc51e). | Application `motor-ia-dev` (rama develop) | Application `motor-ia-test` (rama test; la imagen llegó con el PR \#55 en su versión del PR \#54, sin artefactos de ET-02) | Application `motor-ia-main` (rama main; la imagen aún no llegó a esa rama) |
 
-| Capa | Origen de la imagen | DEV | TEST | PROD |
-|:---|----|----|----|----|
-| Base de datos | `Dockerfile.postgres` (PostgreSQL 18 con `postgresql-18-cron=1.6.8-1.pgdg13+1`) en el stack del backend (BE `Dockerfile.postgres:1,24`, igual en las tres ramas); esquema y roles del DBA. | Host 5447 → 5432 (BE dev@bd8b6d4f `docker-compose.yml:33-34`) | Host 5448 → 5432 (BE test@81487428 `docker-compose.test.yml:25-26`) | Host 5449 → 5432, publicado para el DBA y Despliegue; debe restringirse por firewall (BE main@8a7e6327 `docker-compose.prod.yml:57-68`; INC-BD-02) |
-| Backend | `Dockerfile` (Python 3.13-slim, USER 1000, EXPOSE 8000; BE `Dockerfile:1,51,56,58`, igual en las tres ramas). Dokploy construye en cada despliegue. | Rama dev | Rama test | Rama main |
-| Frontend | `Dockerfile` multietapa (node:22-slim → nginx:1.27-alpine; FE `Dockerfile:1,34`, igual en las tres ramas). Las `VITE_*` se incrustan al compilar. | Build propio de DEV | Build propio de TEST | Build propio de PROD (la imagen de TEST no se promueve) |
-| Gateway AIoT | Recibido de AIoT (BRK `Dockerfile`). | Rama develop | Rama test | Rama main |
-| Broker Mosquitto | `Dockerfile.mosquitto` sobre `eclipse-mosquitto:2` (BRK `docker-compose.yml:6-8`). | Host 1884 → 1883 | Host 1885 → 1883 | Puerto de host por asignar (Despliegue) |
-| Motor de inferencia M04 | `Dockerfile.motor-ia` en la raíz de BRK: multietapa sobre `python:3.13-slim` fijada por digest (3.13.18, Debian trixie), usuario 1001, `EXPOSE 8100`, healthcheck sobre `/v1/healthz` (BRK develop@102b2c5). Es un servicio aparte del gateway y de Mosquitto; el PR \#54 no modifica el `Dockerfile` ni los compose del broker. Desde el PR \#57 la imagen de develop incluye los artefactos de ET-02 (BRK develop@d0bc51e). | Application `motor-ia-dev` (rama develop) | Application `motor-ia-test` (rama test; la imagen llegó con el PR \#55 en su versión del PR \#54, sin artefactos de ET-02) | Application `motor-ia-main` (rama main; la imagen aún no llegó a esa rama) |
+Los nombres de las Applications del motor vienen del PR \#54; su creación y configuración en Dokploy es de Despliegue (INC-BRK-05). La fila del motor no cambia en E4 (corte 2026-11-02); su servidor está por confirmar (AIoT).
 
-Los nombres de las Applications del motor vienen del PR \#54; su creación y configuración en Dokploy es de Despliegue (INC-BRK-05).
-
-El ambiente TEST debe exponer además lo que necesita el stack de herramientas de Pruebas (Cypress, Vitest, Pytest, Playwright, cypress-axe, Newman, k6 y OWASP ZAP). Esos requisitos se formalizan en `registros/entornos/CONTRATO-TEST.md` y `registros/entornos/REQUISITOS-PRUEBAS-TEST.md`; el análogo para PROD es `registros/entornos/CONTRATO-PROD.md`.
+El ambiente TEST expone además lo que necesita el stack de herramientas de Pruebas. Esos requisitos se formalizan en `registros/entornos/CONTRATO-TEST.md`; el análogo para PROD es `registros/entornos/CONTRATO-PROD.md`.
 
 ## 3.2 Principio de separación entre código y configuración
 
@@ -198,6 +205,8 @@ La misma versión del sistema debe ejecutarse en los tres entornos sin modificar
 
 ## 3.3 Cómo se organiza técnicamente: orquestación local y orquestación en Dokploy
 
+*Corte de esta sección: 2026-10-13 y, para el motor M04, 2026-11-02 (v1.6). Sin cambios en E4; pendiente de actualizar en la v1.8 (volúmenes y migraciones, Sección 13). Los puertos vigentes están en la Sección 3.8.*
+
 **Nivel 1 — Compose local (SGMP-Integracion).** Un `compose/docker-compose.yml` base más un archivo por entorno (`compose/compose.dev.yml`, `compose/compose.test.yml`, `compose/compose.prod.yml`). Orquesta backend, frontend, base de datos y la capa AIoT (gateway y Mosquitto) a partir de los repositorios clonados como carpetas hermanas. Se usa para el entorno local (Sección 11.2).
 
 **Nivel 2 — Compose por repositorio (Dokploy).** Cada repositorio versiona, en la rama de cada entorno, el compose que Dokploy despliega. Dokploy construye las imágenes desde el Dockerfile en cada despliegue (`build:`, no `image:`). Qué archivo usa cada aplicación de Dokploy lo configura Despliegue; la tabla indica qué archivos existen en cada commit.
@@ -206,7 +215,7 @@ La misma versión del sistema debe ejecutarse en los tres entornos sin modificar
 |:---|----|----|----|
 | sgpmp-backend | `docker-compose.yml` (dev@bd8b6d4f) | `docker-compose.test.yml` (test@81487428) | `docker-compose.prod.yml` (main@8a7e6327) |
 | SGPMP-FRONT-END-PWA | `docker-compose.yml` (dev@8c30fa3) | `docker-compose.test.yml` (test@95fa674) | `docker-compose.yml` (main@2132c62). No existe `docker-compose.prod.yml`: lo eliminó la sincronización c143fe5 (corte §2.2; INC-FE-03) |
-| BROKER-MQTT-SGPMP | `docker-compose.yml` (develop@44e29b6) | `docker-compose.yml` y `docker-compose.test.yml` (test@7cbdb3f); cuál usa TEST está por confirmar con AIoT y Despliegue (INC-BRK-02) | `docker-compose.yml` (main@cebd430) |
+| BROKER-MQTT-SGPMP | `docker-compose.yml` (develop@44e29b6) | `docker-compose.test.yml` (test@662e096; HU-IMP-AMB-11) | `docker-compose.yml` (main@cebd430) |
 
 El motor M04 no usa compose en Dokploy: se despliega como Application construida desde `Dockerfile.motor-ia`. El archivo `docker-compose.motor-ia.yml` existe solo para desarrollo local (BRK develop@102b2c5).
 
@@ -217,7 +226,7 @@ El principio de construir una sola vez y ejecutar en todos los entornos sigue si
 | Aspecto | DEV (`docker-compose.yml`, dev@bd8b6d4f) | TEST (`docker-compose.test.yml`, test@81487428) | PROD (`docker-compose.prod.yml`, main@8a7e6327) |
 |:---|----|----|----|
 | Nombre de proyecto | Derivado del directorio | `sgpmp-backend-test` (l. 1) | `sgpmp-backend-prod` (l. 24) |
-| Puerto de BD al host | `${DB_PORT:-5447}:5432` (l. 33-34) | `${DB_PORT:-5448}:5432` (l. 25-26) | `${DB_PORT:-5449}:5432` (l. 67-68), para el DBA y Despliegue, sin acceso SSH; restringir por firewall (INC-BD-02) |
+| Puerto de BD al host | `${DB_PORT:-5447}:5432` (l. 33-34) | `${DB_PORT:-5448}:5432` (l. 25-26) | `${DB_PORT:-5449}:5432` (l. 67-68), para el DBA y Despliegue, sin acceso SSH; riesgo en Taiga #5478 |
 | Variables obligatorias | Sin validación | `:?` en BD, SECRET_KEY, FRONTEND_URL, ENV, RECAPTCHA_SECRET_KEY, MQTT_BROKER_URL y MQTT_BROKER_TOKEN (l. 5-18, 41-42, 48-49, 56, 65-66) | `:?` en BD, SECRET_KEY, FRONTEND_URL, ALLOWED_ORIGINS, SMTP_USER, SMTP_PASSWORD, RECAPTCHA_SECRET_KEY y COOKIE\_\* (l. 34-56, 117-139). MQTT_BROKER_URL y MQTT_BROKER_TOKEN sin guarda (l. 152-153) |
 | ENV | `${ENV}` (l. 50) | `${ENV:?}` (l. 49) | Literal `production` (l. 121) |
 | Reinicio | `unless-stopped` (l. 42, 91) | `unless-stopped` (l. 34, 76) | `always` (l. 79, 190) |
@@ -257,6 +266,7 @@ El contenedor declara solo `expose: 80`, no publica `ports:` y no se une a ningu
 
 ### Imagen del motor de inferencia M04 (PR \#54)
 
+*Sin cambios en E4; pendiente de actualizar en la v1.8.*
 El motor (`motor_ia/`, RF-66) se construye con cuatro archivos nuevos en la raíz de BRK, sin tocar los del gateway:
 
 | Archivo | Qué es |
@@ -294,7 +304,19 @@ Fuente: bloque `on:` de cada archivo en `.github/workflows/` de BE dev@bd8b6d4f,
 
 ## 3.4 Catálogo de variables por tipo y sensibilidad
 
-El catálogo vivo es `registros/variables/VARIABLES-ENTORNO.md`; esta sección resume las variables por grupo. Las columnas de entorno muestran valores no sensibles recibidos de Despliegue (consola de Dokploy, corte 2026-10-12) o el valor por defecto del compose o del código, con su cita. “Valor propio” indica una variable sensible cuyo valor existe solo en la consola de Dokploy y no se reproduce aquí.
+El catálogo vivo es `registros/variables/VARIABLES-ENTORNO.md` (INT@`13cd3aa`, 2026-11-23); ante cualquier diferencia con las tablas de esta sección, manda el catálogo. "Valor propio (Dokploy)" indica una variable sensible cuyo valor existe solo en la consola de Dokploy y no se reproduce aquí.
+
+**Cambios de E4 registrados en el catálogo:**
+
+| Variable | Cambio | Componente |
+|---|---|---|
+| `BROKER_SERVICE_TOKEN` | Reemplaza a `GATEWAY_API_TOKEN`, que se retira. Es el Bearer del gateway hacia el backend: el mismo valor en el broker y en el backend de cada entorno. Valor propio (Dokploy). | Gateway y backend |
+| `MQTT_TLS` | `false` en DEV, TEST y PROD. Es el TLS del gateway hacia `mosquitto:1883` por la red interna, que es un listener en claro; no es el TLS de los dispositivos (Sección 8.2) (BRK main@2181993 `docker-compose.prod.yml:217`). | Gateway |
+| `BACKEND_URL` | URL pública del backend de cada entorno, con su prefijo y sin `/` final, porque el broker está en otro servidor (HU-IMP-AMB-11, decisión 9). | Gateway |
+| `ALLOWED_ORIGINS` y `FRONTEND_URL` | Un valor por entorno. En PROD las dos son obligatorias (BE main@e3b07ae6 `docker-compose.prod.yml:129-130`); en TEST, `FRONTEND_URL` es obligatoria y `ALLOWED_ORIGINS` es opcional (BE test@1ee56516 `docker-compose.test.yml:52, 54`). | Backend |
+| `VITE_BASE_PATH` | Subruta pública del frontend: DEV `/sigab-dev`, TEST `/sigab-test`, PROD `/sigab`. Define el `base` de Vite y la regla `location ^~` de nginx (FE dev@1a8aad03 / test@6ebc1faa / main@ed446c62 `Dockerfile:13, 45-54`, idéntico en las tres). | Frontend (argumento de build) |
+
+*Las tablas por grupo conservan el corte de la v1.6 (2026-10-13; motor M04: 2026-11-02), salvo las filas marcadas con el corte 2026-11-23; su revisión completa es parte de la v1.8 (Sección 13).*
 
 | Tipo de variable | Qué controla | Tratamiento |
 |:---|----|----|
@@ -306,20 +328,20 @@ El catálogo vivo es `registros/variables/VARIABLES-ENTORNO.md`; esta sección r
 ### Grupo A — Backend: seguridad, sesión y CORS
 
 | Variable | Tipo | DEV | TEST | PROD |
-|:---|----|----|----|----|
-| `ENV` | Comportamiento | production | production | Literal `production` (BE main `docker-compose.prod.yml:121`) |
-| `COOKIE_SECURE` | Seguridad | true | true | true; obligatoria (l. 138) |
-| `COOKIE_SAMESITE` | Seguridad | lax | lax | Obligatoria (l. 139): lax si frontend y backend comparten dominio registrable; none si no (lo define Despliegue) |
+|---|---|---|---|---|
+| `ENV` | Comportamiento | `production` | `production` | Literal `production` (BE main `docker-compose.prod.yml:121`) |
+| `COOKIE_SECURE` | Seguridad | `true` | `true` | `true`; obligatoria (l. 138) |
+| `COOKIE_SAMESITE` | Seguridad | `lax` | `lax` | Obligatoria (l. 139): `lax` si frontend y backend comparten dominio registrable; `none` si no (lo define Despliegue) |
 | `JWT_LEEWAY_SECONDS` | Comportamiento | 30 | 30 | 30 por defecto (l. 132) |
 | `JWT_EXPIRE_HOURS` | Comportamiento | 8 | 8 | 8 por defecto (l. 131) |
 | `REFRESH_TOKEN_EXPIRE_DAYS` | Comportamiento | 7 | 7 | 7 por defecto (l. 133) |
 | `SECRET_KEY` | Sensible | Valor propio | Valor propio | Valor propio, distinto de DEV y TEST; obligatoria (l. 122) |
-| `ALLOWED_ORIGINS` | Conexión | `https://api.inmero.co` (origen del frontend de DEV según Despliegue, oct. 2026; confirmar el valor en la consola) | `https://api.inmero.co` (mismo origen que DEV; ver Sección 3.8) | `https://inmero.co` (origen del frontend de PROD, Despliegue oct. 2026); obligatoria (l. 124) |
-| `FRONTEND_URL` | Conexión | Por confirmar en el código del backend; el frontend de DEV vive en `https://api.inmero.co/sigab-dev` | Ídem; el frontend de TEST vive en `https://api.inmero.co/sigab-test` | Ídem; el frontend de PROD vive en `https://inmero.co/sigab`; obligatoria (l. 123) |
+| `ALLOWED_ORIGINS` | Conexión | `https://inmero.co` (origen del frontend; corte 2026-11-23, Sección 3.8) | `https://api.inmero.co` (ST-05) | `https://inmero.co`; obligatoria (BE main@e3b07ae6 `docker-compose.prod.yml:130`) |
+| `FRONTEND_URL` | Conexión | URL del frontend de DEV: `https://inmero.co/sigab-dev` (corte 2026-11-23) | URL del frontend de TEST: `https://api.inmero.co/sigab-test` (ST-05); obligatoria (BE test@1ee56516 `docker-compose.test.yml:52`) | URL del frontend de PROD: `https://inmero.co/sigab`; obligatoria (BE main@e3b07ae6 `docker-compose.prod.yml:129`) |
 | `FORWARDED_ALLOW_IPS` | Comportamiento | Fijada en el Dockerfile: rangos privados RFC 1918 (BE `Dockerfile:66`) | Ídem | Ídem |
-| `ROOT_PATH` | Conexión | /api-sgpmp | /api-sgpmp-test | /api por defecto (l. 125) |
+| `ROOT_PATH` | Conexión | `/api-sgpmp` | `/api-sgpmp-test` | `/api` por defecto (l. 125) |
 
-`JWT_LEEWAY_SECONDS=30` evita errores TOKEN_EXPIRADO espurios cuando el reloj del servidor va por detrás del emisor del token. `COOKIE_SECURE` y `COOKIE_SAMESITE` controlan la cookie de refresh; con `ENV=production` son obligatorias y el backend se niega a arrancar si faltan (comentario BE main `docker-compose.prod.yml:134-137`). `ALLOWED_ORIGINS` debe ser el origen HTTPS exacto, sin barra final: un origen con `http://` o con barra final no coincide y el navegador bloquea la petición.
+`JWT_LEEWAY_SECONDS=30` evita errores `TOKEN_EXPIRADO` espurios cuando el reloj del servidor va por detrás del emisor del token. `COOKIE_SECURE` y `COOKIE_SAMESITE` controlan la cookie de refresh; con `ENV=production` son obligatorias y el backend se niega a arrancar si faltan (comentario BE main `docker-compose.prod.yml:134-137`). `ALLOWED_ORIGINS` debe ser el origen HTTPS exacto, sin barra final: un origen con `http://` o con barra final no coincide y el navegador bloquea la petición.
 
 ### Grupo B — Backend: datos y almacenamiento
 
@@ -339,16 +361,16 @@ El catálogo vivo es `registros/variables/VARIABLES-ENTORNO.md`; esta sección r
 ### Grupo C — Backend: servicios externos e integraciones
 
 | Variable | Tipo | DEV | TEST | PROD |
-|:---|----|----|----|----|
-| `SMTP_HOST` / `SMTP_PORT` | Conexión | smtp.gmail.com / 587 | smtp.gmail.com / 587 | smtp.gmail.com / 587 por defecto (BE main `docker-compose.prod.yml:126-127`) |
+|---|---|---|---|---|
+| `SMTP_HOST` / `SMTP_PORT` | Conexión | `smtp.gmail.com` / 587 | `smtp.gmail.com` / 587 | `smtp.gmail.com` / 587 por defecto (BE main `docker-compose.prod.yml:126-127`) |
 | `SMTP_USER` / `SMTP_PASSWORD` | Sensible | Valor propio | Valor propio (cuenta de TEST distinta de la de DEV) | Obligatorias (l. 128-129): sin ellas fallan en silencio la activación y la recuperación de cuenta |
 | `RECAPTCHA_SECRET_KEY` | Sensible | Valor propio | Valor propio (hoy igual al de DEV; INC-IMP-04) | Obligatoria (l. 130; la provee Desarrollo) |
-| `FIREBASE_CREDENTIALS_PATH` | Conexión | /app/secrets/firebase.json (archivo montado; BE dev `docker-compose.yml:85`) | Vacía (opcional) | Opcional; exige montar el archivo (l. 140, 169) |
+| `FIREBASE_CREDENTIALS_PATH` | Conexión | `/app/secrets/firebase.json` (archivo montado; BE dev `docker-compose.yml:85`) | Vacía (opcional) | Opcional; exige montar el archivo (l. 140, 169) |
 | `AGROFUSION_SSO_PUBLIC_KEY_PATH` | Seguridad | Ruta local de un desarrollador, no montada en el contenedor (INC-BE-06) | Vacía: el SSO responde 503 | Vacía por defecto (l. 146) |
-| `AGROFUSION_PROJECT_CODE` / `AGROFUSION_ISSUER` | Conexión | SGPMP / agrofusionauth | Código vacío / agrofusionauth | Vacío / agrofusionauth por defecto (l. 147-148) |
+| `AGROFUSION_PROJECT_CODE` / `AGROFUSION_ISSUER` | Conexión | `SGPMP` / `agrofusion-auth` | Código vacío / `agrofusion-auth` | Vacío / `agrofusion-auth` por defecto (l. 147-148) |
 | `AGROFUSION_HUB_CLIENT_ID` / `AGROFUSION_HUB_CLIENT_SECRET` | Sensible | Valor propio | Vacías: sin sincronización M2M | Vacías por defecto (l. 149-150) |
 | `RF71_INTERNAL_KEY` | Sensible | Reenviada por el compose (BE dev `docker-compose.yml:75`); sin valor en la consola (Despliegue, 2026-10-12) | Vacía | Vacía por defecto (l. 151); la define Implementación |
-| `MQTT_BROKER_URL` | Conexión | Endpoint del gateway de DEV (Sección 3.8) | Endpoint del gateway de TEST; obligatoria (BE test `docker-compose.test.yml:65`) | Endpoint del gateway de PROD (por asignar, Despliegue); sin guarda (l. 152) |
+| `MQTT_BROKER_URL` | Conexión | Host técnico del servidor del broker (insumos 2026-11-23, parte b; BE dev@77e0d772 `docker-compose.yml:83`) | Host técnico del servidor del broker; obligatoria (BE test@1ee56516 `docker-compose.test.yml:69`) | Broker del Dokploy de Arekkazu (insumos 2026-11-23, parte b; BE main@e3b07ae6 `docker-compose.prod.yml:158`) |
 | `MQTT_BROKER_TOKEN` | Sensible | Valor propio (AIoT y DBA) | Valor propio; obligatoria (BE test l. 66) | Valor propio; sin guarda (l. 153) |
 | `MQTT_BROKER_HTTP_TIMEOUT` | Comportamiento | 35 (valor por defecto del código; el compose no la reenvía) | Ídem | 35 por defecto (l. 160) |
 | `IOT_INFERENCIA_M04_URL` | Conexión | URL base del motor de DEV (ejemplo de plantilla: `https://api.inmero.co/model-ia-dev`, sin `/v1/paquetes`). Vacía hasta que el motor tenga modelos (BE dev@c3dc633 `docker-compose.yml`) | Ídem, con `/model-ia-test`. **El compose de TEST no la reenvía (INC-BE-08, confirmada en BE test@a2b56273)** | Ídem, con `/model-ia`; dominio por definir (Despliegue). Reenviada en el `docker-compose.prod.yml` de dev y test (PR \#909), sin guarda `:?`; `main` aún no la tiene (BE main@0abbeee) |
@@ -365,8 +387,8 @@ Las variables `MQTT_HOST`, `MQTT_PORT`, `MQTT_USERNAME` y `MQTT_PASSWORD` no per
 ### Grupo D — Frontend (variables de construcción VITE\_\*)
 
 | Variable | DEV | TEST | PROD |
-|:---|----|----|----|
-| `VITE_API_BASE_URL` | https://api.inmero.co/api-sgpmp-dev | https://api.inmero.co/api-sgpmp-test; obligatoria (FE test `docker-compose.test.yml:10`) | https://api.inmero.co/sigab, sin barra final (Despliegue, oct. 2026) |
+|---|---|---|---|
+| `VITE_API_BASE_URL` | `https://www.api.inmero.co/api-sgpmp-dev` (ST-05) | `https://api.inmero.co/api-sgpmp-test`; obligatoria (FE test `docker-compose.test.yml:10`) | `https://www.api.inmero.co/sigab` (ST-05) |
 | `VITE_RECAPTCHA_SITE_KEY` | Site key de DEV | Site key de TEST; obligatoria (FE test l. 18) | Misma site key que DEV por ahora (Despliegue, 2026-10-12) |
 | `VITE_FIREBASE_API_KEY` | Proyecto Firebase del equipo | Valor propio de TEST (público por diseño, ver Grupo D) | Proyecto Firebase de PROD por definir (Desarrollo y Despliegue) |
 | `VITE_FIREBASE_AUTH_DOMAIN` | `<proyecto>.firebaseapp.com` | Ídem | Ídem |
@@ -375,36 +397,39 @@ Las variables `MQTT_HOST`, `MQTT_PORT`, `MQTT_USERNAME` y `MQTT_PASSWORD` no per
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Sender ID numérico | Ídem | Ídem |
 | `VITE_FIREBASE_APP_ID` | App ID de la aplicación web | Ídem | Ídem |
 | `VITE_VAPID_KEY` | Clave pública VAPID | Ídem | Ídem |
-| `VITE_AGROFUSION_LOGIN_URL` | La lee el código (FE `src/auth/config/sso.ts:8`, `src/vite-env.d.ts:12`), pero no es ARG del Dockerfile (FE `Dockerfile:12-20`) ni `build.args` del compose: no llega a ningún build Docker (INC-FE-01) | Ídem (test@95fa674) | Ídem (main@2132c62) |
+| `VITE_AGROFUSION_LOGIN_URL` | La lee el código (FE `src/auth/config/sso.ts:8`, `src/vite-env.d.ts:12`), pero no es `ARG` del Dockerfile (FE `Dockerfile:12-20`) ni `build.args` del compose: no llega a ningún build Docker (INC-FE-01) | Ídem (test@95fa674) | Ídem (main@2132c62) |
 
-Las `VITE_*` son públicas por diseño: terminan en texto plano dentro del bundle. Ninguna credencial de servidor puede declararse con el prefijo `VITE_`; `RECAPTCHA_SECRET_KEY` pertenece solo al backend. Un cambio de valor exige reconstruir la imagen (nuevo despliegue en Dokploy); reiniciar el contenedor no tiene efecto. La imagen de TEST no puede promoverse a PROD porque lleva incrustada la URL del backend de TEST. Cada `VITE_*` debe existir como ARG en el Dockerfile, en `build.args` del compose y en `.env.example`.
+Las `VITE_*` son públicas por diseño: terminan en texto plano dentro del bundle. Ninguna credencial de servidor puede declararse con el prefijo `VITE_`; `RECAPTCHA_SECRET_KEY` pertenece solo al backend. Un cambio de valor exige reconstruir la imagen (nuevo despliegue en Dokploy); reiniciar el contenedor no tiene efecto. La imagen de TEST no puede promoverse a PROD porque lleva incrustada la URL del backend de TEST. Cada `VITE_*` debe existir como `ARG` en el Dockerfile, en `build.args` del compose y en `.env.example`.
 
 ### Grupo E — Gateway AIoT y Mosquitto (BROKER-MQTT-SGPMP)
 
 Las tres ramas tienen el mismo `docker-compose.yml`, `.env.example` y `docker/` (BRK develop@44e29b6 = test@7cbdb3f = main@cebd430). El gateway recibe sus variables por `env_file: .env` (BRK `docker-compose.yml:74-75`), que Dokploy escribe con los valores de la consola.
 
 | Variable | Tipo | DEV | TEST | PROD |
-|:---|----|----|----|----|
-| `DATABASE_URL` (gateway) | Sensible | Hoy: host de Dokploy, puerto 5447 publicado, base sgpmp_dev, rol `dba` (Despliegue, 2026-10-12; INC-BD-01) | Hoy: puerto 5448 publicado, base sgpmp_test, rol `dba` (ídem) | Diseño: host interno `${POSTGRES_DB}-db:5432` en dokploy-network (BE main `docker-compose.prod.yml:57-59`); rol por definir (DBA) |
-| `MQTT_HOST` / `MQTT_PORT` | Conexión interna | Fijadas en el compose: mosquitto / 1883 (BRK `docker-compose.yml:77,83`) | Ídem | Ídem |
-| `MQTT_HOST_PORT` | Conexión (puerto de host) | 1884 | 1885 | Por asignar (Despliegue) |
-| `MQTT_WS_HOST_PORT` | Conexión (puerto de host) | 9001 | 9002 | Por asignar (Despliegue) |
+|---|---|---|---|---|
+| `DATABASE_URL` (gateway) | Sensible | Hoy: host de Dokploy, puerto 5447 publicado, base `sgpmp_dev`, rol `dba` (Despliegue, 2026-10-12; INC-BD-01) | Hoy: puerto 5448 publicado, base `sgpmp_test`, rol `dba` (ídem) | Diseño: host interno `${POSTGRES_DB}-db:5432` en `dokploy-network` (BE main `docker-compose.prod.yml:57-59`); rol por definir (DBA) |
+| `MQTT_HOST` / `MQTT_PORT` | Conexión interna | Fijadas en el compose: `mosquitto` / 1883 (BRK `docker-compose.yml:77,83`) | Ídem | Ídem |
+| `MQTT_HOST_PORT` | Conexión (puerto de host) | 1884 | 1885 | Por definir en el despliegue; el compose los exige sin valor por defecto (BRK main@2181993 `docker-compose.prod.yml:92`; DOC03-H-06) |
+| `MQTT_WS_HOST_PORT` | Conexión (puerto de host) | 9001 | 9002 | Por definir en el despliegue; el compose los exige sin valor por defecto (BRK main@2181993 `docker-compose.prod.yml:93`; DOC03-H-06) |
 | `MQTT_PUERTO_PUBLICO` | Conexión | 1883 por defecto (`.env.example:56`; compose l. 20, 47); 8883 al activar TLS | Ídem | Ídem; la activación la decide Despliegue (INC-BRK-01) |
 | `MQTT_WS_PUERTO_PUBLICO` | Conexión | 9001 por defecto (`.env.example:57`; compose l. 21, 48); 9002 al activar TLS | Ídem | Ídem |
 | `MQTT_TLS_HOST_PORT` / `MQTT_WSS_HOST_PORT` | Conexión (puerto de host) | Solo en mapeos comentados, con 8883 y 9002 por defecto (compose l. 53-54) | Ídem | Ídem |
-| `MQTT_TLS` | Comportamiento | false (`.env.example:48`; `app/config.py:27`) | false | false |
+| `MQTT_TLS` | Comportamiento | `false` (`.env.example:48`; `app/config.py:27`) | `false` | `false` |
+| `BACKEND_URL` | Conexión | Por `env_file` | URL pública del backend de TEST, por `env_file` (HU-IMP-AMB-11, decisión 9; corte 2026-11-23) | URL pública del backend de PROD; obligatoria (BRK main@2181993 `docker-compose.prod.yml:246`) |
+| `BROKER_SERVICE_TOKEN` | Sensible | Valor propio (Dokploy); mismo valor en broker y backend | Ídem | Ídem; obligatoria (l. 247). Reemplaza a `GATEWAY_API_TOKEN` (corte 2026-11-23) |
 | `MQTT_USERNAME` / `MQTT_PASSWORD` | Sensible | Valor propio (administrador de dynamic-security = gateway; compose l. 10-15) | Valor propio | Valor propio |
 | `MQTT_DEVICE_USERNAME` / `MQTT_DEVICE_PASSWORD` | Sensible | Valor propio (credencial compartida heredada; compose l. 16-17) | Valor propio | Valor propio |
-| `MQTT_TOPIC_PREFIX` | Conexión | sgpmp (`.env.example:61`) | sgpmp | sgpmp |
+| `MQTT_TOPIC_PREFIX` | Conexión | `sgpmp` (`.env.example:61`) | `sgpmp` | `sgpmp` |
 | `MQTT_ACK_TIMEOUT_SECONDS` | Comportamiento | 30 (`.env.example:66`) | 30 | 30 |
-| `MQTT_ACK_REQUIRE_ID_COMANDO` | Comportamiento | false (`.env.example:70`) | false | false (depende del firmware; AIoT) |
+| `MQTT_ACK_REQUIERE_ID_COMANDO` | Comportamiento | `false` (`.env.example:70`) | `false` | `false` (depende del firmware; AIoT) |
 
-`MQTT_TLS` **no es el TLS hacia afuera.** `MQTT_TLS` controla el TLS del cliente del gateway hacia el Mosquitto interno (puerto 1883) y debe seguir en false. El TLS hacia los dispositivos depende de `MQTT_PUERTO_PUBLICO`: con 1883 (valor por defecto) se publica al host el listener en texto plano; con 8883 se publica el listener TLS (corte 2026-10-13 §2.6). `TLS_CERT` y `TLS_KEY` no son variables de entorno: son rutas fijas del entrypoint (`/mosquitto/certs/fullchain.pem` y `privkey.pem`; BRK `docker/mosquitto-entrypoint.sh:81-82`), y los certificados se montan desde `./docker/certs` (compose l. 60). Si se pide TLS sin certificados, el broker aborta el arranque (entrypoint l. 91-95).
+**`MQTT_TLS` no es el TLS hacia afuera.** `MQTT_TLS` controla el TLS del cliente del gateway hacia el Mosquitto interno (puerto 1883) y debe seguir en `false`. El TLS hacia los dispositivos depende de `MQTT_PUERTO_PUBLICO`: con 1883 (valor por defecto) se publica al host el listener en texto plano; con 8883 se publica el listener TLS (corte 2026-10-13 §2.6). `TLS_CERT` y `TLS_KEY` no son variables de entorno: son rutas fijas del entrypoint (`/mosquitto/certs/fullchain.pem` y `privkey.pem`; BRK `docker/mosquitto-entrypoint.sh:81-82`), y los certificados se montan desde `./docker/certs` (compose l. 60). Si se pide TLS sin certificados, el broker aborta el arranque (entrypoint l. 91-95).
 
-El gateway ya no usa un token estático (`API_TOKEN` no aparece en el código de develop, test ni main): valida el Bearer contra `modulo1.credenciales_servicio`. Estas variables pertenecen al gateway y no deben declararse en el frontend. La rama test del broker tiene también `docker-compose.test.yml` (proyecto `sigab-broker-test`, puertos 1885 → 1883 y 9002 → 9001, sin montaje de certificados; BRK test@7cbdb3f `docker-compose.test.yml:1,28-32`); cuál de los dos usa TEST se confirma con AIoT y Despliegue (INC-BRK-02).
+El gateway ya no usa un token estático (`API_TOKEN` no aparece en el código de `develop`, `test` ni `main`): valida el Bearer contra `modulo1.credenciales_servicio`. Estas variables pertenecen al gateway y no deben declararse en el frontend. La rama `test` del broker tiene también `docker-compose.test.yml` (proyecto `sigab-broker-test`, puertos 1885 → 1883 y 9002 → 9001, sin montaje de certificados; BRK test@7cbdb3f `docker-compose.test.yml:1,28-32`); cuál de los dos usa TEST se confirma con AIoT y Despliegue (INC-BRK-02).
 
 ### Grupo F — Motor de inferencia M04 (`.env.motor-ia.example`, BRK develop@d0bc51e)
 
+*Sin cambios en E4; pendiente de actualizar en la v1.8.*
 | Variable | Tipo | DEV | TEST | PROD |
 |:---|----|----|----|----|
 | `IOT_INFERENCIA_M04_TOKEN` | Sensible | Valor propio. Obligatoria: el compose local la interpola desde la shell, y con ella vacía el motor lanza `RuntimeError` y no arranca | Valor propio | Valor propio |
@@ -460,37 +485,53 @@ Cada variable que Implementación cataloga queda asociada a su entorno en `regis
 
 ## 3.8 Infraestructura en Dokploy: dominios, rutas y puertos
 
-Dokploy, con Traefik como proxy inverso, aloja los ambientes DEV y TEST. Traefik termina el TLS en el puerto 443, enruta por dominio y por ruta (con “Strip Path” cuando el servicio vive bajo un prefijo) y entrega el tráfico a los contenedores por la red interna. Ni el frontend ni el backend publican puertos al host: solo declaran `expose`.
-
-**Fuente.** Los puertos de host de esta sección son información recibida de Despliegue (corte 2026-10-12). Los dominios y rutas son los que Despliegue comunicó en octubre de 2026; quedan por confirmar el Strip Path del frontend y del backend y los dominios del gateway. Los criterios de exposición (`expose` en lugar de `ports`, puertos de la base de datos) son responsabilidad de Implementación y se citan contra el código.
+Traefik termina el TLS en el puerto 443, enruta por dominio y por prefijo de ruta, y entrega el tráfico a los contenedores por la red interna. Ni el frontend, ni el backend, ni el gateway publican puertos al host: solo declaran `expose`. Cada dominio de esta sección se verificó con `curl.exe -s -o NUL -w "%{http_code}"` el 2026-11-23 a las 12:21 -0500 (`evidencias/curl-dominios.txt`).
 
 ### Servicios web: frontend, backend, gateway AIoT y motor M04
 
-| Componente | Puerto interno | DEV | TEST | PROD |
-|:---|----|----|----|----|
-| Frontend nginx / PWA | 80 (expose) | https://api.inmero.co/sigab-dev | https://api.inmero.co/sigab-test | https://inmero.co/sigab |
-| Backend FastAPI / Uvicorn | 8000 (expose) | https://api.inmero.co/api-sgpmp-dev (ROOT_PATH=/api-sgpmp; INC-BE-03) | https://api.inmero.co/api-sgpmp-test (ROOT_PATH=/api-sgpmp-test) | https://api.inmero.co/sigab (también responde en www.api.inmero.co); ROOT_PATH por defecto /api |
-| Gateway AIoT | 8000 (expose; BRK `docker-compose.yml:86-87`) | https://api.inmero.co/broker-sigab-dev (por confirmar) | https://api.inmero.co/broker-sigab-test (por confirmar) | Por confirmar (Despliegue) |
-| Motor de inferencia M04 | 8100 (Container Port en Dokploy; BRK develop@102b2c5 `Dockerfile.motor-ia`) | Prefijo `/model-ia-dev` bajo `api.inmero.co` (previsto; ver INC-BRK-04) | Prefijo `/model-ia-test` (previsto) | Prefijo `/model-ia`; dominio por definir (Despliegue) |
+| Componente | Servidor | Puerto interno | DEV | TEST | PROD |
+|---|---|---|---|---|---|
+| Frontend nginx / PWA | Backend | 80 (`expose`) | `https://inmero.co/sigab-dev/` → 200 | `https://api.inmero.co/sigab-test/` → 200 | `https://inmero.co/sigab/` → 200 |
+| Backend FastAPI | Backend | 8000 (`expose`) | `https://api.inmero.co/api-sgpmp-dev` (`/health` → 200) | `https://api.inmero.co/api-sgpmp-test` (`/health` → 200) | `https://api.inmero.co/sigab` (`/health` → 200) |
+| Gateway AIoT que usa el backend | Broker | 8000 (`expose`) | Host técnico del servidor del broker (`MQTT_BROKER_URL`) | Host técnico del servidor del broker (`MQTT_BROKER_URL`) | Broker del Dokploy de Arekkazu (`MQTT_BROKER_URL`) |
+| Rutas `/broker-sigab*` en `api.inmero.co` | — | — | `/broker-sigab-dev`: `/v1/healthz` → 404 (DOC03-H-03); el backend de DEV no la usa | `/broker-sigab-test`: `/v1/healthz` → 200; no consta que el backend la use: por confirmar (Despliegue y AIoT) | `/broker-sigab`: `/v1/healthz` → 200; no consta que el backend la use: por confirmar (Despliegue y AIoT) |
+| Motor de inferencia M04 | Por confirmar (AIoT) | 8100 (Container Port en Dokploy; BRK develop@102b2c5 `Dockerfile.motor-ia`) | Prefijo `/model-ia-dev` bajo `api.inmero.co` (previsto; ver INC-BRK-04) | Prefijo `/model-ia-test` (previsto) | Prefijo `/model-ia`; dominio por definir (Despliegue) |
+
+- **Dominio anterior del frontend de DEV.** `https://api.inmero.co/sigab-dev` ya no sirve el frontend (404).
+- **Gateways del broker.** La fila «Gateway AIoT que usa el backend» sale de las variables de Dokploy compartidas por Despliegue (insumos 2026-11-23, parte b). El host técnico no se nombra porque contiene la IP del servidor.
+- **Motor M04.** Fila sin cambios en E4 (corte 2026-11-02): prefijos previstos y ubicación por confirmar (AIoT).
+- **Variantes con `www.`.** `www.inmero.co` (frontend) y `www.api.inmero.co` (backend) responden 200 con las mismas rutas en los tres entornos.
+
+### Prefijo de ruta y orígenes
+
+- **Prefijo del frontend.** Cada build incrusta su subruta (`VITE_BASE_PATH`) y nginx la recorta con `location ^~ <subruta>` (FE dev@1a8aad03 / test@6ebc1faa / main@ed446c62 `Dockerfile:52-54`). `https://inmero.co/sigab-test/` no es el frontend de TEST: la regla `PathPrefix(/sigab)` de PROD captura esa URL y entrega el build de PROD (DOC03-H-02, Taiga #6072).
+- **Prefijo del backend.** El backend vive bajo un prefijo de ruta en `api.inmero.co`: `/api-sgpmp-dev`, `/api-sgpmp-test` y `/sigab`. `ROOT_PATH` se pasa por entorno (BE dev@77e0d772 `docker-compose.yml:61`; test y main con valor por defecto `/api`: BE test@1ee56516 `docker-compose.test.yml:55`, BE main@e3b07ae6 `docker-compose.prod.yml:131`).
+- **Orígenes.** DEV y PROD sirven el frontend desde el mismo origen, `https://inmero.co`, y solo cambia la ruta: comparten el almacenamiento del navegador (`localStorage`, cookies del sitio) y el valor de origen para CORS. TEST está en `https://api.inmero.co`, el mismo origen de los backends. `ALLOWED_ORIGINS` y `FRONTEND_URL` se cargan por entorno (Sección 3.4).
 
 ### Datos y mensajería: PostgreSQL y Mosquitto
 
-| Componente | Puerto interno | DEV | TEST | PROD |
-|:---|----|----|----|----|
-| PostgreSQL 18 | 5432 | Host 5447; base sgpmp_dev | Host 5448; base sgpmp_test | Host 5449 publicado por defecto; base sgpmp_prod (BE main@8a7e6327 `docker-compose.prod.yml:67-68`; INC-BD-02) |
-| Mosquitto MQTT | 1883 (texto plano); 8883 (TLS) | Host 1884 | Host 1885 | Por asignar (Despliegue) |
-| Mosquitto WebSocket | 9001 (WS); 9002 (WSS) | Host 9001 | Host 9002 → 9001 | Por asignar (Despliegue) |
+| Componente | Servidor | Puerto interno | DEV | TEST | PROD |
+|---|---|---|---|---|---|
+| PostgreSQL 18 | Backend | 5432 | Host 5447 (BE dev@77e0d772 `docker-compose.yml:40-41`) | Host 5448 (BE test@1ee56516 `docker-compose.test.yml:29-30`) | Host 5449 (BE main@e3b07ae6 `docker-compose.prod.yml:73-74`) |
+| Mosquitto MQTT | Broker | 1883 en claro · 8883 TLS (solo PROD) | Host 1884 → 1883 | Host 1885 → 1883 | Host por definir en el despliegue; el compose los exige sin valor por defecto → 8883 |
+| Mosquitto WebSocket | Broker | 9001 WS · 9002 WSS (solo PROD) | Host 9001 → 9001 | Host 9002 → 9001 | Host por definir en el despliegue; el compose los exige sin valor por defecto → 9002 |
 
-**Diagrama 1.** Mapa de despliegue, puertos y protocolos v1.6 (HU-IMP-AMB-09). Fuente: `IMP_Diag_Despliegue_Puertos_Protocolos_v1.6.drawio`, construido sobre la v1.5 de `entregas/E1_2026-10-13_M01-M09-M02/documentos/` (corte 2026-10-13 y corte complementario 2026-11-02). \*\[Insertar la imagen exportada del diagrama al regenerar el Word.\]\* Agrega el motor M04, el flujo gateway → backend, el compose de PROD del broker y los dominios de Despliegue de octubre de 2026.
+Las citas de Mosquitto están en la Sección 8.2.
 
 ### Criterios de red y exposición
 
-- **Enrutamiento por ruta.** DEV y TEST comparten el host `api.inmero.co`: frontend (`/sigab-dev`, `/sigab-test`), backend (`/api-sgpmp-dev`, `/api-sgpmp-test`), gateway (`/broker-sigab-*`, por confirmar) y motor (`/model-ia-*`). Traefik resuelve cada petición con la regla más específica. Falta que Despliegue confirme si hace Strip Path del frontend y del backend; hasta entonces no se cambian `base` de Vite, `nginx.conf` ni el service worker.
-- **Cookies, almacenamiento y CORS.** El frontend y el backend comparten el dominio registrable `inmero.co`: son el mismo sitio y `COOKIE_SAMESITE=lax` es suficiente. Como el frontend de DEV y el de TEST comparten el origen `https://api.inmero.co`, comparten el almacenamiento del navegador y `ALLOWED_ORIGINS` no los distingue; el riesgo se informó a Despliegue. `ALLOWED_ORIGINS` lleva solo esquema y dominio, sin ruta ni barra final.
-- **Red compartida.** Diseño: los stacks se conectan por `dokploy-network` y resuelven la base por su host interno `${POSTGRES_DB}-db:5432`, sin pasar por el puerto publicado (BE main@8a7e6327 `docker-compose.prod.yml:57-59, 204-215`). Hoy: el gateway de DEV y TEST se conecta por el host de Dokploy y el puerto publicado (5447 / 5448) con el rol `dba` (Despliegue, 2026-10-12; INC-BD-01).
-- **Exposición de la base de datos.** DEV publica 5447 para desarrollo. TEST publica 5448 porque Pruebas y el DBA necesitan acceso directo con psql o DBeaver (BE test `docker-compose.test.yml:19-26`). PROD publica 5449 porque el equipo no tiene acceso SSH al servidor y es la única vía del DBA y Despliegue para restaurar y mantener la base (BE main `docker-compose.prod.yml:61-68`). En los tres casos el control real es restringir el puerto por firewall a IPs conocidas, nunca a 0.0.0.0/0; en PROD, además, solo con roles de clave fuerte. Si llega a haber acceso SSH, el mapeo de PROD se retira (l. 66). La restricción del firewall la confirma Despliegue (INC-BD-02).
+- **Red del servidor del backend.** El backend alcanza la base por su nombre interno `${POSTGRES_DB}-db:5432` dentro de `dokploy-network`, sin pasar por el puerto publicado (BE main@e3b07ae6 `docker-compose.prod.yml:251-252`).
+- **Entre servidores.** El gateway y el backend se hablan por HTTPS público, en los dos sentidos:
+  - backend → gateway por `MQTT_BROKER_URL`: DEV y TEST: host técnico del servidor del broker · PROD: broker del Dokploy de Arekkazu (insumos 2026-11-23, parte b; ST-05);
+  - gateway → backend por `BACKEND_URL`.
+- **Exposición de la base de datos.** Los tres entornos publican PostgreSQL al host: 5447, 5448 y 5449. Es el único acceso del DBA y de Despliegue, que no tienen SSH. La plantilla del gateway de DEV y TEST también apunta al puerto publicado (Sección 8.2). El riesgo está registrado en Taiga #5478.
 - **Aislamiento del frontend.** El contenedor de nginx no se une a ninguna red: solo entrega activos estáticos.
-- **Motor M04.** Igual que el frontend y el backend, no publica puertos al host en Dokploy: el tráfico llega por Traefik con “Strip Path” del prefijo. El puerto 8100 se publica solo en el compose local. Dokploy tiene hoy los paths como `/motor-ia-*`, mientras que el código y el backend usan `/model-ia-*`; hay que alinearlos antes de cargar `IOT_INFERENCIA_M04_URL` (INC-BRK-04).
+- **Motor M04.** Igual que el frontend y el backend, no publica puertos al host en Dokploy: el tráfico llega por Traefik con “Strip Path” del prefijo. El puerto 8100 se publica solo en el compose local. Dokploy tiene hoy los paths como `/motor-ia-*`, mientras que el código y el backend usan `/model-ia-*`; hay que alinearlos antes de cargar `IOT_INFERENCIA_M04_URL` (INC-BRK-04). Sin cambios en E4.
+
+
+![Diagrama 1. Mapa de despliegue, puertos y protocolos v1.7.](img/imp_diag_despliegue_puertos_protocolos_v1.7.png)
+
+*Diagrama 1. Mapa de despliegue, puertos y protocolos v1.7. Fuente: `documentos/IMP_Diag_Despliegue_Puertos_Protocolos_v1.7.drawio` (HU-IMP-DOC-03, corte 2026-11-23; base: v1.6 de HU-IMP-DOC-02). El motor M04 queda fuera de los dos servidores: ubicación por confirmar (AIoT).*
 
 ### Cabeceras de seguridad (nginx del frontend)
 
