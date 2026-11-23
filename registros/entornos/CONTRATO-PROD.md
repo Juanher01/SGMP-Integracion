@@ -90,6 +90,7 @@ Las siguientes variables deben ser administradas e inyectadas como **Secretos de
 | `RF71_INTERNAL_KEY` | Implementación / DevOps | Clave privada para seguridad interna RF71 (Generada en ST-03) |
 | `FRONTEND_URL` | Despliegue | URL pública/dominio HTTPS del Frontend |
 | `VITE_API_BASE_URL` | Despliegue | URL pública/dominio HTTPS del Backend API |
+| `BACKEND_URL` | Despliegue / AIoT | URL pública HTTPS del backend, con su prefijo de ruta, para el reenvío del gateway: el broker corre en otro servidor y no comparte red con el backend (agregado el 2026-11-23, HU-IMP-AMB-11) |
 | `MQTT_HOST`, `MQTT_PORT` | Despliegue / AIoT | Host y puerto del Broker MQTT de Producción |
 | `MQTT_USERNAME`, `MQTT_PASSWORD` | AIoT | Credenciales de autenticación en Broker MQTT |
 | `SMTP_USER`, `SMTP_PASSWORD` | Desarrollo / Despliegue | Credenciales del servidor de correo SMTP productivo |
