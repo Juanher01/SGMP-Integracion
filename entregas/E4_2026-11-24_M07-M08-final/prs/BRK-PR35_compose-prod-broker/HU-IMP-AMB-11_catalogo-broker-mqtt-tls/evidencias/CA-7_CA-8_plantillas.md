@@ -1,6 +1,7 @@
 # CA-7 y CA-8 — Plantillas y compose local (HU-IMP-AMB-11, ST-04)
 
 Fecha: 2026-11-22. Rama de ejecución, sin commit.
+Regenerada el 2026-11-23 sobre `9763e04` (decisión 9: placeholder de URL pública en `BACKEND_URL` de prod). Comandos ejecutados por el líder en Git Bash; salidas pegadas tal cual. Solo cambia el bloque de `env/.env.prod.example` (l. 100–105); el resto es igual al 2026-11-22.
 
 ```bash
 $ docker compose version --short
@@ -23,10 +24,10 @@ env/.env.dev.example:103:# BROKER_SERVICE_TOKEN: secreta; el mismo valor en el g
 env/.env.dev.example:104:BROKER_SERVICE_TOKEN=
 env/.env.prod.example:82:# MQTT_TLS: TLS del gateway hacia mosquitto por la red interna (en claro): false en DEV, TEST y PROD (ver catálogo).
 env/.env.prod.example:83:MQTT_TLS=false
-env/.env.prod.example:100:# BACKEND_URL: base del backend para el reenvío del gateway. Valor por entorno (D1, Despliegue).
-env/.env.prod.example:101:BACKEND_URL=
-env/.env.prod.example:102:# BROKER_SERVICE_TOKEN: secreta; el mismo valor en el gateway y en el backend.
-env/.env.prod.example:103:BROKER_SERVICE_TOKEN=
+env/.env.prod.example:100:# BACKEND_URL: base del backend para el reenvío del gateway. En PROD, la URL pública del backend
+env/.env.prod.example:103:BACKEND_URL=https://<dominio-publico-del-backend>/<prefijo>
+env/.env.prod.example:104:# BROKER_SERVICE_TOKEN: secreta; el mismo valor en el gateway y en el backend.
+env/.env.prod.example:105:BROKER_SERVICE_TOKEN=
 env/.env.test.example:82:MQTT_TLS=false
 env/.env.test.example:99:# BACKEND_URL: base del backend para el reenvío del gateway. Local: servicio `backend` del compose.
 env/.env.test.example:100:BACKEND_URL=http://backend:8000
@@ -79,5 +80,5 @@ prod API_TOKEN: 0
 87:      - MQTT_TOPIC_RESULTADO=${MQTT_TOPIC_RESULTADO:-resultado}
 ```
 
-**Veredicto:** cumplen CA-7 y CA-8. En cada entorno hay 0 `API_TOKEN`, las 5 variables están en el gateway y `BROKER_SERVICE_TOKEN` también está en el backend (REV-01 m-02).
+**Veredicto (2026-11-23):** cumplen CA-7 (con el texto de la decisión 9: placeholder de URL pública en prod, sin valor real) y CA-8 (`exit=0` también en prod con el placeholder). En cada entorno hay 0 `API_TOKEN`, las 5 variables están en el gateway y `BROKER_SERVICE_TOKEN` también está en el backend (REV-01 m-02).
 
