@@ -1,0 +1,15 @@
+HU-IMP-DOC-03 — Corte de fuentes (CA-1)
+git fetch --all: 2026-11-23 11:38:28 -0500 (America/Bogota)
+Comando por rama: git rev-parse --short origin/<rama>  ·  fecha: git log -1 --format=%cd origin/<rama>
+
+Repositorio                  Rama     Commit    Fecha del commit
+Arekkazu/sgpmp-backend       dev      77e0d772  2026-11-22 20:07:50 -0500
+Arekkazu/sgpmp-backend       test     1ee56516  2026-11-22 20:50:44 -0500
+Arekkazu/sgpmp-backend       main     e3b07ae6  2026-11-22 20:10:12 -0500
+Arekkazu/SGPMP-FRONT-END-PWA dev      1a8aad03  2026-11-22 20:24:15 -0500
+Arekkazu/SGPMP-FRONT-END-PWA test     6ebc1faa  2026-11-23 08:59:50 -0500
+Arekkazu/SGPMP-FRONT-END-PWA main     ed446c62  2026-11-22 20:25:45 -0500
+SerBy48/BROKER-MQTT-SGPMP    develop  2f8ea54   2026-11-21 20:18:35 -0500
+SerBy48/BROKER-MQTT-SGPMP    test     662e096   2026-11-01 00:29:27 -0500
+SerBy48/BROKER-MQTT-SGPMP    main     2181993   2026-11-21 20:19:59 -0500
+Juanher01/SGMP-Integracion   main     f69094b   2026-11-23 09:17:40 -0500
