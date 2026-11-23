@@ -129,6 +129,7 @@ Corrección:
 - **n-07** no se aplica: queda como nota. La plantilla de prod modela el entorno desplegado; para probar en local se usa `http://backend:8000`.
 - **n-01** aplicado: sin fragmentos de IP ni de dominios como patrón de búsqueda en el repositorio.
 - n-02 (el rol de Dokploy da `0` en el diff de la rama, comprobado el 2026-11-23), n-04 (hallazgos para sus dueños, ya en ST-05), n-05 y n-06: sin cambios.
+- **Adenda 2026-11-23:** n-04 queda superada por el curl del 2026-11-23 (frontend de TEST en `https://api.inmero.co`); `ALLOWED_ORIGINS=https://api.inmero.co` en TEST es correcto. Ver `2cc1d52`.
 
 ## Borrador de comentario para el PR (lo publica el líder, después del push)
 
