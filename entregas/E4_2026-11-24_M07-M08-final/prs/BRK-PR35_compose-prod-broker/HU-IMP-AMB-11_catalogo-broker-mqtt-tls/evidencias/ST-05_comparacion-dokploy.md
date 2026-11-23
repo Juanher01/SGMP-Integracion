@@ -142,9 +142,9 @@
 | backend | `AGROFUSION_ISSUER` | **crítica** | opcional (`:-agrofusion-auth`) | no | default `agrofusion-auth`; no cargar salvo que AgroFusion cambie el emisor | |
 | backend | `AGROFUSION_PROJECT_CODE` | **crítica** | opcional (`:-` vacía) | no | `SIGAB-TEST` | vacía |
 | backend | `AGROFUSION_SSO_PUBLIC_KEY_PATH` | **crítica** | opcional (`:-` vacía) | no | ruta del File Mount de la clave pública del SSO (ver catálogo); sin ella, SSO 503 | vacía |
-| backend | `ALLOWED_ORIGINS` ¹ | **crítica** | opcional (`:-` vacía) | no | `https://inmero.co` (solo esquema y dominio, sin ruta ni barra final) | con valor |
+| backend | `ALLOWED_ORIGINS` ¹ | **crítica** | opcional (`:-` vacía) | no | origen del frontend de TEST: `https://api.inmero.co` (curl 2026-11-23; solo esquema y dominio, sin ruta ni barra final) | con valor |
 | backend | `BROKER_SERVICE_TOKEN` | **crítica** | opcional (`:-` vacía) | sí | con valor; **el mismo** que el gateway del mismo entorno (sin él, el backend responde 503 al reenvío del broker) | con valor |
-| backend | `FRONTEND_URL` | **crítica** | obligatoria (`:?`) | no | URL pública del frontend del entorno (la define Despliegue; por confirmar con curl) | con valor |
+| backend | `FRONTEND_URL` | **crítica** | obligatoria (`:?`) | no | URL pública del frontend de TEST: `https://api.inmero.co/sigab-test` (curl 2026-11-23) | con valor |
 | backend | `SGPMP_ENTORNO` | **crítica** | opcional (`:-TEST`) — **solo con el PR #1204** (abierto) | no | `TEST` (o sin cargar, cuando el compose la pase: PR #1204) | |
 | backend | `AGROFUSION_HUB_CLIENT_ID` |  | opcional (`:-` vacía) | no | sin uso en el código de `test`: no cargar; la retira CFG-04 ST-04c | |
 | backend | `AGROFUSION_HUB_CLIENT_SECRET` |  | opcional (`:-` vacía) | sí | sin uso en el código de `test`: no cargar; la retira CFG-04 ST-04c | |
