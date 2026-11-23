@@ -267,6 +267,7 @@ El contenedor declara solo `expose: 80`, no publica `ports:` y no se une a ningu
 ### Imagen del motor de inferencia M04 (PR \#54)
 
 *Sin cambios en E4; pendiente de actualizar en la v1.8.*
+
 El motor (`motor_ia/`, RF-66) se construye con cuatro archivos nuevos en la raíz de BRK, sin tocar los del gateway:
 
 | Archivo | Qué es |
@@ -430,6 +431,7 @@ El gateway ya no usa un token estático (`API_TOKEN` no aparece en el código de
 ### Grupo F — Motor de inferencia M04 (`.env.motor-ia.example`, BRK develop@d0bc51e)
 
 *Sin cambios en E4; pendiente de actualizar en la v1.8.*
+
 | Variable | Tipo | DEV | TEST | PROD |
 |:---|----|----|----|----|
 | `IOT_INFERENCIA_M04_TOKEN` | Sensible | Valor propio. Obligatoria: el compose local la interpola desde la shell, y con ella vacía el motor lanza `RuntimeError` y no arranca | Valor propio | Valor propio |
@@ -712,6 +714,7 @@ El rol de Implementación frente a AIoT es de coordinación: mantiene las variab
 ## 8.4 Motor de inferencia M04
 
 *Sin cambios en E4; pendiente de actualizar en la v1.8.*
+
 El motor (`motor_ia/`, RF-66) vive en el repositorio BROKER-MQTT-SGPMP pero **no es el gateway ni Mosquitto**: se construye con su propio `Dockerfile.motor-ia` y se despliega como Application aparte. No habla MQTT. Se comunica solo por HTTPS:
 
 1.  **Backend → motor.** El backend envía los paquetes con `POST` a `${IOT_INFERENCIA_M04_URL}/v1/paquetes` (la variable es la URL base; el backend agrega la ruta) con `IOT_INFERENCIA_M04_TOKEN`, por Traefik, con TLS mínimo `IOT_INFERENCIA_TLS_MIN` (1.3 por defecto). El backend no sigue redirecciones: un prefijo distinto del configurado en Traefik hace fallar cada envío. Los paquetes pasan por la cola RF-56; si el motor no tiene modelos, quedan en FALLIDO tras 5 intentos.
@@ -845,6 +848,7 @@ Las irregularidades del corte 2026-11-23 se registraron como hallazgos de HU-IMP
 ### Resumen (mismo contenido que el registro)
 
 *Sin cambios en E4; pendiente de actualizar en la v1.8.*
+
 | ID | Resumen | Responsable | Estado |
 |:---|----|----|----|
 | INC-FE-01 | `VITE_AGROFUSION_LOGIN_URL` no llega a ningún build Docker | Por confirmar (Implementación: Dockerfile y compose) | detectado — pendiente de triage |
@@ -879,6 +883,7 @@ Los cambios de los PR \#57, \#58 y \#61 a `Dockerfile.motor-ia`, a su `.dockerig
 ### Correspondencia con los identificadores provisionales
 
 *Sin cambios en E4; pendiente de actualizar en la v1.8.*
+
 | Provisional | Definitivo | Nota |
 |:---|----|----|
 | SAL-IMP-01 | INC-BD-01 | — |
