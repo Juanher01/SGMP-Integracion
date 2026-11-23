@@ -929,6 +929,37 @@ ADR-001 reemplazó el pipeline E1→E7, que procesaba módulos (M01…M09) y cuy
 | 1.5, primera entrega | 2026-10-12 | Juan Hernando Perdomo Mosquera | Respuesta a REV-01: rol vigente, flujos del Camino B y correcciones C1–C10. Word editado a mano. |
 | 1.5, segunda entrega | 2026-10-13 | Sebastián Sandoval Chavarro · Juan Hernando Perdomo Mosquera | Corrección de REV-02: fuente en Markdown, corte 2026-10-13 y salvedades migradas al registro de incidencias. |
 | 1.6 | 2026-11-02 | Sebastián Sandoval Chavarro · Juan Hernando Perdomo Mosquera | Imagen del motor de inferencia M04 (PR \#54 de BRK, con los cambios de los PR \#55, \#57, \#58, \#60 y \#61) y variables `IOT_INFERENCIA_*` del backend (PR \#909). Corte complementario 2026-11-02 19:48 -0500. Incluye los ajustes de la revisión del líder del 2026-11-02. |
+| 1.7 | 2026-11-23 | Sebastián Sandoval Chavarro · Juan Hernando Perdomo Mosquera | Dos servidores, dominios verificados, tramos MQTT y cambios de variables de E4 (HU-IMP-DOC-03). |
+
+## Cambios de la versión 1.6 a la 1.7
+
+| Sección | Cambio | Origen |
+|---|---|---|
+| Control y fuentes | Corte 2026-11-23 con los 10 commits; evidencias de dominios y puertos. | HU-IMP-DOC-03 CA-1 |
+| 3.1 | Dos servidores (backend y broker) sin red Docker común; capas por servidor. | HU-IMP-AMB-11 (decisión 9); HU-IMP-DOC-03 CA-5 |
+| 3.4 | Nota con los cambios de E4: `BROKER_SERVICE_TOKEN` en lugar de `GATEWAY_API_TOKEN`, `MQTT_TLS=false`, `BACKEND_URL` pública, `ALLOWED_ORIGINS` y `FRONTEND_URL` por entorno, `VITE_BASE_PATH`. | HU-IMP-AMB-11; HU-IMP-CFG-04; HU-IMP-DOC-03 CA-7 |
+| 3.8 | Dominios de noviembre verificados con curl (frontend de DEV y PROD en `inmero.co/<subruta>`, frontend de TEST y backends en `api.inmero.co/<prefijo>`); gateways que usa el backend (insumos 2026-11-23, parte b); prefijos, orígenes, puertos y red; mapa v1.7. | HU-IMP-DOC-03 CA-3, CA-4 |
+| 1 | Entornos desplegados en dos servidores; corte 2026-11-23. | HU-IMP-DOC-03 |
+| 3.3 | Nota de corte; TEST del broker con `docker-compose.test.yml`; riesgo del puerto de PROD en Taiga #5478. | HU-IMP-AMB-11; Taiga #5478 |
+| 3.4 (tablas por grupo) | Filas con datos del corte 2026-11-23: `ALLOWED_ORIGINS`, `FRONTEND_URL`, `MQTT_BROKER_URL` de PROD, `VITE_API_BASE_URL`, `MQTT_HOST_PORT` y `MQTT_WS_HOST_PORT` de PROD; filas nuevas `BACKEND_URL` y `BROKER_SERVICE_TOKEN` en el Grupo E. | HU-IMP-DOC-03 CA-3, CA-7 |
+| 8 | El gateway corre en el servidor del broker y llega a la base por el puerto publicado. | HU-IMP-DOC-03 CA-5 |
+| 8.2 | Broker por ambiente en su propio servidor; dos tramos MQTT; conexiones del gateway con backend y base. | HU-IMP-DOC-03 CA-5 |
+| 8.3 | Los pendientes con AIoT y Despliegue pasan a la Sección 11.4. | Indicación del líder (sin pendientes en el cuerpo) |
+| 11.2 | Verificación del puerto MQTT en el servidor del broker; el firewall se reemplaza por la referencia a Taiga #5478. | HU-IMP-DOC-03 |
+| 11.3 y 11.4 | Estado al corte 2026-11-23; riesgos y pendientes por equipo con referencia a Taiga. | HU-IMP-DOC-03 CA-8 |
+| Todo el documento | Integración sobre la v1.6: se conservan el motor M04 (1, 2.4, 3.1, 3.3, Grupos C y F de 3.4, 3.8, 8.1, 8.3, 8.4, 11.1 a 11.4), las rutas de ADR-002 y la tabla de incidencias, con la nota «sin cambios en E4» donde corresponde. | HU-IMP-DOC-03 ST-04; REV-02 |
+| Diagrama 1 | Mapa v1.7 sin la nota de orígenes de la capa «Hallazgos» y con el motor M04 fuera de los dos servidores (ubicación por confirmar, AIoT). | REV-02, observaciones A y C |
+
+## Pendientes para la v1.8
+
+| Sección | Pendiente |
+|---|---|
+| 3.3 | Volúmenes y migraciones |
+| 3.4 | Filas del catálogo en las tablas de grupos |
+| 8.1 | Ramas y ambientes del repositorio de AIoT |
+| 3.4 | Grupo F (motor M04): sin cambios en E4 |
+| 8.4 | Motor de inferencia M04: ya existía; sin cambios en E4 |
+| 11.4 | Resumen y correspondencia de incidencias: sin cambios en E4 |
 
 ## Actualización por la imagen del motor M04 (versión 1.6, 2026-11-02)
 
