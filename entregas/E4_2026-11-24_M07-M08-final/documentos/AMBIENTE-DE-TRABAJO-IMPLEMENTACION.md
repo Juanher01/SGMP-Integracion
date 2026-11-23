@@ -668,7 +668,7 @@ Las ACL y el soporte TLS del broker están en las tres ramas (corte 2026-10-13 �
 
 El SGPMP debe garantizar en los módulos M03, M04 y M09 la comunicación con el equipo de AIoT, responsable de los dispositivos y del firmware que capturan datos en campo y ejecutan comandos.
 
-Esa comunicación no es directa: pasa por el gateway (repositorio BROKER-MQTT-SGPMP), que traduce entre MQTT y HTTPS. Mosquitto es el broker de mensajería y el gateway es el único servicio del sistema que dialoga con él por MQTT, a través de `mosquitto:1883` (BRK `docker-compose.yml:77,83`). El backend no habla MQTT: envía los comandos por HTTPS (`POST {MQTT_BROKER_URL}/v1/commands`) a través de Traefik. El gateway persiste la telemetría y el registro de dispositivos en la base compartida (esquemas modulo3 y modulo9). En diseño lo hace por la red interna; hoy, en DEV y TEST, por el host y el puerto publicado con el rol `dba` (INC-BD-01). El contrato de mensajería lo definen Desarrollo y AIoT.
+Esa comunicación no es directa: pasa por el gateway (repositorio BROKER-MQTT-SGPMP), que traduce entre MQTT y HTTPS. Mosquitto es el broker de mensajería y el gateway es el único servicio del sistema que dialoga con él por MQTT, a través de `mosquitto:1883` (BRK develop@2f8ea54 `docker-compose.yml:77,83`). El backend no habla MQTT: envía los comandos por HTTPS (`POST {MQTT_BROKER_URL}/v1/commands`) al gateway que indica `MQTT_BROKER_URL`: en DEV y TEST, un host técnico del servidor del broker; en PROD, el broker del Dokploy de Arekkazu (insumos 2026-11-23, parte b). El gateway corre en el servidor del broker y persiste la telemetría y el registro de dispositivos en la base del servidor del backend (esquemas `modulo3` y `modulo9`), por el puerto publicado de PostgreSQL (Sección 8.2). El contrato de mensajería lo definen Desarrollo y AIoT.
 
 ## 8.1 Ramas y ambientes del repositorio de AIoT
 
@@ -682,22 +682,36 @@ Fuente: corte 2026-10-13 §2.4–§2.6, y corte complementario 2026-11-02 para e
 
 ## 8.2 Endpoints y puertos del broker por ambiente
 
-| Ambiente | MQTT (host → contenedor) | WebSocket (host → contenedor) | Puertos internos | Endpoint HTTPS del gateway |
-|:---|----|----|----|----|
-| DEV | 1884 → 1883 | 9001 → 9001 | Mosquitto 1883 · gateway 8000 | https://api.inmero.co/broker-sigab-dev (por confirmar) |
-| TEST | 1885 → 1883 | 9002 → 9001 | Mosquitto 1883 · gateway 8000 | https://api.inmero.co/broker-sigab-test (por confirmar) |
-| PROD | Host por asignar (Despliegue) → 8883 TLS: el `docker-compose.prod.yml` del broker exige `MQTT_HOST_PORT` sin valor por defecto (BRK develop@d0bc51e l. 92; aún no en `main`) | Host por asignar (Despliegue) → WSS 9002: `MQTT_WS_HOST_PORT` obligatoria, sin valor por defecto (l. 93) | Mosquitto 1883 · gateway 8000 | Por definir (Despliegue) |
+El broker (gateway HTTP y Mosquitto) corre en el servidor del broker. Hay dos tramos MQTT distintos y no deben confundirse (nota «Dos tramos MQTT» de `registros/variables/VARIABLES-ENTORNO.md`):
 
-Los puertos de host y los endpoints los asigna Despliegue (corte 2026-10-12); los protocolos los definen AIoT y Desarrollo; Implementación mantiene las variables, el compose y la coordinación. El backend despacha comandos a `${MQTT_BROKER_URL}/v1/commands` con `MQTT_BROKER_TOKEN`, cuyo hash debe estar registrado en `modulo1.credenciales_servicio`. Los dispositivos Edge llegan por el puerto de host del ambiente (1884 en DEV, 1885 en TEST), que apunta al 1883 del contenedor; al activar TLS (`MQTT_PUERTO_PUBLICO=8883`) el mismo puerto de host apuntará al 8883 y el texto plano quedará solo dentro de la red de Docker (BRK `docker-compose.yml:38-47`). El compose advierte que en el host 8883 ya lo ocupa otro proyecto (EMQX) y 9002 el WebSocket de TEST (l. 49-52), por lo que el WSS de TEST no podrá publicarse en el host 9002. La espera HTTP del backend (`MQTT_BROKER_HTTP_TIMEOUT=35`) se mantiene por encima de `MQTT_ACK_TIMEOUT_SECONDS=30` del broker para recibir el veredicto NO_CONF.
+1. **Dispositivo → Mosquitto.** Entra por el puerto de host del ambiente. Con `MQTT_PUERTO_PUBLICO=8883` el listener externo exige TLS.
+2. **Gateway → Mosquitto.** Va por la red interna del stack a `mosquitto:1883`, en claro, con `MQTT_TLS=false`. Este tramo no sale del servidor del broker.
+
+| Ambiente | Tramo 1: dispositivo → Mosquitto (host → contenedor) | WebSocket (host → contenedor) | Tramo 2: gateway → Mosquitto | Ruta `api.inmero.co/broker-sigab*` (curl) |
+|---|---|---|---|---|
+| DEV | 1884 → 1883, en claro (BRK develop@2f8ea54 `docker-compose.yml:46-47`) | 9001 → 9001 (l. 48) | `mosquitto:1883` en claro (l. 77, 83) | `/broker-sigab-dev` → 404 (DOC03-H-03); el backend de DEV no la usa |
+| TEST | 1885 → 1883, en claro (BRK test@662e096 `docker-compose.test.yml:28-29`) | 9002 → 9001 (l. 30) | `mosquitto:1883` en claro (l. 43, 46) | `/broker-sigab-test` → 200; no consta que el backend la use: por confirmar (Despliegue y AIoT) |
+| PROD | Host por definir en el despliegue; el compose los exige sin valor por defecto → 8883, TLS (BRK main@2181993 `docker-compose.prod.yml:91-92`) | Host por definir en el despliegue; el compose los exige sin valor por defecto → 9002, WSS (l. 93) | `mosquitto:1883` en claro · `MQTT_TLS=${MQTT_TLS:-false}` (l. 203-204, 217) | `/broker-sigab` → 200; no consta que el backend la use: por confirmar (Despliegue y AIoT) |
+
+**Cómo se conecta el gateway con los demás servicios:**
+
+| Conexión | DEV y TEST | PROD |
+|---|---|---|
+| Gateway → backend | `BACKEND_URL` por `env_file`; en TEST, la URL pública del backend (decisión 9) | `BACKEND_URL` obligatoria (BRK main@2181993 `docker-compose.prod.yml:246`), con la URL pública del backend |
+| Gateway → PostgreSQL | `DATABASE_URL` por `env_file`, según la plantilla, hacia el puerto publicado de la base (BRK develop@2f8ea54 y test@662e096 `.env.example:12`); valor propio (Dokploy) | `DATABASE_URL` armada desde `DB_HOST`, `DB_NAME`, `DB_IOT_USER` y `DB_IOT_PASSWORD` (BRK main@2181993 `docker-compose.prod.yml:195`); contraseña: valor propio (Dokploy) |
+| Backend → gateway | `MQTT_BROKER_URL`: host técnico del servidor del broker; el backend llama a `/v1/commands` | `MQTT_BROKER_URL`: broker del Dokploy de Arekkazu |
+
+El gateway publica `expose: 8000` en los tres ambientes, sin puerto de host (BRK develop@2f8ea54 `docker-compose.yml:86-87`; test@662e096 `docker-compose.test.yml:49-50`; main@2181993 `docker-compose.prod.yml:256-257`).
 
 ## 8.3 Rol de Implementación
 
 El rol de Implementación frente a AIoT es de coordinación: mantiene las variables del gateway por ambiente (Sección 3.4, Grupo E), el compose que lo despliega, la imagen y las variables del motor de inferencia M04 (Sección 8.4) y el registro de las incidencias de comunicación entre backend, gateway, Mosquitto y base de datos. Los flujos IoT y los protocolos son de AIoT y Desarrollo.
 
-**Pendientes con AIoT y Despliegue.** La ACL con dynamic-security y el soporte TLS están en develop, test y main. Falta activar TLS hacia afuera en TEST y PROD (`MQTT_PUERTO_PUBLICO=8883`, certificados montados; HU-IMP-SEG-03 e INC-BRK-01), confirmar qué compose usa TEST (INC-BRK-02), asignar los puertos de host de PROD (Despliegue), cerrar la convención final de topics (AIoT), alinear prefijos y puerto del motor en Dokploy (INC-BRK-04) y crear las Applications con su montaje de modelos (INC-BRK-05).
+**Pendientes con AIoT y Despliegue.** Se listan en la Sección 11.4.
 
 ## 8.4 Motor de inferencia M04
 
+*Sin cambios en E4; pendiente de actualizar en la v1.8.*
 El motor (`motor_ia/`, RF-66) vive en el repositorio BROKER-MQTT-SGPMP pero **no es el gateway ni Mosquitto**: se construye con su propio `Dockerfile.motor-ia` y se despliega como Application aparte. No habla MQTT. Se comunica solo por HTTPS:
 
 1.  **Backend → motor.** El backend envía los paquetes con `POST` a `${IOT_INFERENCIA_M04_URL}/v1/paquetes` (la variable es la URL base; el backend agrega la ruta) con `IOT_INFERENCIA_M04_TOKEN`, por Traefik, con TLS mínimo `IOT_INFERENCIA_TLS_MIN` (1.3 por defecto). El backend no sigue redirecciones: un prefijo distinto del configurado en Traefik hace fallar cada envío. Los paquetes pasan por la cola RF-56; si el motor no tiene modelos, quedan en FALLIDO tras 5 intentos.
