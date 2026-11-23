@@ -1,29 +1,37 @@
 # REV-01 — HU-IMP-DOC-03 (documento de ambiente y mapa de puertos v1.7)
 
+**Lo que está bien:**
+- **H-05** es un hallazgo nuevo y correcto: el gateway de PROD busca la base por `sgpmp-network`, que no existe entre los dos servidores.
+- Corregiste el nombre `MQTT_ACK_REQUIERE_ID_COMANDO`, que la v1.6 tenía mal.
+- Revisé con `git show` 15 citas `rama@commit` y las 15 coinciden con el código.
+
+**Datos de la revisión:**
 - **Fecha:** 2026-11-23, 15:05 -0500.
 - **Qué se revisó:** rama `origin/docs/hu-imp-doc-03` en `e3c65ad` (Juan Hernando). Todavía no hay PR.
-- **Contra qué:** la base v1.6 del líder (`ad1a03e`, rama `docs/ambiente-v1.7`, mismo archivo), los criterios de la HU (`historia.md`) y `insumos-2026-11-23.md`. Código: `git fetch` del 2026-11-23 a las 15:04.
-- **Desviación aceptada por el líder:** el entregable es el documento completo en `documentos/AMBIENTE-DE-TRABAJO-IMPLEMENTACION.md` y no `entregables/secciones-v1.7.md`.
+- **Contra qué:** los criterios de la HU (`historia.md`), `insumos-2026-11-23.md` y la base v1.6 del líder. Código: `git fetch` del 2026-11-23 a las 15:04.
+- **Decisiones del líder:**
+  - El entregable es el documento completo en `documentos/AMBIENTE-DE-TRABAJO-IMPLEMENTACION.md`, no `entregables/secciones-v1.7.md`.
+  - Juan Hernando corrige solo las secciones de su alcance. El líder las pasa a su base v1.6 en la ST-04.
 - **Ya verificado por el líder (no se repite):** no hay direcciones IP, no hay secretos y el drawio tiene 27 aristas con `source` y `target`.
 
 ## Dictamen: SOLICITAR CAMBIOS
 
-Lo nuevo está bien trabajado. Las citas que revisé coinciden con el código y los hallazgos H-01 y H-05 son buenos. El problema principal es la base: el documento se armó sobre la **v1.5**, no sobre la v1.6. Las secciones que no tocaste quedaron idénticas a la v1.5 y se perdió todo lo que la v1.6 había agregado. Además, el frontend de TEST figura en un dominio que no es el suyo.
+Hay que corregir el dominio del frontend de TEST, el texto sobre los gateways del broker (con el dato de Despliegue de las 16:00), la redacción de los puertos de PROD, el mapa y §13. Después, abrir el PR antes de las 17:00.
 
 ## Criterios de aceptación
 
 | CA | Veredicto | Evidencia |
 |---|---|---|
-| CA-1 | CUMPLE | Los 10 hashes eran la punta de cada rama a las 11:38 (`git merge-base --is-ancestor`). BE y FE avanzaron hacia las 13:50, pero los archivos citados no cambiaron (`git diff --stat <hash> origin/<rama>` sobre compose, Dockerfile y `nginx.conf`: vacío). Ver ajuste 12. |
+| CA-1 | CUMPLE | Los 10 hashes eran la punta de cada rama a las 11:38 (`git merge-base --is-ancestor`). BE y FE avanzaron hacia las 13:50, pero los archivos citados no cambiaron (`git diff --stat <hash> origin/<rama>` sobre compose, Dockerfile y `nginx.conf`: vacío). Ver ajuste 11. |
 | CA-2 | CUMPLE (desviación aceptada) | Documento completo en lugar de secciones sueltas. |
-| CA-3 | NO CUMPLE | El frontend de TEST figura en `https://inmero.co/sigab-test/`, que sirve el build de PROD (mismo ETag, H-02). El de TEST está en `https://api.inmero.co/sigab-test` (dominio en Dokploy: `ST-05_comparacion-dokploy.md`, «Hallazgos fuera de alcance») y no se probó. Los gateways `api.inmero.co/broker-sigab*` se presentan como endpoints en uso (ajustes 3 y 4). |
-| CA-4 | NO CUMPLE | Muestreo de 15 citas `rama@commit` con `git show`: las 15 coinciden (ver abajo). Pero los puertos de host de PROD no dicen «por definir en el despliegue» (ajuste 5) y hay citas sin rama@commit (ajuste 8). |
-| CA-5 | CUMPLE, con una observación | Dos servidores (§3.1) y dos tramos (§8.2) bien descritos. «TLS 8883/9002» solo aparece como vigente en PROD. Observación: la tabla de §3.8 pone «8883 TLS» sin decir que es solo PROD (ajuste 9). |
+| CA-3 | NO CUMPLE | El frontend de TEST figura en `https://inmero.co/sigab-test/`, que sirve el build de PROD (mismo ETag, H-02). El de TEST está en `https://api.inmero.co/sigab-test` (dominio en Dokploy: `ST-05_comparacion-dokploy.md`, «Hallazgos fuera de alcance») y no se probó. Los gateways `api.inmero.co/broker-sigab*` se presentan como endpoints en uso (ajustes 1 y 2). |
+| CA-4 | NO CUMPLE | Las 15 citas muestreadas coinciden (ver abajo). Pero los puertos de host de PROD no dicen «por definir en el despliegue» (ajuste 3) y hay citas sin rama@commit (ajuste 7). |
+| CA-5 | CUMPLE, con una observación | Dos servidores (§3.1) y dos tramos (§8.2) bien descritos. «TLS 8883/9002» solo aparece como vigente en PROD. Observación: la tabla de §3.8 pone «8883 TLS» sin decir que es solo PROD (ajuste 8). |
 | CA-6 | CUMPLE | Verificado por el líder. |
 | CA-7 | CUMPLE | La nota de §3.4 cita `VARIABLES-ENTORNO.md@13cd3aa` (está en `main`) y nombra solo los cinco cambios de E4. |
-| CA-8 | NO CUMPLE | Están los cinco riesgos, pero «orígenes compartidos» incluye a TEST (es otro origen) y la captura de `PathPrefix` está mal explicada (ajuste 3). Falta el riesgo de gateways duplicados (ajuste 4). En §13, la v1.6 figura como «solo mapa» y §8.4 como «sección nueva» (ajuste 2). |
-| CA-9 | NO CUMPLE | Las aristas están bien (líder). El PNG no coincide con el texto en cuatro puntos: gateway por `/broker-sigab-*` a través del Traefik del servidor del backend, puerto de host de PROD, notas viejas y motor M04 (ajustes 4, 5, 7 y 1). |
-| CA-10 | NO VERIFICABLE AÚN | Sin PR. Plazo 17:00. |
+| CA-8 | NO CUMPLE | Están los cinco riesgos, pero «orígenes compartidos» incluye a TEST (es otro origen) y la captura de `PathPrefix` está mal explicada (ajuste 1). Falta el riesgo de gateways duplicados (ajuste 2). En §13, la v1.6 figura como «solo mapa» y §8.4 como «sección nueva» (ajuste 5). |
+| CA-9 | NO CUMPLE | Las aristas están bien (líder). El PNG no coincide con el texto (ajuste 4). |
+| CA-10 | NO VERIFICABLE AÚN | Sin PR. Plazo 17:00 (ajuste 6). |
 | CA-11 | No aplica | Es la ST-04 del líder. |
 
 **Muestreo de citas (todas coinciden con `git show`):**
@@ -38,106 +46,92 @@ Lo nuevo está bien trabajado. Las citas que revisé coinciden con el código y 
 - **FE:** `Dockerfile:13`, `:45-54`, idéntico en `1a8aad03`, `6ebc1faa` y `ed446c62`
 - **H-01:** `git rev-list --left-right --count origin/test...origin/main` → `14 31`, igual que en tu evidencia.
 
-## Lo que está bien
+## Ajustes para Juan Hernando
 
-- Las citas de puertos y variables son exactas y `CA-4_puertos.md` está muy completo.
-- **H-05** (el gateway de PROD busca la base por `sgpmp-network`, que no existe entre servidores) es un hallazgo nuevo y correcto.
-- **H-01** (el broker pasa de `develop` a `main` sin pasar por `test`) está bien demostrado.
-- La nota de §3.4 es exacta.
-- Corregiste el nombre `MQTT_ACK_REQUIERE_ID_COMANDO`, que la v1.6 tenía mal.
-- Los dos tramos MQTT de §8.2 están claros y separados por ambiente.
+**Alcance de las correcciones.** Corrige solo las secciones de tu alcance:
+- control del documento y tabla de fuentes;
+- §3.1, nota de §3.4, §3.8 (y las filas de los grupos de §3.4 que ya cambiaste);
+- §8, §8.2, §11.3, §11.4 y §13;
+- el mapa.
 
-## Ajustes
+**No restaures** contenido de otras secciones aunque falte respecto de la v1.6: eso lo hace el líder en la ST-04. En la descripción del PR, lista exactamente qué secciones modificaste (número y título); son las que el líder pasará a su base.
 
 ### Bloqueantes
 
-1. **Partir de la v1.6, no de la v1.5.** La base es el mismo archivo en la rama `docs/ambiente-v1.7` (commit «docs(ambiente): base v1.6 para la v1.7»). Lo más simple es copiar esa base y pegar encima solo tus secciones del alcance: control, fuentes, §3.1, nota de §3.4, §3.8, §8.2, §11.3, §11.4 y §13.
-
-   Todo lo demás debe quedar **como en la v1.6**. Lo que hoy falta o volvió a la v1.5:
-   - **§2.4:** las filas del motor M04 en Entradas (Desarrollo) y en Salidas (Despliegue y AIoT).
-   - **§3.3:** el párrafo del motor y la subsección «Imagen del motor de inferencia M04 (PR #54)».
-   - **§3.4:**
-     - Grupo C: filas `IOT_INFERENCIA_*` y su nota.
-     - Grupo F completo.
-     - Reglas de estandarización: el ejemplo de las `IOT_INFERENCIA_*`.
-   - **§3.8:** el motor en «Servicios web».
-   - **§4:** el motor en «Imágenes y compose», en «Comunicación» y en los healthchecks.
-   - **§5:** las rutas `entregas/<entrega>/**/<HU>/` (ADR-002). Hoy dicen `historias/<HU>/`, que ya no existe.
-   - **§8.1:** la tabla de la v1.6 (motor y `test@662e096`).
-   - **§8.3:** la mención del motor.
-   - **§8.4:** completa.
-   - **§9:** la mención de `entregas/README.md`.
-   - **§11.1:** el motor en la fila del broker.
-   - **§11.2:** los párrafos del motor en A y en B.
-   - **§11.4:** las incidencias INC-BE-08, INC-BRK-04 e INC-BRK-05. Las dos últimas no están en `registros/incidencias/registro.md`: si se borran de aquí, se pierden.
-
-   En §3.3, Grupo F, §8.4 y §11.4 agrega la nota «sin cambios en E4; pendiente de actualizar en la v1.8».
-
-2. **§13, control de cambios.**
-   - La v1.6 no fue «solo mapa»: el documento pasó a versión 1.6 (HU-IMP-DOC-02, 2026-11-02). Corrige esa fila.
-   - Restaura la tabla «Actualización por la imagen del motor M04 (versión 1.6, 2026-11-02)».
-   - Renombra «Cambios de la versión 1.5 a la 1.7» a «1.6 a la 1.7».
-   - En «Pendientes para la v1.8»: §8.4 no es nueva, es «motor M04, sin cambios en E4». Agrega el Grupo F.
-
-3. **Frontend de TEST.**
-   - **Curl:** prueba `https://api.inmero.co/sigab-test/` (y con `www.`) y agrégalo a `curl-dominios.txt`.
+1. **Frontend de TEST.**
+   - **Curl:** prueba `https://api.inmero.co/sigab-test/` (y con `www.`) y agrégalo a `evidencias/curl-dominios.txt`.
    - **§3.8:** pon ese dominio en la tabla. Reescribe «Orígenes»: DEV y PROD comparten el origen `https://inmero.co`; TEST está en `https://api.inmero.co`, que es el mismo origen de los backends.
    - **§3.4, Grupo A:** `ALLOWED_ORIGINS` de TEST es `https://api.inmero.co` y `FRONTEND_URL` de TEST es `https://api.inmero.co/sigab-test`.
-   - **H-02, §11.3 (elemento 5) y §11.4:** la captura de `PathPrefix(/sigab)` es real. Pero `inmero.co/sigab-test` no es el frontend de TEST: esa URL cae en el build de PROD. El riesgo es que alguien la use creyendo que es TEST. El riesgo de «orígenes compartidos» es solo DEV–PROD.
+   - **§11.4, riesgo «orígenes compartidos»:** solo DEV–PROD.
+   - **H-02, §11.3 (elemento 5) y §11.4, riesgo de `PathPrefix`:** la captura de `PathPrefix(/sigab)` es real. Pero `inmero.co/sigab-test` no es el frontend de TEST: esa URL cae en el build de PROD. El riesgo es que alguien la use creyendo que es TEST.
 
-4. **Gateways del broker** (ver `insumos-2026-11-23.md`, parte b). Hoy el documento dice que el backend llama al gateway por `api.inmero.co/broker-sigab*` y «Igual» en PROD. No consta:
-   - En DEV y TEST, el backend (`MQTT_BROKER_URL`) apunta a un host técnico del servidor del broker. No escribas su nombre: contiene la IP.
-   - En PROD apunta al broker del Dokploy de AIoT (Arekkazu).
+2. **Gateways del broker.** Hoy el documento dice que el backend llama al gateway por `api.inmero.co/broker-sigab*` y «Igual» en PROD. No consta: según `insumos-2026-11-23.md` (parte b), el backend apunta a otros gateways.
+   - **Corrígelo con la información del broker que envía Despliegue a las 16:00** y cítala como fuente, en:
+     - §3.1 (servidores)
+     - §3.8 (tabla y «Entre servidores»)
+     - §8 (introducción) y §8.2 (tabla y fila «Backend → gateway»)
+     - §3.4, Grupo C (`MQTT_BROKER_URL`)
+     - la flecha del mapa
+   - **Si no se nombra un host técnico, no escribas su nombre:** contiene la IP. Escribe «host técnico del servidor del broker».
+   - **Lo que no llegue a las 16:00 queda así:** «`api.inmero.co/broker-sigab` y `/broker-sigab-test` responden, pero no consta que el backend los use: por confirmar (Despliegue y AIoT)». Agrega a §11.4 el riesgo «gateways duplicados» (Despliegue y AIoT).
+   - **H-03:** no digas que el backend de DEV usa esa ruta.
 
-   Escribe «`api.inmero.co/broker-sigab` y `/broker-sigab-test` responden, pero no consta que el backend los use: por confirmar (Despliegue y AIoT)». Va en:
-   - §3.1 (servidores)
-   - §3.8 (tabla y «Entre servidores»)
-   - §8 (introducción) y §8.2 (tabla y fila «Backend → gateway»)
-   - §3.4, Grupo C (`MQTT_BROKER_URL` de PROD)
-   - la flecha del mapa
+3. **Puertos de host de Mosquitto en PROD.** Donde hoy dice solo `MQTT_HOST_PORT` / `MQTT_WS_HOST_PORT`, escribe «por definir en el despliegue; el compose los exige sin valor por defecto». Va en §3.1, §3.8, §8.2, Grupo E de §3.4 y el mapa.
 
-   En H-03, no digas que el backend de DEV usa esa ruta. Agrega a §11.4 el riesgo «gateways duplicados» (Despliegue y AIoT).
+4. **Mapa** (drawio y PNG):
+   - **Gateway:** la flecha de `/broker-sigab-*` no pasa por el Traefik del servidor del backend, porque el gateway está en el servidor del broker. Rotúlala según el ajuste 2.
+   - **Puerto de host de PROD:** según el ajuste 3.
+   - **Nota «PostgreSQL — CN-001»:** cita `main@c68775af`; usa `BE main@e3b07ae6` (`docker-compose.prod.yml:73-74`).
+   - **Nota «Broker MQTT — CN-002»:** dice que el objetivo del gateway → BD es la red interna (`dokploy-network`). Déjala coherente con H-05: entre servidores no hay red común; DEV y TEST usan el puerto publicado y PROD está pendiente (#5478).
+   - **Motor M04:** ubícalo como en el mapa v1.6. Hoy queda fuera de los dos servidores.
 
-   **Ojo:** a las 16:00 llega la información del broker de Despliegue. Si responde esto, escribe lo que diga y cítala como fuente. Este ajuste queda pendiente de ese dato.
+5. **§13, control de cambios.**
+   - La v1.6 existió como versión del documento y del mapa (HU-IMP-DOC-02, 2026-11-02). Corrige la fila «1.6 (solo mapa) … El documento no cambió de versión».
+   - Renombra «Cambios de la versión 1.5 a la 1.7» a «1.6 a la 1.7».
+   - En «Pendientes para la v1.8»: §8.4 no es «sección nueva», ya existía (motor M04, sin cambios en E4).
 
-5. **Puertos de host de Mosquitto en PROD.** Donde hoy dice solo `MQTT_HOST_PORT` / `MQTT_WS_HOST_PORT`, escribe «por definir en el despliegue; el compose los exige sin valor por defecto». Va en §3.1, §3.8, §8.2, Grupo E de §3.4 y el mapa.
-
-6. **Saca el `.docx` de `documentos/`.** Las exportaciones no se versionan y la conversión es la ST-04.
+6. **Entrega antes de las 17:00.**
+   - Quita el `.docx` de `documentos/`: las exportaciones no se versionan y la conversión es la ST-04.
+   - Integra `origin/main` en tu rama (merge o rebase). `main` (`2c059fb`) ya trae `historia.md` e `insumos-2026-11-23.md` en la carpeta de la HU.
+   - Abre el PR a `main`. Incluye la lista de secciones modificadas, las salidas de los grep de CA-5 y CA-6 y la captura del mapa.
 
 ### Menores
 
-7. **Mapa:** actualiza dos notas que vienen de la v1.6 y ubica el motor.
-   - «PostgreSQL — CN-001» todavía cita `main@c68775af`; usa `main@e3b07ae6`.
-   - «Broker MQTT — CN-002» dice que el objetivo del gateway → BD es la red interna. Choca con H-05: déjalo coherente con el texto.
-   - El motor M04 queda fuera de los dos servidores: indica en cuál corre o «por confirmar».
-
-8. **Citas sin rama@commit:**
+7. **Citas sin rama@commit:**
    - FE `Dockerfile:13, 45-54` (§3.1, §3.4 y §3.8): agrega `FE dev@1a8aad03 / test@6ebc1faa / main@ed446c62` (idéntico en las tres).
    - Introducción de §8: `BRK develop@2f8ea54 docker-compose.yml:77,83`.
    - Grupo C, `MQTT_BROKER_URL` de TEST: en `test@1ee56516` está en la l. 69, no en la 65.
 
-9. **§3.8, tabla de Mosquitto:** la columna «puerto interno» dice «1883 en claro · 8883 TLS» para todos. Aclara «8883/9002 TLS: solo PROD».
+8. **§3.8, tabla de Mosquitto:** la columna «puerto interno» dice «1883 en claro · 8883 TLS» para todos. Aclara «8883/9002 TLS: solo PROD».
 
-10. **Numeración de hallazgos.** En AMB-11 y en los insumos, «H-01» es el `BACKEND_URL` interno (CFG-01); en tu entrega es la promoción del broker. Para no confundir, cita siempre el código: por ejemplo «H-04 (CFG-01)», o numera los tuyos como «DOC03-H-01».
+9. **Numeración de hallazgos.** En AMB-11 y en los insumos, «H-01» es el `BACKEND_URL` interno (CFG-01); en tu entrega es la promoción del broker. Para no confundir, cita siempre el código: por ejemplo «H-04 (CFG-01)», o numera los tuyos como «DOC03-H-01».
 
-11. **§11.2 B, paso 7 (firewall del 5448/5449):** escribe «alternativa en discusión, #5478».
+10. **§11.2 B, paso 7 (firewall del 5448/5449):** escribe «alternativa en discusión, #5478».
 
-12. **Antes de abrir el PR:**
-    - Rebasa tu rama sobre `origin/main` (`2c059fb`, que ya trae `historia.md` e `insumos-2026-11-23.md`).
-    - Repite el `git fetch`. BE y FE avanzaron a las 13:50; los archivos citados no cambiaron. Actualiza los hashes o anota que los citados siguen iguales.
+11. **Corte (CA-1):** repite el `git fetch` antes del PR. BE y FE avanzaron a las 13:50, pero los archivos citados no cambiaron. Actualiza los hashes o anota en `CA-1_corte.txt` que los archivos citados siguen iguales.
 
-13. **§3.4, Grupo D:** según ST-05, `VITE_API_BASE_URL` de DEV y PROD usa `www.api.inmero.co`. Si cambias filas de los grupos (es v1.8), que coincidan con ST-05; si no, déjalas como en la v1.6.
+12. **§3.4, Grupo D:** según ST-05, `VITE_API_BASE_URL` de DEV y PROD usa `www.api.inmero.co`. Corrige las filas que cambiaste para que coincidan con ST-05, o déjalas como estaban.
 
-## Borrador del comentario para Juan Hernando
+## Para el líder (ST-04)
 
-Juan Hernando: buen trabajo con las citas (revisé 15 y todas coinciden con el código) y con los hallazgos H-01 y H-05, que son nuevos y útiles. Hay que corregir sobre todo dos cosas:
+No requiere acción de Juan Hernando. La entrega se armó sobre la v1.5. Las secciones fuera del alcance son idénticas a la v1.5 y les falta lo que agregó la v1.6. Al pasar las secciones de Juan Hernando a la base v1.6 (`ad1a03e`, rama local `docs/ambiente-v1.7`), estas secciones se conservan de la base:
 
-1. El documento salió de la v1.5. Toma el archivo de la rama `docs/ambiente-v1.7` (base v1.6) y pega encima solo tus secciones. Así vuelve todo lo del motor M04 y las correcciones de la v1.6.
-2. El frontend de TEST está en `https://api.inmero.co/sigab-test`, no en `inmero.co/sigab-test`.
+- **§2.4:** filas del motor M04 en Entradas (Desarrollo) y en Salidas (Despliegue y AIoT).
+- **§3.3:** párrafo del motor y subsección «Imagen del motor de inferencia M04 (PR #54)».
+- **§3.4:**
+  - Grupo C: filas `IOT_INFERENCIA_*` y su nota.
+  - Grupo F completo.
+  - Reglas de estandarización: ejemplo de las `IOT_INFERENCIA_*`.
+- **§3.8:** el motor en «Servicios web». Integrar con la tabla nueva de Juan Hernando.
+- **§4:** el motor en «Imágenes y compose», en «Comunicación» y en los healthchecks.
+- **§5:** rutas `entregas/<entrega>/**/<HU>/` (ADR-002). La entrega volvió a `historias/<HU>/`.
+- **§8.1:** tabla de la v1.6 (motor y `test@662e096`).
+- **§8.3:** mención del motor.
+- **§8.4:** completa.
+- **§9:** mención de `entregas/README.md`.
+- **§11.1:** el motor en la fila del broker.
+- **§11.2:** párrafos del motor en A y B (el paso 7 de B va con el ajuste 10).
+- **§11.4:** incidencias INC-BE-08, INC-BRK-04 e INC-BRK-05. Las dos últimas no están en `registros/incidencias/registro.md`: solo existen en la v1.6.
+- **§13:** tabla «Actualización por la imagen del motor M04 (versión 1.6, 2026-11-02)». Agregar el Grupo F a los pendientes de la v1.8.
 
-Además:
-- los gateways `broker-sigab*` quedan «por confirmar» hasta el dato de Despliegue de las 16:00;
-- los puertos de PROD van como «por definir en el despliegue»;
-- saca el `.docx`.
-
-La lista completa está en `revisiones/REV-01.md`: primero los bloqueantes (1 a 6), luego los menores.
+En §3.3, Grupo F, §8.4 y §11.4 va la nota «sin cambios en E4; pendiente de actualizar en la v1.8».
