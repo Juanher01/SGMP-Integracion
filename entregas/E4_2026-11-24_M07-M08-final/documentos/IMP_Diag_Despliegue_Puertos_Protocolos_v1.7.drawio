@@ -1,0 +1,451 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+  <diagram id="diag-desp-ptos-ptcls" name="Despliegue — Puertos y Protocolos">
+    <mxGraphModel dx="3332" dy="2279" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-0" />
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-1" parent="Zfa-h7b1mF_UkIyc46Zn-0" style="locked=0;" value="Capa Base" />
+        <mxCell id="srv-nota" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="text;html=1;align=left;fontSize=9;fontStyle=2;strokeColor=none;fillColor=none;fontColor=#666666;whiteSpace=wrap;" value="Sin red Docker común entre los dos servidores:&lt;br&gt;todo cruce va por HTTPS público (HU-IMP-AMB-11, decisión 9)" vertex="1">
+          <mxGeometry height="70" width="180" x="360" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="srv-backend" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="rounded=1;arcSize=1;dashed=1;dashPattern=12 6;fillColor=none;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontStyle=1;fontSize=13;html=1;whiteSpace=wrap;strokeColor=#2E6B1F;fontColor=#2E6B1F;" value="«node» Servidor del backend&lt;br&gt;&lt;span style=&quot;font-weight:normal;font-size:10px&quot;&gt;Dokploy · Traefik · frontend · backend · PostgreSQL (DEV, TEST y PROD) · red dokploy-network&lt;/span&gt;" vertex="1">
+          <mxGeometry height="1290" width="700" x="960" y="-330" as="geometry" />
+        </mxCell>
+        <mxCell id="srv-broker" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="rounded=1;arcSize=1;dashed=1;dashPattern=12 6;fillColor=none;strokeWidth=2;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontStyle=1;fontSize=13;html=1;whiteSpace=wrap;strokeColor=#B07D00;fontColor=#8A6100;" value="«node» Servidor del broker&lt;br&gt;&lt;span style=&quot;font-weight:normal;font-size:10px&quot;&gt;Dokploy de Arekkazu · gateway + Mosquitto de DEV, TEST y PROD&lt;/span&gt;" vertex="1">
+          <mxGeometry height="600" width="380" x="360" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-2" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="text;html=1;align=center;fontSize=18;fontStyle=1;strokeColor=none;fillColor=none;" value="Diagrama de Despliegue — Infraestructura donde corre el sistema" vertex="1">
+          <mxGeometry height="30" width="900" x="377" y="-450" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-3" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="text;html=1;align=center;fontSize=12;strokeColor=none;fillColor=none;fontStyle=2;" value="Monolito Modular · Python FastAPI · SQLAlchemy · PostgreSQL · React+Ionic PWA · Edge Computing · Motor de inferencia M04" vertex="1">
+          <mxGeometry height="20" width="900" x="377" y="-420" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-4" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=12;" value="«device»&#10;Dispositivo Usuario&#10;Android / iOS / Browser" vertex="1">
+          <mxGeometry height="250" width="280" x="-130" y="-250" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-5" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="shape=mxgraph.archimate3.application;fillColor=#d5b8e8;strokeColor=#9673a6;fontSize=11;" value="«artifact»&#10;PWA React + Ionic (TypeScript)&#10;Módulos por dominio" vertex="1">
+          <mxGeometry height="50" width="240" x="-110" y="-190" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-6" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="shape=mxgraph.archimate3.application;fillColor=#d5b8e8;strokeColor=#9673a6;fontSize=11;" value="«artifact»&#10;Service Worker (offline-first)&#10;Cache API · Badge offline" vertex="1">
+          <mxGeometry height="50" width="240" x="-110" y="-130" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-7" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="shape=mxgraph.archimate3.application;fillColor=#d5b8e8;strokeColor=#9673a6;fontSize=11;" value="«artifact»&#10;Estado local&#10;Zustand · React Query · Axios + JWT interceptor" vertex="1">
+          <mxGeometry height="60" width="240" x="-110" y="-70" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-9" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=50;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;" value="«device»&#10;Edge Node (Finca)&#10;Raspberry Pi / Industrial PC" vertex="1">
+          <mxGeometry height="400" width="300" x="-140" y="43" as="geometry">
+            <mxRectangle height="90" width="200" x="40" y="430" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-10" parent="Zfa-h7b1mF_UkIyc46Zn-9" style="shape=mxgraph.archimate3.application;fillColor=#ffe6a0;strokeColor=#d6b656;fontSize=11;" value="«artifact»&#10;Edge Runtime (Python ligero)&#10;Cliente MQTT — publica al broker centralizado" vertex="1">
+          <mxGeometry height="50" width="240" x="30" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-11" parent="Zfa-h7b1mF_UkIyc46Zn-9" style="shape=mxgraph.archimate3.application;fillColor=#ffe6a0;strokeColor=#d6b656;fontSize=11;" value="«artifact»&#10;SQLite local (buffer 72h)&#10;Cola sincronización diferida" vertex="1">
+          <mxGeometry height="50" width="240" x="30" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-12" parent="Zfa-h7b1mF_UkIyc46Zn-9" style="shape=mxgraph.archimate3.application;fillColor=#ffe6a0;strokeColor=#d6b656;fontSize=11;" value="«artifact»&#10;Edge Analytics (sklearn ligero)&#10;Detección anomalías · Alertas pre-backend" vertex="1">
+          <mxGeometry height="50" width="240" x="30" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-13" parent="Zfa-h7b1mF_UkIyc46Zn-9" style="rounded=1;fillColor=#ffd966;strokeColor=#d6b656;fontSize=10;" value="Gestión Energía · Batería · Solar" vertex="1">
+          <mxGeometry height="30" width="240" x="30" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="cENZ17llnDM_x1ERUOXW-1" parent="Zfa-h7b1mF_UkIyc46Zn-9" style="shape=mxgraph.archimate3.application;fillColor=#ffe6a0;strokeColor=#d6b656;fontSize=11;" value="«artifact»&#10;Edge Processing&#10;SQLite (buffer offline) · Retry / QoS MQTT " vertex="1">
+          <mxGeometry height="50" width="240" x="30" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="cENZ17llnDM_x1ERUOXW-2" parent="Zfa-h7b1mF_UkIyc46Zn-9" style="shape=mxgraph.archimate3.application;fillColor=#ffe6a0;strokeColor=#d6b656;fontSize=11;" value="«artifact»&#10;Edge Processing&#10;SQLite (buffer offline) · Retry / QoS MQTT " vertex="1">
+          <mxGeometry height="50" width="240" x="30" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-14" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=50;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;" value="«device»&#10;Sensores IoT&#10;Wearables · Ambientales" vertex="1">
+          <mxGeometry height="170" width="280" x="-130" y="498" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-16" parent="Zfa-h7b1mF_UkIyc46Zn-14" style="rounded=1;fillColor=#ffd966;strokeColor=#d6b656;fontSize=11;" value="Protocolo LoRaWAN" vertex="1">
+          <mxGeometry height="28" width="240" x="20" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-15" parent="Zfa-h7b1mF_UkIyc46Zn-14" style="rounded=1;fillColor=#ffe6a0;strokeColor=#d6b656;fontSize=11;" value="«artifact»&#10;Captura datos&#10;Temp · Humedad · pH · Peso&#10;Actividad motora · Rumia" vertex="1">
+          <mxGeometry height="60" width="240" x="20" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-17" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;" value="«node»&#10;Servidor Backend Instance 1 (Cloud)&#10;Linux · Docker · HTTP 8000 (TLS en Traefik) · Monolito Modular" vertex="1">
+          <mxGeometry height="550" width="480" x="1160" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-25" parent="Zfa-h7b1mF_UkIyc46Zn-17" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Report Service + M07 Integration&#10;PDF · Excel · NIC41→JSON (cálculo interno) · ICA = índice de conversión alimenticia" vertex="1">
+          <mxGeometry height="50" width="440" x="20" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-24" parent="Zfa-h7b1mF_UkIyc46Zn-17" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Sync Queue&#10;Sincronización diferida Edge→BD · conflict resolver" vertex="1">
+          <mxGeometry height="50" width="440" x="20" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-23" parent="Zfa-h7b1mF_UkIyc46Zn-17" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Notification Service&#10;SMTP (Gmail hoy) · FCM (push) · SendGrid: Objetivo (no desplegado) · Retry Queue" vertex="1">
+          <mxGeometry height="50" width="440" x="20" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="cENZ17llnDM_x1ERUOXW-3" parent="Zfa-h7b1mF_UkIyc46Zn-17" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="&lt;&lt;artifact&gt;&gt;&#10;Integration Handler&#10;Fallback · Retry · Circuit Breaker · External APIs · ML Service" vertex="1">
+          <mxGeometry height="50" width="440" x="20" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-18" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;FastAPI App (main.py)&#10;Routers · Middleware · OpenAPI" vertex="1">
+          <mxGeometry height="50" width="440" x="1180" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-19" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Dominio DDD&#10;BC: Auth · Assets · Telemetry · Financial · Config · Reports" vertex="1">
+          <mxGeometry height="50" width="440" x="1180" y="178" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-20" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;SQLAlchemy ORM + Alembic&#10;Repositorios · Migrations · Session" vertex="1">
+          <mxGeometry height="50" width="440" x="1180" y="238" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-21" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Auth Service&#10;JWT HS256 (interno) · RS256 solo SSO AGROFUSION · BCrypt · RBAC" vertex="1">
+          <mxGeometry height="50" width="440" x="1180" y="298" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-27" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=10;" value="«node»&#10;PostgreSQL (servidor del backend)&#10;PostgreSQL 18 · host 5447 DEV · 5448 TEST · 5449 PROD → 5432&#10;(publicados al host · Taiga #5478)" vertex="1">
+          <mxGeometry height="170" width="400" x="1160" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-28" parent="Zfa-h7b1mF_UkIyc46Zn-27" style="shape=cylinder3;fillColor=#aac8f0;strokeColor=#6c8ebf;fontSize=11;" value="«artifact»&#10;DB Principal (R/W)&#10;Audit insert-only · Borrado lógico" vertex="1">
+          <mxGeometry height="80" width="170" x="115" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-35" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;startSize=30;fontSize=11;" value="«external» Servicios externos desplegados" vertex="1">
+          <mxGeometry height="180" width="320" x="1840" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="S-_rEWRCBSLLvi32CNCP-4" parent="Zfa-h7b1mF_UkIyc46Zn-35" style="shape=mxgraph.archimate3.application;fillColor=light-dark(#A8D5A2,#4D4C4C);strokeColor=#82b366;fontSize=9;" value="Correo SMTP — Gmail hoy · SendGrid: Objetivo (no desplegado)" vertex="1">
+          <mxGeometry height="26" width="300" x="10" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-fcm" parent="Zfa-h7b1mF_UkIyc46Zn-35" style="shape=mxgraph.archimate3.application;fillColor=#e0e0e0;strokeColor=#666666;fontSize=9;" value="Firebase Cloud Messaging (push) · firebase_admin" vertex="1">
+          <mxGeometry height="26" width="300" x="10" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-recaptcha" parent="Zfa-h7b1mF_UkIyc46Zn-35" style="shape=mxgraph.archimate3.application;fillColor=#e0e0e0;strokeColor=#666666;fontSize=9;" value="Google reCAPTCHA · /recaptcha/api/siteverify" vertex="1">
+          <mxGeometry height="26" width="300" x="10" y="94" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-agrofusion" parent="Zfa-h7b1mF_UkIyc46Zn-35" style="shape=mxgraph.archimate3.application;fillColor=#e0e0e0;strokeColor=#666666;fontSize=9;" value="AgroFusion Hub · llama al backend (M2M)&#10;SSO RS256 validado con clave pública local" vertex="1">
+          <mxGeometry height="30" width="300" x="10" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-22" parent="S-_rEWRCBSLLvi32CNCP-0" style="shape=mxgraph.archimate3.application;fillColor=light-dark(#A8D5A2,#4D4D4D);strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;ML Service&#10;scikit-learn · Random Forest · umbral 70%" vertex="1">
+          <mxGeometry height="50" width="243" x="33.5" y="57" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-1" parent="0P-6feL1eprvoFLn9LHD-0" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Report Service + M07 Integration&#10;PDF · Excel · NIC41→JSON (cálculo interno) · ICA = índice de conversión alimenticia" vertex="1">
+          <mxGeometry height="50" width="360" x="20" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-2" parent="0P-6feL1eprvoFLn9LHD-0" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Sync Queue&#10;Sincronización diferida Edge→BD · conflict resolver" vertex="1">
+          <mxGeometry height="50" width="360" x="20" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-3" parent="0P-6feL1eprvoFLn9LHD-0" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Notification Service&#10;SMTP (Gmail hoy) · FCM (push) · SendGrid: Objetivo (no desplegado) · Retry Queue" vertex="1">
+          <mxGeometry height="50" width="360" x="20" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-4" parent="0P-6feL1eprvoFLn9LHD-0" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="&lt;&lt;artifact&gt;&gt;&#10;Integration Handler&#10;Fallback · Retry · Circuit Breaker · External APIs · ML Service" vertex="1">
+          <mxGeometry height="50" width="360" x="20" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-16" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=50;fillColor=light-dark(#E1D5E7,#3F0711);strokeColor=#9673a6;fontStyle=1;fontSize=12;" value="«node»&#10;Proxy inverso (Cloud) · balanceo: objetivo&#10;Traefik (Dokploy) — TLS 443 · ruteo por dominio y ruta" vertex="1">
+          <mxGeometry height="56" width="360" x="1210" y="-226" as="geometry" />
+        </mxCell>
+        <mxCell id="broker-1" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=42;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;" value="«node»&#10;Broker MQTT (centralizado)" vertex="1">
+          <mxGeometry height="430" width="340" x="380" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="broker-2" parent="broker-1" style="shape=mxgraph.archimate3.application;fillColor=#ffe6a0;strokeColor=#d6b656;fontSize=9;" value="«artifact» Mosquitto&#10;1883 interno, en claro (tramo 2)&#10;hacia dispositivos (tramo 1):&#10;en claro en DEV, TEST y PROD&#10;WS 9001 (interno) en claro · sin consumidor&#10;ACL dynamic-security" vertex="1">
+          <mxGeometry height="110" width="300" x="20" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="broker-3" parent="broker-1" style="shape=mxgraph.archimate3.application;fillColor=#ffe6a0;strokeColor=#d6b656;fontSize=9;" value="«artifact» Gateway HTTP&#10;:8000 (expose) · BROKER_SERVICE_TOKEN" vertex="1">
+          <mxGeometry height="60" width="300" x="20" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="front-1" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=40;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;" value="«node» Servidor Frontend (nginx)" vertex="1">
+          <mxGeometry height="90" width="240" x="975" y="-110" as="geometry" />
+        </mxCell>
+        <mxCell id="front-2" parent="front-1" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=9;" value="«artifact» Build estático de la PWA&#10;:80 interno · sin puerto de host" vertex="1">
+          <mxGeometry height="36" width="210" x="15" y="46" as="geometry" />
+        </mxCell>
+        <mxCell id="leyenda-1" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="text;html=1;align=left;fontSize=9;fontStyle=2;strokeColor=none;fillColor=none;fontColor=#666666;" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 102), rgb(149, 149, 149));&quot;&gt;Capas (Ctrl+Shift+L): «Capa Base» = cajas fijas (siempre visible) ·&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 102), rgb(149, 149, 149));&quot;&gt;«Capa DEV» / «Capa TEST / Sandbox» / «Capa PROD» = URLs y puertos de host de cada ambiente (enciende UNA a la vez)&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 102), rgb(149, 149, 149));&quot;&gt;«Capa Protocolos» = flechas con su protocolo y puerto INTERNO (no cambia entre ambientes) ·&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 102), rgb(149, 149, 149));&quot;&gt;«Hallazgos» = apoyo, apagada por defecto · «Detalle de comunicación» = notas de apoyo, encendida.&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 102), rgb(149, 149, 149));&quot;&gt;«Objetivo (no desplegado)» = cajas y flechas punteadas de la arquitectura objetivo, apagada por defecto.&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="560" x="-150" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="ctl-version" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="rounded=1;fillColor=#FFFFFF;strokeColor=#999999;fontSize=9;align=left;spacingLeft=8;verticalAlign=top;spacingTop=4;html=1;" value="&lt;b&gt;IMP_Diag_Despliegue_Puertos_Protocolos · v1.7&lt;/b&gt;&lt;br&gt;Fecha: 2026-11-23 · Autores: Sebastián Sandoval Chavarro y Juan Hernando Perdomo Mosquera&lt;br&gt;Cambios: dos servidores (backend y broker), tramos MQTT, dominios verificados con curl y puertos de CA-4&lt;br&gt;(HU-IMP-DOC-03). Base: v1.6 (HU-IMP-DOC-02)&lt;br&gt;Dato de Despliegue: un servidor del broker para los 3 entornos, puertos de Dokploy,&amp;nbsp;&lt;div&gt;PROD con docker-compose.yml&lt;/div&gt;" vertex="1">
+          <mxGeometry height="95" width="480" x="-150" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="ctl-fuente" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="rounded=1;fillColor=#FFFFFF;strokeColor=#999999;fontSize=9;align=left;spacingLeft=8;verticalAlign=top;spacingTop=4;html=1;" value="&lt;b&gt;FUENTE de cada dato (corte 2026-11-23 11:38:28 -0500 · evidencias/CA-1_corte.txt)&lt;/b&gt;&lt;br&gt;Puertos: evidencias/CA-4_puertos.md · Dominios: evidencias/curl-dominios.txt (2026-11-23 12:21 -0500)&lt;br&gt;Dos servidores y BACKEND_URL pública: HU-IMP-AMB-11 (decisión 9)&lt;br&gt;BE dev@77e0d772 · test@1ee56516 · main@e3b07ae6&lt;br&gt;FE dev@1a8aad03 · test@6ebc1faa · main@ed446c62&lt;br&gt;BRK develop@2f8ea54 · test@662e096 · main@2181993 · INT main@f69094b&lt;br&gt;Broker (servidor, puertos de host, Compose Path de PROD, gateways): Despliegue (Danna),&amp;nbsp;&lt;div&gt;variables del Dokploy del broker, 2026-11-23&lt;br&gt;Motor M04: sin cambios desde la v1.6 · Punteado = Objetivo (no desplegado)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="135" width="480" x="-150" y="955" as="geometry" />
+        </mxCell>
+        <mxCell id="motor-1" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="swimlane;startSize=40;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=11;whiteSpace=wrap;" value="«node» Motor de inferencia M04 (Application aparte en Dokploy) · ubicación por confirmar (AIoT)" vertex="1">
+          <mxGeometry height="170" width="400" x="1900" y="-260" as="geometry" />
+        </mxCell>
+        <mxCell id="motor-2" parent="motor-1" style="shape=mxgraph.archimate3.application;fillColor=#ffd8a8;strokeColor=#d79b00;fontSize=9;whiteSpace=wrap;" value="«artifact» Motor IA (FastAPI · onnxruntime) · Dockerfile.motor-ia&#10;:8100 interno · sin puerto de host · sin MQTT&#10;/v1/paquetes · /v1/healthz · Bearer IOT_INFERENCIA_M04_TOKEN" vertex="1">
+          <mxGeometry height="56" width="370" x="15" y="46" as="geometry" />
+        </mxCell>
+        <mxCell id="motor-3" parent="motor-1" style="shape=mxgraph.archimate3.application;fillColor=#ffd8a8;strokeColor=#d79b00;fontSize=9;whiteSpace=wrap;" value="«artifact» Modelos en /data/modelos (provisional hasta B2/M3)&#10;develop: artefactos ET-02 en la imagen + catalogo.json por File Mount&#10;test: imagen del PR #54 → Bind Mount · main: sin imagen" vertex="1">
+          <mxGeometry height="54" width="370" x="15" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="nota-gw-duplicados" parent="Zfa-h7b1mF_UkIyc46Zn-1" style="rounded=1;arcSize=20;fillColor=#F8CECC;strokeColor=#B85450;fontSize=9;align=left;spacingLeft=4;whiteSpace=wrap;html=1;" value="Gateways duplicados o restos en el Traefik de SIGAB: api.inmero.co/broker-sigab, /broker-sigab-test y /broker-sigab-dev no son dominio de ningún broker · quién los sirve: por confirmar (Despliegue)" vertex="1">
+          <mxGeometry height="66" width="225" x="975" y="-284" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-dev" parent="Zfa-h7b1mF_UkIyc46Zn-0" value="Capa DEV" visible="0" />
+        <mxCell id="env-dev-banner" parent="layer-dev" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=12;fontStyle=1;align=center;" value="AMBIENTE: DESARROLLO (DEV)" vertex="1">
+          <mxGeometry height="32" width="300" x="-140" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="env-dev-front" parent="layer-dev" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=9;fontStyle=1;align=center;" value="Frontend · https://inmero.co/sigab-dev/ (200)" vertex="1">
+          <mxGeometry height="30" width="300" x="975" y="-14" as="geometry" />
+        </mxCell>
+        <mxCell id="env-dev-back" parent="layer-dev" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=9;fontStyle=1;align=center;" value="Backend · api.inmero.co/api-sgpmp-dev (200)" vertex="1">
+          <mxGeometry height="22" width="210" x="1170" y="606" as="geometry" />
+        </mxCell>
+        <mxCell id="env-dev-gw" parent="layer-dev" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;fontSize=8" value="Gateway del backend: host técnico del servidor del broker" vertex="1">
+          <mxGeometry height="44" width="165" x="380" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="env-dev-mqtt" parent="layer-dev" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=9;fontStyle=1;align=center;" value="MQTT · host 1885 → 1883 (en claro)" vertex="1">
+          <mxGeometry height="20" width="165" x="380" y="548" as="geometry" />
+        </mxCell>
+        <mxCell id="env-dev-ws" parent="layer-dev" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=9;fontStyle=1;align=center;" value="WS · host 9004 → 9001 (en claro)" vertex="1">
+          <mxGeometry height="20" width="165" x="380" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="env-dev-db" parent="layer-dev" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=9;fontStyle=1;align=center;" value="PostgreSQL · host 5447 → 5432 · BD sgpmp_dev · Taiga #5478" vertex="1">
+          <mxGeometry height="30" width="380" x="1180" y="858" as="geometry" />
+        </mxCell>
+        <mxCell id="env-dev-motor" parent="layer-dev" style="rounded=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;" value="Motor · /model-ia-dev · imagen develop@d0bc51e (artefactos ET-02 + File Mount)" vertex="1">
+          <mxGeometry height="20" width="400" x="1900" y="-85" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-test" parent="Zfa-h7b1mF_UkIyc46Zn-0" value="Capa TEST / Sandbox" visible="0" />
+        <mxCell id="env-test-banner" parent="layer-test" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=12;fontStyle=1;align=center;" value="AMBIENTE: PRUEBAS (TEST) + SANDBOX" vertex="1">
+          <mxGeometry height="32" width="300" x="-140" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-front" parent="layer-test" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap" value="Frontend · https://api.inmero.co/sigab-test/ (200) · inmero.co/sigab-test entrega PROD (DOC03-H-02)" vertex="1">
+          <mxGeometry height="30" width="300" x="975" y="-14" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-back" parent="layer-test" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=9;fontStyle=1;align=center;" value="Backend · api.inmero.co/api-sgpmp-test (200)" vertex="1">
+          <mxGeometry height="22" width="210" x="1170" y="606" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-gw" parent="layer-test" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;fontSize=8" value="Gateway del backend: host técnico del servidor del broker" vertex="1">
+          <mxGeometry height="44" width="165" x="380" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-mqtt" parent="layer-test" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=9;fontStyle=1;align=center;" value="MQTT · host 1886 → 1883 (en claro · SEG-03)" vertex="1">
+          <mxGeometry height="20" width="165" x="380" y="548" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-ws" parent="layer-test" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=9;fontStyle=1;align=center;" value="WS · host 9005 → 9001 (en claro)" vertex="1">
+          <mxGeometry height="20" width="165" x="380" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-db" parent="layer-test" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=9;fontStyle=1;align=center;" value="PostgreSQL · host 5448 → 5432 · BD sgpmp_test · Taiga #5478" vertex="1">
+          <mxGeometry height="30" width="380" x="1180" y="858" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-sandbox-flag" parent="layer-test" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D79B00;strokeWidth=2;fontSize=9;fontStyle=1;align=center;" value="ENABLE_TEST_SANDBOX=true" vertex="1">
+          <mxGeometry height="22" width="180" x="1170" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-sandbox-db" parent="layer-test" style="rounded=1;fillColor=#FFE6CC;strokeColor=#D79B00;strokeWidth=2;fontSize=9;fontStyle=1;align=center;html=1;fontStyle=0;" value="SANDBOX · solo TEST (nunca DEV/PROD)&lt;br/&gt;Rollback de memoria al cerrar cada ciclo;&lt;div&gt;&amp;nbsp;si falla, reinicio del contenedor&lt;br/&gt;Rollback solo cubre BD: SMTP/FCM/MQTT no se revierten ·&lt;/div&gt;&lt;div&gt;&amp;nbsp;puerto 5448 publicado&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="380" x="1180" y="892" as="geometry" />
+        </mxCell>
+        <mxCell id="env-test-motor" parent="layer-test" style="rounded=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;" value="Motor · /model-ia-test · imagen del PR #54 (llegó con el PR #55) · Bind Mount" vertex="1">
+          <mxGeometry height="20" width="400" x="1900" y="-85" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-prod" parent="Zfa-h7b1mF_UkIyc46Zn-0" value="Capa PROD" visible="0" />
+        <mxCell id="env-prod-banner" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=12;fontStyle=1;align=center;" value="AMBIENTE: PRODUCCIÓN (PROD)" vertex="1">
+          <mxGeometry height="32" width="300" x="-140" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-front" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;" value="Frontend · https://inmero.co/sigab/ (200) · expose :80" vertex="1">
+          <mxGeometry height="30" width="300" x="975" y="-14" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-back" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;" value="Backend · https://api.inmero.co/sigab (200) · expose :8000" vertex="1">
+          <mxGeometry height="22" width="230" x="1170" y="606" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-gw" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;fontSize=8" value="Gateway: dominio propio del broker de PROD (Dokploy de Arekkazu) · expose :8000" vertex="1">
+          <mxGeometry height="44" width="165" x="380" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-mqtt" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;fontSize=8" value="MQTT · host 1887 → 1883 (en claro)" vertex="1">
+          <mxGeometry height="20" width="165" x="380" y="548" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-ws" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;fontSize=8" value="WS · host 9006 → 9001 (en claro)" vertex="1">
+          <mxGeometry height="20" width="165" x="380" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-db" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;" value="PostgreSQL · host 5449 → 5432 publicado · BD sgpmp_prod (el broker usa sgpmp_main: por confirmar, DBA) · Taiga #5478" vertex="1">
+          <mxGeometry height="30" width="380" x="1180" y="858" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-gwdb" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;" value="Gateway → BD (PROD): puerto publicado 5449 · rol: Taiga #5478" vertex="1">
+          <mxGeometry height="20" width="300" x="600" y="790" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-motor" parent="layer-prod" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;" value="Motor · /model-ia · dominio por definir · sin imagen en main (cebd430)" vertex="1">
+          <mxGeometry height="20" width="400" x="1900" y="-85" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-protocolos" parent="Zfa-h7b1mF_UkIyc46Zn-0" value="Capa Protocolos" />
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-38" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-9" value="LoRaWAN">
+          <mxGeometry relative="1" as="geometry" x="-0.4">
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="3mxXDTT2PxGYSkMZLNH4-0" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-9" value="Contingencia">
+          <mxGeometry relative="1" as="geometry" x="0">
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-36" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.9444;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="0P-6feL1eprvoFLn9LHD-16" value="HTTPS 443 · TLS (Let's Encrypt) + JWT">
+          <mxGeometry relative="1" as="geometry" x="-0.72">
+            <Array as="points"><mxPoint x="10" y="-360" /><mxPoint x="1550" y="-360" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="edge-lb-front" edge="1" parent="layer-protocolos" source="0P-6feL1eprvoFLn9LHD-16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=0.1;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="front-1" value="HTTP :80 interno">
+          <mxGeometry relative="1" as="geometry" x="-0.45">
+            <Array as="points"><mxPoint x="1246" y="-65" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-18" edge="1" parent="layer-protocolos" source="0P-6feL1eprvoFLn9LHD-16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=0.2778;exitY=1;exitDx=0;exitDy=0;entryX=0.3125;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-17" value="HTTP :8000 interno (Strip Path)">
+          <mxGeometry relative="1" as="geometry" x="-0.6">
+            <mxPoint x="80" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="edge-brk-1" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#D79B00;fontColor=#D79B00;strokeWidth=2;exitX=1;exitY=0.43;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="broker-2" value="Tramo 1 · dispositivo → Mosquitto&#10;(puertos de host de Dokploy)&#10;DEV 1885 → 1883 ·&#10;TEST 1886 → 1883 ·&#10;PROD 1887 → 1883&#10;en claro en los tres entornos&#10;(SEG-BROKER-02 sin cumplir)">
+          <mxGeometry relative="1" as="geometry" x="-0.167">
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-41" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#666666;fontColor=#666666;strokeWidth=2;exitX=1;exitY=0.3582;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="S-_rEWRCBSLLvi32CNCP-4" value="SMTP 587 · STARTTLS">
+          <mxGeometry relative="1" as="geometry" x="-0.2">
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-39" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#6C8EBF;fontColor=#6C8EBF;strokeWidth=2;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.9;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-27" value="TCP 5432 interno · &#10;${POSTGRES_DB}-db">
+          <mxGeometry relative="1" as="geometry" x="-0.4">
+            <mxPoint x="-70" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="edge-gw-db" edge="1" parent="layer-protocolos" source="broker-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#6C8EBF;fontColor=#6C8EBF;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-27" value="TCP → puerto publicado de PostgreSQL&#10;(5447 / 5448 / 5449 → 5432)&#10;entre servidores · Taiga #5478 · DEV, TEST y PROD">
+          <mxGeometry relative="1" as="geometry" x="-0.1">
+            <Array as="points"><mxPoint x="550" y="765" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="edge-be-lb" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=0.7708;exitY=0;exitDx=0;exitDy=0;entryX=0.8889;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="0P-6feL1eprvoFLn9LHD-16" value="HTTPS 443 · POST /v1/paquetes al motor&#10;(URL pública /model-ia-*)">
+          <mxGeometry relative="1" as="geometry" x="-0.6">
+            <mxPoint x="-110" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="edge-lb-gw" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=0;exitY=0.8;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="broker-3" value="HTTPS · MQTT_BROKER_URL&#10;→ POST /v1/commands&#10;DEV/TEST: host técnico&#10;del servidor del broker&#10;PROD: dominio propio del broker&#10;de PROD (Dokploy de Arekkazu)">
+          <mxGeometry relative="1" as="geometry" x="-0.565">
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-gw-mosq" edge="1" parent="layer-protocolos" source="broker-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#D79B00;fontColor=#D79B00;strokeWidth=2;startArrow=open;startFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="broker-2" value="Tramo 2 · mosquitto:1883&#10;en claro · MQTT_TLS=false">
+          <mxGeometry relative="1" as="geometry" x="-0.55" />
+        </mxCell>
+        <mxCell id="edge-be-fcm" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=1;exitY=0.4127;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="ext-fcm" value="HTTPS 443">
+          <mxGeometry relative="1" as="geometry" x="-0.2">
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-be-recaptcha" edge="1" parent="layer-protocolos" source="Zfa-h7b1mF_UkIyc46Zn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=1;exitY=0.4673;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="ext-recaptcha" value="HTTPS 443">
+          <mxGeometry relative="1" as="geometry" x="-0.2" />
+        </mxCell>
+        <mxCell id="edge-af-be" edge="1" parent="layer-protocolos" source="ext-agrofusion" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5255;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-17" value="HTTPS 443 entrante (vía Traefik)">
+          <mxGeometry relative="1" as="geometry" x="-0.2">
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="proto-legend" parent="layer-protocolos" style="rounded=1;fillColor=#FFFFFF;strokeColor=#999999;fontSize=9;align=left;spacingLeft=8;verticalAlign=top;spacingTop=4;html=1;fontStyle=0;" value="PROTOCOLOS (colores de las flechas) · punteado = Objetivo (no desplegado)&lt;br&gt;&lt;font color=&quot;#4D8F2F&quot;&gt;━ HTTP/HTTPS&lt;/font&gt;: 443 TLS en Traefik · 80 (frontend), 8000 (backend, gateway) y 8100 (motor M04) internos&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Entre servidores solo HTTPS: backend → gateway por MQTT_BROKER_URL (DEV/TEST host técnico del servidor del broker;&amp;nbsp;&lt;div&gt;&amp;nbsp; &amp;nbsp;PROD dominio propio del broker de PROD (Dokploy de Arekkazu))&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;y gateway → backend por BACKEND_URL · api.inmero.co/broker-sigab*: no es dominio de ningún broker&lt;br&gt;&lt;font color=&quot;#D79B00&quot;&gt;━ MQTT (TCP)&lt;/font&gt;: tramo 1 dispositivo → Mosquitto: DEV 1885 / TEST 1886 / PROD 1887 → 1883, en claro en los tres (Dokploy)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;tramo 2 gateway ↔ mosquitto:1883 en claro (MQTT_TLS=false), dentro del servidor del broker&lt;br&gt;&lt;font color=&quot;#D79B00&quot;&gt;┅ WebSocket&lt;/font&gt;: DEV 9004 / TEST 9005 / PROD 9006 → 9001, en claro&lt;br&gt;&lt;font color=&quot;#6C8EBF&quot;&gt;━ TCP/PostgreSQL&lt;/font&gt;: 5432 interno · host 5447 DEV / 5448 TEST / 5449 PROD (publicados · Taiga #5478)&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;Gateway → BD: puerto publicado, desde el servidor del broker&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;━ SMTP&lt;/font&gt;: 587 STARTTLS · LoRaWAN y REST en negro&lt;/div&gt;" vertex="1">
+          <mxGeometry height="175" width="600" x="-180" y="1100" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-lb-motor" edge="1" parent="layer-protocolos" source="0P-6feL1eprvoFLn9LHD-16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.2988;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="motor-1" value="HTTP :8100 interno&#10;(Strip Path /model-ia-*)">
+          <mxGeometry relative="1" as="geometry" x="0.06" />
+        </mxCell>
+        <mxCell id="edge-motor-lb" edge="1" parent="layer-protocolos" source="motor-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=0;exitY=0.4471;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="0P-6feL1eprvoFLn9LHD-16" value="HTTPS 443 · BACKEND_URL&#10;(/api-sgpmp-*)&#10;POST /prediccion/inferencias&#10;/prediccion/motor/* y&#10;POST /prediccion/modelos&#10;(PR #60, #61)">
+          <mxGeometry relative="1" as="geometry" x="-0.45">
+            <mxPoint x="0" y="44" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="edge-gw-lb" edge="1" parent="layer-protocolos" source="broker-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=1;exitY=0.1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="0P-6feL1eprvoFLn9LHD-16" value="HTTPS 443 público · BACKEND_URL&#10;+ BROKER_SERVICE_TOKEN&#10;(gateway → backend, entre servidores)">
+          <mxGeometry relative="1" as="geometry" x="-0.45">
+            <Array as="points"><mxPoint x="800" y="153" /><mxPoint x="800" y="-198" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="layer-hallazgos" parent="Zfa-h7b1mF_UkIyc46Zn-0" value="Hallazgos" visible="0" />
+        <mxCell id="tag-bd1" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#F8CECC;strokeColor=#B85450;fontSize=9;fontStyle=1;align=center;" value="CN-001 / INC-BD-04 · sin TLS" vertex="1">
+          <mxGeometry height="18" width="150" x="600" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-bd2" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#F8CECC;strokeColor=#B85450;fontSize=9;fontStyle=1;align=center;" value="CN-001 / INC-BD-04 · sin TLS" vertex="1">
+          <mxGeometry height="18" width="170" x="975" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-brk-1" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;" value="CN-003 / INC-BRK-01 · dispositivos en claro" vertex="1">
+          <mxGeometry height="28" width="155" x="388" y="335" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-brk-2" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;" value="CN-002 / INC-BRK-03 · ACL en las 3 ramas" vertex="1">
+          <mxGeometry height="28" width="155" x="388" y="368" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-brk-ws" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;" value="WS sin consumidor" vertex="1">
+          <mxGeometry height="20" width="160" x="560" y="548" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-brk-i2" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;" value="CN-002 / INC-BRK-03 · verificar al desplegar PROD" vertex="1">
+          <mxGeometry height="30" width="160" x="560" y="572" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-lb" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#F5F5F5;strokeColor=#999999;fontSize=9;fontStyle=1;align=center;" value="Balanceo round-robin: objetivo PROD" vertex="1">
+          <mxGeometry height="18" width="165" x="1370" y="-300" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-rootpath" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;" value="ROOT_PATH ≠ ruta pública" vertex="1">
+          <mxGeometry height="18" width="190" x="1170" y="655" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-sbx" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;" value="Sandbox: reenviada en compose TEST (test@81487428)" vertex="1">
+          <mxGeometry height="30" width="180" x="975" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-gwdb" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;" value="GW→BD: puerto publicado en los 3 entornos · Taiga #5478" vertex="1">
+          <mxGeometry height="18" width="300" x="600" y="815" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-reg" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;" value="CN-001 → INC-BD-04 · CN-002 → INC-BRK-03&#10;CN-003 → INC-BRK-01&#10;(registros/incidencias/registro.md)" vertex="1">
+          <mxGeometry height="46" width="155" x="388" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-motor-pref" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;" value="INC-BRK-04 · Dokploy /motor-ia-* vs código /model-ia-* · Container Port 8100" vertex="1">
+          <mxGeometry height="18" width="400" x="1900" y="-60" as="geometry" />
+        </mxCell>
+        <mxCell id="tag-motor-app" parent="layer-hallazgos" style="rounded=1;arcSize=60;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;fontStyle=1;align=center;whiteSpace=wrap;" value="INC-BRK-05 · Applications y montajes de modelos sin crear en Dokploy" vertex="1">
+          <mxGeometry height="18" width="400" x="1900" y="-40" as="geometry" />
+        </mxCell>
+        <mxCell id="layer-detalle" parent="Zfa-h7b1mF_UkIyc46Zn-0" value="Detalle de comunicación" />
+        <mxCell id="det-bd" parent="layer-detalle" style="rounded=1;fillColor=#FDEDEC;strokeColor=#B85450;strokeWidth=1.5;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;fontStyle=1;" value="PostgreSQL — CN-001 (INC-BD-04)&#10;Interno: 5432 · backend → ${POSTGRES_DB}-db:5432 (red del stack)&#10;Host: DEV 5447 / TEST 5448 / PROD 5449 → 5432, publicados;&#10;riesgo registrado en Taiga #5478.&#10;PROD: BE main@e3b07ae6 docker-compose.prod.yml:73-74 publica ${DB_PORT:-5449}:5432 (sin acceso SSH).&#10;TLS: sin sslmode en ningún ambiente (DBA + Implementación)." vertex="1">
+          <mxGeometry height="120" width="540" x="500" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="det-broker" parent="layer-detalle" style="rounded=1;fillColor=#FFF6ED;strokeColor=#D79B00;strokeWidth=1.5;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;fontStyle=1;" value="Broker MQTT — CN-002 (INC-BRK-03) / CN-003 (INC-BRK-01)&#10;Interno: TCP 1883 · WS 9001 · Gateway HTTP 8000&#10;Autenticación: SÍ — credenciales separadas para gateway y dispositivos&#10;ACL por tópico (dynamic-security, SEG-BROKER-03): SÍ en develop, test y main&#10;   → CN-002 resuelto en código (main@cebd430); verificar al desplegar PROD&#10;SEG-BROKER-02: soportado en código, sin activar en ningún entorno: Dokploy no carga MQTT_PUERTO_PUBLICO&#10;   y PROD usa docker-compose.yml; 8883/9002 solo en docker-compose.prod.yml, no desplegado → CN-003&#10;   MQTT_TLS=false = cliente gateway → Mosquitto interno, no el listener externo&#10;Listener WebSocket (9001, texto plano) sin consumidor conocido (el frontend usa polling)&#10;Gateway ↔ Mosquitto: MQTT 1883 interno (publica comandos, se suscribe a telemetría)&#10;Gateway → BD (modulo3 / modulo9): entre servidores no hay red Docker común;&#10;   los tres usan el puerto publicado (5447 / 5448 / 5449 → 5432); rol: Taiga #5478" vertex="1">
+          <mxGeometry height="240" width="640" x="-180" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="det-subs" parent="layer-detalle" style="rounded=1;fillColor=#FFF6ED;strokeColor=#D79B00;strokeWidth=1.5;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;fontStyle=1;" value="Nota abierta (objetivo): el backend no se suscribe a MQTT (lo hace el gateway).&#10;Con 2 instancias del gateway suscritas al mismo broker, falta definir si ambas&#10;procesan cada mensaje o si se necesita una suscripción compartida." vertex="1">
+          <mxGeometry height="90" width="440" x="1080" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="det-motor" parent="layer-detalle" style="rounded=1;fillColor=#FFF6ED;strokeColor=#D79B00;strokeWidth=1.5;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;fontStyle=1;" value="Motor M04 — INC-BRK-04 / INC-BRK-05&#10;Application aparte (motor-ia-dev / -test / -main); no es gateway ni Mosquitto; no habla MQTT&#10;Interno: 8100 (Container Port; otro valor → 502) · sin puerto de host&#10;Backend → motor: ${IOT_INFERENCIA_M04_URL}/v1/paquetes · Bearer · TLS mín. 1.3 (por Traefik)&#10;Motor → backend: BACKEND_URL /prediccion/inferencias, /prediccion/motor/* y /prediccion/modelos (por Traefik)&#10;Modelos: develop en la imagen + File Mount de catalogo.json · test Bind Mount&#10;Imagen: develop@d0bc51e · test@662e096 (versión del PR #54) · main sin imagen" vertex="1">
+          <mxGeometry height="150" width="640" x="1560" y="1300" as="geometry" />
+        </mxCell>
+      <mxCell id="layer-objetivo" parent="Zfa-h7b1mF_UkIyc46Zn-0" value="Objetivo (no desplegado)" visible="0" /><mxCell id="0P-6feL1eprvoFLn9LHD-0" parent="layer-objetivo" style="swimlane;startSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;dashed=1;dashPattern=8 4;" value="«node»&#10;Servidor Backend Instance 2 (Cloud) — Objetivo (no desplegado)&#10;Linux · Docker · HTTP 8000 (TLS en Traefik) · Monolito Modular" vertex="1">
+          <mxGeometry height="550" width="400" x="2400" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-5" parent="layer-objetivo" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;FastAPI App (main.py)&#10;Routers · Middleware · OpenAPI" vertex="1">
+          <mxGeometry height="50" width="360" x="2420" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-6" parent="layer-objetivo" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Dominio DDD&#10;BC: Auth · Assets · Telemetry · Financial · Config · Reports" vertex="1">
+          <mxGeometry height="50" width="360" x="2420" y="178" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-7" parent="layer-objetivo" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;SQLAlchemy ORM + Alembic&#10;Repositorios · Migrations · Session" vertex="1">
+          <mxGeometry height="50" width="360" x="2420" y="238" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-8" parent="layer-objetivo" style="shape=mxgraph.archimate3.application;fillColor=#a8d5a2;strokeColor=#82b366;fontSize=11;" value="«artifact»&#10;Auth Service&#10;JWT HS256 (interno) · RS256 solo SSO AGROFUSION · BCrypt · RBAC" vertex="1">
+          <mxGeometry height="50" width="360" x="2420" y="298" as="geometry" />
+        </mxCell>
+        <mxCell id="S-_rEWRCBSLLvi32CNCP-0" parent="layer-objetivo" style="swimlane;startSize=50;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=12;dashed=1;dashPattern=8 4;" value="«node»&#10;Servidor ML - Cloud — Objetivo (no desplegado)" vertex="1">
+          <mxGeometry height="117" width="310" x="2400" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-31" parent="layer-objetivo" style="swimlane;startSize=50;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=12;dashed=1;dashPattern=8 4;" value="«external system» Sistemas Externos&#10;Objetivo (no desplegado)" vertex="1">
+          <mxGeometry height="200" width="280" x="2400" y="-250" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-32" parent="layer-objetivo" style="rounded=1;fillColor=#e0e0e0;strokeColor=#666666;fontSize=11;dashed=1;dashPattern=8 4;" value="UPRA (reportes agropecuarios)" vertex="1">
+          <mxGeometry height="36" width="240" x="2420" y="-192" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-33" parent="layer-objetivo" style="rounded=1;fillColor=#e0e0e0;strokeColor=#666666;dashed=1;dashPattern=8 4;fontSize=9;" value="ICA (trazabilidad sanitaria)&#10;≠ «ICA» del código (índice de conversión alimenticia)" vertex="1">
+          <mxGeometry height="36" width="240" x="2420" y="-146" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-34" parent="layer-objetivo" style="rounded=1;fillColor=#e0e0e0;strokeColor=#666666;fontSize=11;dashed=1;dashPattern=8 4;" value="Entidades crediticias · NIC41→JSON" vertex="1">
+          <mxGeometry height="36" width="240" x="2420" y="-100" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-29" parent="layer-objetivo" style="shape=cylinder3;fillColor=#aac8f0;strokeColor=#6c8ebf;fontSize=11;dashed=1;dashPattern=8 4;" value="«artifact»&#10;DB Réplica (solo lectura)&#10;Objetivo (no desplegado)" vertex="1">
+          <mxGeometry height="70" width="170" x="975" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-30" parent="layer-objetivo" style="rounded=1;fillColor=#cce0f5;strokeColor=#6c8ebf;fontSize=10;dashed=1;dashPattern=8 4;" value="Backup automático diario — Objetivo (no desplegado)" vertex="1">
+          <mxGeometry height="30" width="170" x="975" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="det-lb" parent="layer-objetivo" style="rounded=1;fillColor=#F7F7F7;strokeColor=#999999;strokeWidth=1.5;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;fontStyle=1;" value="Load Balancer — objetivo de arquitectura PROD&#10;Sería Traefik (Dokploy): mismo proxy que ya termina TLS, con&#10;balanceo round-robin nativo entre réplicas.&#10;OJO: docker-compose.prod.yml corre el backend MONOPROCESO a propósito&#10;(rate limiter y semáforo del broker viven en memoria del proceso).&#10;Escalar a 2 instancias exige migrarlos a estado compartido antes." vertex="1">
+          <mxGeometry height="130" width="400" x="2850" y="-330" as="geometry" />
+        </mxCell>
+        <mxCell id="env-prod-back2" parent="layer-objetivo" style="rounded=1;fillColor=#E1D5E7;strokeColor=#9673A6;fontSize=9;fontStyle=1;align=center;dashed=1;dashPattern=8 4;" value="Instancia 2 · Objetivo (no desplegado) · expose :8000 (hoy monoproceso)" vertex="1">
+          <mxGeometry height="22" width="340" x="2400" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-20" edge="1" parent="layer-objetivo" source="0P-6feL1eprvoFLn9LHD-16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.9;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="0P-6feL1eprvoFLn9LHD-0" value="Objetivo (no desplegado) · HTTP :8000">
+          <mxGeometry relative="1" as="geometry" x="0.3"><Array as="points"><mxPoint x="1390" y="-300" /><mxPoint x="2760" y="-300" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="Zfa-h7b1mF_UkIyc46Zn-40" edge="1" parent="layer-objetivo" source="Zfa-h7b1mF_UkIyc46Zn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;dashed=1;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;exitX=1;exitY=0.1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-31" value="Objetivo (no desplegado) · HTTPS 443">
+          <mxGeometry relative="1" as="geometry" x="0.5"><Array as="points"><mxPoint x="2340" y="105" /><mxPoint x="2340" y="-150" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="S-_rEWRCBSLLvi32CNCP-3" edge="1" parent="layer-objetivo" source="Zfa-h7b1mF_UkIyc46Zn-17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;dashed=1;exitX=1;exitY=0.95;exitDx=0;exitDy=0;entryX=0;entryY=0.3419;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="S-_rEWRCBSLLvi32CNCP-0" value="Objetivo (no desplegado) · REST">
+          <mxGeometry relative="1" as="geometry" x="0.3"><Array as="points"><mxPoint x="2300" y="572.5" /><mxPoint x="2300" y="720" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-10" edge="1" parent="layer-objetivo" source="0P-6feL1eprvoFLn9LHD-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;dashed=1;strokeColor=#4D8F2F;fontColor=#4D8F2F;strokeWidth=2;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.7143;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-31" value="Objetivo (no desplegado) · HTTPS 443">
+          <mxGeometry relative="1" as="geometry" x="0" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-11" edge="1" parent="layer-objetivo" source="0P-6feL1eprvoFLn9LHD-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;dashed=1;strokeColor=#666666;fontColor=#666666;strokeWidth=2;dashed=1;exitX=0;exitY=0.3;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-35" value="SMTP 587 · STARTTLS">
+          <mxGeometry relative="1" as="geometry" x="0"><Array as="points"><mxPoint x="2240" y="215" /><mxPoint x="2240" y="290" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-14" edge="1" parent="layer-objetivo" source="0P-6feL1eprvoFLn9LHD-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.6452;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="S-_rEWRCBSLLvi32CNCP-0" value="Objetivo (no desplegado) · REST">
+          <mxGeometry relative="1" as="geometry" x="0" />
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-15" edge="1" parent="layer-objetivo" source="0P-6feL1eprvoFLn9LHD-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;strokeColor=#6C8EBF;fontColor=#6C8EBF;strokeWidth=2;dashed=1;exitX=0;exitY=0.97;exitDx=0;exitDy=0;entryX=1;entryY=0.7059;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-27" value="TCP :5432 · PostgreSQL">
+          <mxGeometry relative="1" as="geometry" x="0.5">
+            <Array as="points"><mxPoint x="2340" y="583.5" /><mxPoint x="2340" y="800" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="UYoWidx1297Aab-H_8bZ-0" edge="1" parent="layer-objetivo" source="S-_rEWRCBSLLvi32CNCP-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;dashed=1;exitX=0;exitY=0.8;exitDx=0;exitDy=0;entryX=1;entryY=0.9818;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="Zfa-h7b1mF_UkIyc46Zn-17" value="Objetivo (no desplegado) · predicción">
+          <mxGeometry relative="1" as="geometry" x="0.3"><Array as="points"><mxPoint x="2260" y="773.6" /><mxPoint x="2260" y="590" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="0P-6feL1eprvoFLn9LHD-12" edge="1" parent="layer-objetivo" source="S-_rEWRCBSLLvi32CNCP-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;jumpStyle=arc;jumpSize=8;endArrow=open;endFill=0;fontSize=9;dashed=1;exitX=0.3;exitY=0;exitDx=0;exitDy=0;entryX=0.2325;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#FFFFFF;" target="0P-6feL1eprvoFLn9LHD-0" value="Objetivo (no desplegado) · predicción">
+          <mxGeometry relative="1" as="geometry" x="0" />
+        </mxCell>
+        </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
