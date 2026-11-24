@@ -1,0 +1,29 @@
+﻿HU-IMP-DOC-03 - Verificacion de dominios (CA-3)
+Fecha: 2026-11-23 12:21:06 -05:00 (equipo de juanh)
+Comando: curl.exe -s -o NUL -w "%{http_code}" --max-time 15 <url>   (000 = sin respuesta)
+
+Amb.  Servicio          HTTP  URL
+DEV   Frontend          200   https://inmero.co/sigab-dev/
+DEV   Frontend (www)    200   https://www.inmero.co/sigab-dev/
+DEV   Frontend v1.6     404   https://api.inmero.co/sigab-dev
+DEV   Backend           200   https://api.inmero.co/api-sgpmp-dev/health
+DEV   Backend (www)     200   https://www.api.inmero.co/api-sgpmp-dev/health
+DEV   Gateway           404   https://api.inmero.co/broker-sigab-dev/v1/healthz
+TEST  Frontend          200   https://inmero.co/sigab-test/
+TEST  Frontend (www)    200   https://www.inmero.co/sigab-test/
+TEST  Backend           200   https://api.inmero.co/api-sgpmp-test/health
+TEST  Backend (www)     200   https://www.api.inmero.co/api-sgpmp-test/health
+TEST  Gateway           200   https://api.inmero.co/broker-sigab-test/v1/healthz
+PROD  Frontend          200   https://inmero.co/sigab/
+PROD  Frontend (www)    200   https://www.inmero.co/sigab/
+PROD  Backend           200   https://api.inmero.co/sigab/health
+PROD  Backend (www)     200   https://www.api.inmero.co/sigab/health
+PROD  Gateway           200   https://api.inmero.co/broker-sigab/v1/healthz
+
+ETag (curl.exe -sI <url>): si coinciden, /sigab captura /sigab-test (riesgo de PathPrefix)
+https://inmero.co/sigab-test/    Etag: "6b0248a0-f63"
+https://inmero.co/sigab/         Etag: "6b0248a0-f63"
+
+Agregado REV-01 (2026-11-23 16:42 -0500):
+TEST  Frontend          200   https://api.inmero.co/sigab-test/
+TEST  Frontend          404   https://www.api.inmero.co/sigab-test/
