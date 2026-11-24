@@ -20,6 +20,6 @@ Módulos M07, M08 y presentación final. [PENDIENTE: alcance exacto según el ta
 ## Documentos entregados
 | Documento | Versión | Fuente (commit) | Enlace Drive |
 |---|---|---|---|
-| Documento de Ambiente de Trabajo y mapa de puertos (`documentos/AMBIENTE-DE-TRABAJO-IMPLEMENTACION.md`, `documentos/IMP_Diag_Despliegue_Puertos_Protocolos_v1.7.drawio`) | 1.7 | `01741b1` (rama `docs/ambiente-v1.7-final`) | Por agregar |
+| Documento de Ambiente de Trabajo y mapa de puertos (`documentos/AMBIENTE-DE-TRABAJO-IMPLEMENTACION.md`, `documentos/IMP_Diag_Despliegue_Puertos_Protocolos_v1.7.drawio`) | 1.7 | `5de6495` (rama `docs/ambiente-v1.7-final`, PR #33) | Por agregar |
 
 ## Pendientes que pasan a la siguiente entrega

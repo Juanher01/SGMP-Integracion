@@ -86,7 +86,7 @@ Si una fuente contradice el contexto v1.7, gana el código y la diferencia se an
 
 - ☑ CA-1 a CA-10 cumplidos según REV-02 (APROBAR CON OBSERVACIONES). CA-10: PR #32 abierto el 2026-11-23 a las 17:57, después del plazo de las 17:00.
 - ☑ Ajustes de REV-01 aplicados (REV-02). Observaciones A y C cerradas en la ST-04; B y E por confirmar (Despliegue); D pendiente en el PR #32.
-- ☐ CA-11: v1.7 integrada en `documentos/` y `.docx` generado (ST-04); falta subirlo a Drive y anotar el enlace. PR #32 y PR de la ST-04 por fusionar.
+- ☐ CA-11: v1.7 integrada en `documentos/` con el dato de Despliegue del 2026-11-23 y el mapa reorganizado; `.docx` generado con `md2docx.ps1` desde el commit fuente `5de6495` (ST-04, PR #33). PR #32 fusionado; falta fusionar el PR #33, subir el `.docx` a Drive y anotar el enlace en el README de E4.
 - ☑ `entregas/README.md` y el README de E4 actualizados (en revisión final).
 
 **Dependencias y aprobaciones.** El PR lo aprueba el líder de Implementación. Sin respuesta de Despliegue (puertos de Mosquitto, gateway de DEV) ni de AIoT (variables del broker), esos datos quedan «por confirmar» y no bloquean.
